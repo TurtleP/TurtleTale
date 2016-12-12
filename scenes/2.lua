@@ -1,0 +1,22 @@
+return
+{
+	{"levelequals", "home"},
+	{"sleep", 1},
+	{"shake", 8},
+	{"dialog", {"phoenix", "KYAAAAAAAAA!"}},
+	{"sleep", 1},
+	{"spawncharacter", {"phoenix", 300, -49}},
+	{"setspeedy", {"phoenix", 64}},
+	{"sleep", 2},
+	{"setspeedy", {"phoenix", 0}},
+	{"dialog", {"turtle", "W-what do you want?"}},
+	{"sleep", 0.5},
+	{"dialog", {"phoenix", "Haha! Don't worry, I'll be quick about it!"}},
+	{"sleep", 0.5},
+	{"dofunction", {"phoenix", "flamethrower", "left"}},
+	{"sleep", 2},
+	{"dialog", {"phoenix", "There. That'll teach you! Don't be late with your payments next time."}},
+	{"sleep", 0.25},
+	{"setspeedy", {"phoenix", -64}},
+	{"dialog", {"turtle", "Dammit. I've had enough of this! It's time to pay him a personal visit at the volcano!"}},
+}

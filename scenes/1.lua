@@ -1,0 +1,26 @@
+return
+{	
+	{"setmap", "indoors"},
+	{"fadein", 0.15},
+    {"spawncharacter", {"turtle", 32, 64}},
+    {"dofunction", {"player", "use", true}},
+    {"sleep", 0.5},
+    {"dofunction", {"player", "use", false}},
+    {"freezeplayer"},
+    {"sleep", 4.5},
+    {"shake", 4},
+    {"sleep", 2},
+    {"dialog", {"turtle", "*yaawn*"}},
+    {"sleep", 2},
+    {"shake", 6},
+    {"sleep", 1},
+    {"dialog", {"turtle", "I .. don't wanna wake up. Just five more minut--"}},
+    {"sleep", 0.2},
+    {"shake", 8},
+    {"sleep", 0.5},
+    {"dofunction", {"player", "use", true}},
+    {"sleep", 0.1},
+    {"dofunction", {"player", "use", false}},
+    {"dialog", {"turtle", "Ow! Dang it I fell out of bed. What the heck is going on?"}},
+    {"unfreezeplayer"}
+}
