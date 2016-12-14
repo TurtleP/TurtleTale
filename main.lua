@@ -30,7 +30,8 @@ function love.load()
 
 	require 'states.title'
 	require 'states.game'
-
+	require 'states.intro'
+	
 	backgroundColors = 
 	{
 		["midnight"] = {16, 51, 90},
@@ -115,6 +116,9 @@ function love.load()
 	for i = 1, 5 do
 		fireQuads[i] = love.graphics.newQuad((i - 1) * 8, 0, 8, 8, fireImage:getWidth(), fireImage:getHeight())
 	end
+
+	introImage = love.graphics.newImage("graphics/intro/intro.png")
+	potionImage = love.graphics.newImage("graphics/intro/potionLogo.png")
 
 	jumpSound = love.audio.newSource("audio/jump.ogg")
 	selectionSound = love.audio.newSource("audio/select.ogg")

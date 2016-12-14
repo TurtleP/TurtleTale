@@ -32,7 +32,7 @@ function bed:update(dt)
             end
         end
     else
-        local ret = checkrectangle(self.x, self.y, self.width, self.height, {2}, self)
+        local ret = checkrectangle(self.x, self.y, self.width, self.height, {"player"}, self)
 
         if #ret > 0 then
             if ret[1][2].useKey then

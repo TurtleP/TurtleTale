@@ -24,6 +24,8 @@ function gameInit(map)
 	if cutscenes[currentScript] then
 		eventSystem:decrypt(cutscenes[currentScript][1])
 	end
+
+	cameraObjects = {}
 end
 
 function gameCreateTables()
@@ -38,23 +40,23 @@ function gameCreateTables()
 		OBJECTS LIST
 
 		1: TILES
-		2: objects[2][1]
+		2: objects["player"][1]
 		3: DOOR
 		4: BARRIER
 
 	--]]
 
     objects = {}
-    objects[1] = tiled:getTiles()
-    objects[2] = {turtle:new(SPAWN_X, SPAWN_Y)}
+    objects["tile"] = tiled:getTiles()
+    objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
 	
-	objects[3] =
+	objects["barrier"] =
 	{
 		barrier:new(0, 0, 1, 240),
 		barrier:new(400, 0, 1, 240)
 	}
 	
-	objects[4] = {}
+	objects["phoenix"] = {}
 	
 	prefabs = tiled:getObjects({"bed", "clock", "door"})
 
@@ -65,7 +67,7 @@ function gameUpdate(dt)
 	if paused then
 		return
 	end
-	
+
 	cameraObjects = checkCamera(getScrollValue(), 0, 432, 248)
 	
 	if shakeValue > 0 then
@@ -140,15 +142,11 @@ function gameDraw()
 		end
 	end
 	
-    for i = 1, #objects do
-		if i ~= 1 then
-			for j = 1, #objects[i] do
-				if objects[i][j].draw then
-					objects[i][j]:draw()
-				end
-			end
+    for i, v in ipairs(cameraObjects) do
+		if v[2].draw then
+			v[2]:draw()
 		end
-    end
+	end
 
 	for k, v in ipairs(clouds) do
 		if tiled:getMapName() == "home" then
@@ -188,30 +186,30 @@ function gameKeyPressed(key)
 		return
 	end
 
-	if objects[2][1].frozen then
+	if objects["player"][1].frozen then
 		return
 	end
 
     if key == "right" then
-        objects[2][1]:moveRight(true)
+        objects["player"][1]:moveRight(true)
     elseif key == "left" then
-        objects[2][1]:moveLeft(true)
+        objects["player"][1]:moveLeft(true)
     elseif key == "a" then
-		objects[2][1]:jump()
+		objects["player"][1]:jump()
 	elseif key == "up" then
-		objects[2][1]:use(true)
+		objects["player"][1]:use(true)
 	end
 end
 
 function gameKeyReleased(key)
     if key == "right" then
-        objects[2][1]:moveRight(false)
+        objects["player"][1]:moveRight(false)
     elseif key == "left" then
-        objects[2][1]:moveLeft(false)
+        objects["player"][1]:moveLeft(false)
     elseif key == "a" then
-		objects[2][1]:stopJump()
+		objects["player"][1]:stopJump()
 	elseif key == "up" then
-		objects[2][1]:use(false)
+		objects["player"][1]:use(false)
 	end
 end
 
@@ -224,5 +222,5 @@ function gameNewDialog(text)
 end
 
 function getScrollValue()
-    return math.floor(scrollValues[objects[2][1].screen][1])
+    return math.floor(scrollValues[objects["player"][1].screen][1])
 end

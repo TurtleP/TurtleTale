@@ -1,24 +1,27 @@
 local SGM = {}
 
 function SGM:init()
-    local path = ""
-    if not _EMULATEHOMEBREW then
-        path = "sdmc:/LovePotion/TurtleTale"
+    local path = "sdmc:/LovePotion/TurtleTale"
+    if _EMULATEHOMEBREW then
+        path = love.filesystem.getSaveDirectory() 
     end
 
     self.path = path
 
-    if not love.filesystem.isFile(path .. "/save.lua") then
-        file = love.filesystem.newFile(path .. "/save.lua", "w")
-
+    local file = io.open(path .. "/save.lua", "w")
+    if file then
         file:write("return\n{\n\tnil,\n\tnil,\n\tnil\n}")
+
+        file:flush()
+            
+        file:close()
     end
 
     self.currentSave = nil
 
     local files = nil
-    if love.filesystem.isFile(path .. "/save.lua") then
-        files = require 'save'
+    if io.open(path .. "/save.lua", "r") then
+        files = dofile(path .. "/save.lua")
     end
 
     self.files = files 
@@ -32,14 +35,20 @@ function SGM:save(t, toSave)
 
         love.filesystem.remove(self.path .. "/save.lua")
 
-        file = love.filesystem.newFile(self.path .. "/save.lua", "w")
-        file:write("return\n{\n\t")
+        file = io.open(self.path .. "/save.lua", "w")
+        
+        if file then
+            file:write("return\n{\n\t")
 
-        for i = 1, #self.files do
-            file:write("{'" .. self.files[i][1] .. "', " .. self.files[i][2] .. ", " .. self.files[i][3] .. "},\n\t")
+            for i = 1, #self.files do
+                file:write("{'" .. self.files[i][1] .. "', " .. self.files[i][2] .. ", " .. self.files[i][3] .. "},\n\t")
+            end
+
+            file:write("\n}")
+
+            file:flush()
+            file:close()
         end
-
-        file:write("\n}")
     end
 end
 

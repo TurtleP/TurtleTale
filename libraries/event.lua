@@ -47,31 +47,31 @@ function eventsystem:update(dt)
 				self.sleep = v.args
 			elseif cmd == "spawncharacter" then
 				if v.args[1] == "turtle" then
-					objects[2][1] = turtle:new(v.args[2], v.args[3])
+					objects["player"][1] = turtle:new(v.args[2], v.args[3])
 				elseif v.args[1] == "phoenix" then
-					objects[4][1] = phoenix:new(v.args[2], v.args[3])
+					objects["phoenix"][1] = phoenix:new(v.args[2], v.args[3])
 				end
 			elseif cmd == "dofunction" then
 				if v.args[1] == "player" then
 					if v.args[2] == "use" then
-						objects[2][1]:use(v.args[3])
+						objects["player"][1]:use(v.args[3])
 					end
 				elseif v.args[1] == "phoenix" then
 					if v.args[2] == "flamethrower" then
-						objects[4][1]:flamethrower("left")
+						objects["phoenix"][1]:flamethrower("left")
 					end
 				end
 			elseif cmd == "setposition" then
 				if v.args[1] == "turtle" then
-					objects[2][1].x, objects[2][1].y = v.args[2], v.args[3]
+					objects["player"][1].x, objects["player"][1].y = v.args[2], v.args[3]
 				end
 			elseif cmd == "setspeedx" then
 				if v.args[1] == "phoenix" then
-					objects[4][1].speedx = v.args[2]
+					objects["phoenix"][1].speedx = v.args[2]
 				end
 			elseif cmd == "setspeedy" then
 				if v.args[1] == "phoenix" then
-					objects[4][1].speedy = v.args[2]
+					objects["phoenix"][1].speedy = v.args[2]
 				end
 			elseif cmd == "walkcharacter" then
 
@@ -82,9 +82,9 @@ function eventsystem:update(dt)
 					objects["enemy"][1]:faceDirection(v.args[2])
 				end
 			elseif cmd == "freezeplayer" then
-				objects[2][1]:freeze(true)
+				objects["player"][1]:freeze(true)
 			elseif cmd == "unfreezeplayer" then
-				objects[2][1]:freeze(false)
+				objects["player"][1]:freeze(false)
 			elseif cmd == "shake" then
 				shakeValue = v.args
 			elseif cmd == "changestate" then

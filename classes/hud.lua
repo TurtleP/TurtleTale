@@ -10,7 +10,7 @@ function hud:draw()
         return
     end
     
-    for x = 1, objects[2][1]:getMaxHealth() do
+    for x = 1, objects["player"][1]:getMaxHealth() do
         local offset = 0
         if x % 2 == 0 then
             offset = 4

@@ -99,14 +99,10 @@ end
 function tiled:renderBackground()
     if self.background then
         love.graphics.draw(self.background, 0, 0)
-    end
-
-    for y = 1, self.mapHeight do
-        for x = getScrollValue() / 16, 25 do
-            if objects[1][x .. "-" .. y] then
-                if objects[1][x .. "-" .. y].draw then
-                    objects[1][x .. "-" .. y]:draw()
-                end
+    else
+        for k, v in pairs(self.tiles) do
+            if self.tiles[k].draw then
+                self.tiles[k]:draw()
             end
         end
     end

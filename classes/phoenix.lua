@@ -84,7 +84,7 @@ function fire:init(x, y, speed)
     self.width = 8
     self.height = 8
 
-    local ang = math.atan2(y - objects[2][1].y, x - objects[2][1].x)
+    local ang = math.atan2(y - objects["player"][1].y, x - objects["player"][1].x)
 
     self.speedx = math.cos(ang) * speed[1] or 0
     self.speedy = -math.sin(ang) * speed[2] or 0

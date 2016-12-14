@@ -26,7 +26,7 @@ function door:init(x, y, properties, screen)
 end
 
 function door:update(dt)
-    local ret = checkrectangle(self.x + 4, self.y, self.width - 8, self.height, {2}, self)
+    local ret = checkrectangle(self.x + 4, self.y, self.width - 8, self.height, {"player"}, self)
 
     self.render = #ret > 0
 

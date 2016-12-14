@@ -51,7 +51,9 @@ function dialog:update(dt)
 end
 
 function dialog:draw()
-    love.graphics.setScissor(self.x, self.y, self.width, self.height + 5)
+    love.graphics.setScreen("top")
+
+    --love.graphics.setScissor(self.x, self.y, self.width, self.height + 5)
 
     love.graphics.setColor(0, 0, 0, 128)
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
@@ -62,13 +64,13 @@ function dialog:draw()
     love.graphics.draw(dialogImage[self.speaker], self.x + 2, self.y + (self.height / 2) - 7)
 
     if self.renderNext then
-        love.graphics.setColor(255, 0, 0)
+        love.graphics.setColor(255, 0, 0, 255)
         love.graphics.draw(selectionVerImage, selectionVerQuads[1], (self.x + self.width) - 10, (self.y + self.height) - 5 + math.sin(love.timer.getTime() * 4))
     end
 
     love.graphics.setColor(255, 255, 255, 255)
 
-    love.graphics.setScissor()
+    --love.graphics.setScissor()
 end
 
 function dialog:print(text, x, y)
