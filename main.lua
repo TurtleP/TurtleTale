@@ -11,7 +11,7 @@ function love.load()
 	
 	require 'libraries.physics'
 	require 'libraries.event'
-	
+
 	saveManager = require 'libraries.savemanager'
 	saveManager:init()
 	
@@ -117,6 +117,14 @@ function love.load()
 		fireQuads[i] = love.graphics.newQuad((i - 1) * 8, 0, 8, 8, fireImage:getWidth(), fireImage:getHeight())
 	end
 
+	bookImage = love.graphics.newImage("graphics/game/savegame.png")
+	bookQuads = {}
+	for x = 1, 10 do
+		bookQuads[x] = love.graphics.newQuad((x - 1) * 32, 0, 32, 32, bookImage:getWidth(), bookImage:getHeight())
+	end
+
+	bookPrefabImage = love.graphics.newImage("graphics/game/book.png")
+
 	introImage = love.graphics.newImage("graphics/intro/intro.png")
 	potionImage = love.graphics.newImage("graphics/intro/potionLogo.png")
 
@@ -146,8 +154,8 @@ function love.load()
 		["right"] = "right",
 		["up"] = "up",
 		["down"] = "down",
-		["jump"] = "a",
-		["punch"] = "b"
+		["jump"] = "b",
+		["punch"] = "y"
 	}
 	
 	SPAWN_X, SPAWN_Y = 1, 1

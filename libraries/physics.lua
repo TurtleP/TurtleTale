@@ -10,23 +10,6 @@ local floor = math.floor
 local dist = util.dist
 local abs = math.abs
 
---[[
-
-	CATEGORIES:
-
-	1. TILE
-	2. PLAYER
-	3. COINBLOCK
-	4. PORTAL
-	5. PIPE
-	6. GOOMBA
-	7. KOOPAGREEN
-	8. COIN
-	9. MUSHROOM
-	10. BARRIER
-
---]]
-
 function physicsupdate(dt)
 	for cameraIndex, cameraValue in ipairs(cameraObjects) do
 		local objName, objData, objIndex = cameraValue[1], cameraValue[2], cameraValue[3]

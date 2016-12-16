@@ -21,6 +21,8 @@ function gameInit(map)
 		tiled:setMap(map)
 	end
 	
+	love.graphics.setBackgroundColor(backgroundColors.sky)
+	
 	if cutscenes[currentScript] then
 		eventSystem:decrypt(cutscenes[currentScript][1])
 	end
@@ -69,7 +71,9 @@ function gameUpdate(dt)
 	end
 
 	cameraObjects = checkCamera(getScrollValue(), 0, 432, 248)
-	
+
+	saveManager:tick(dt)
+
 	if shakeValue > 0 then
 		shakeValue = shakeValue - dt / 0.3
 	end
@@ -130,10 +134,6 @@ function gameDraw()
 		love.graphics.translate(math.floor( (math.random() * 2 - 1) * shakeValue ), math.floor( (math.random() * 2 - 1)  * shakeValue))
 	end
 
-	for k, v in ipairs(stars) do
-	    love.graphics.rectangle("fill", v[1], v[2], 1, 1)
-	end
-
 	tiled:renderBackground()
 
 	for i = 1, #prefabs do
@@ -141,16 +141,16 @@ function gameDraw()
 			prefabs[i][j]:draw()
 		end
 	end
-	
-    for i, v in ipairs(cameraObjects) do
-		if v[2].draw then
-			v[2]:draw()
-		end
-	end
 
 	for k, v in ipairs(clouds) do
 		if tiled:getMapName() == "home" then
 			v:draw()
+		end
+	end
+
+    for i, v in ipairs(cameraObjects) do
+		if v[2].draw then
+			v[2]:draw()
 		end
 	end
 
@@ -177,7 +177,7 @@ function gameDraw()
 end
 
 function gameKeyPressed(key)
-	if key == "x" or key == "start" then
+	if key == "start" then
 		paused = not paused
 	end
 

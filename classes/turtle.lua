@@ -38,7 +38,7 @@ function turtle:init(x, y)
     self.scale = scale
     self.offsetX = 0
 
-    self.maxHealth = 5
+    self.maxHealth = 3
     self.health = self.maxHealth
     self.render = true
 
@@ -102,12 +102,24 @@ function turtle:downCollide(name, data)
     self.jumping = false
 end
 
+function turtle:setScale(scale)
+    if scale == 1 then
+        self.offsetX = 0
+    else
+        self.offsetX = self.width
+    end
+    self.scale = scale
+end
+
 function turtle:use(move)
     self.useKey = move
 end
 
 function turtle:freeze(freeze)
     self.frozen = freeze
+
+    self.speedx = 0
+    self.speedy = 0
 end
 
 function turtle:moveRight(move)

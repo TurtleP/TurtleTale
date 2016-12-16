@@ -10,7 +10,7 @@ function pausemenu:init()
 		},
 		{"Save and Continue", 
 			function() 
-				--saveGame() 
+				saveManager:save(saveManager:getCurrentSave(), {os.date("%m.%d.%Y"), objects["player"][1]:getHealth(), objects["player"][1]:getMaxHealth(), saveManager:getTime()}) --last save, current HP, time played 
 				
 				paused = false 
 			end
@@ -63,7 +63,7 @@ function pausemenu:keypressed(key)
 
 			self.sineTimer = 0
 		end
-	elseif key == controls["jump"] then
+	elseif key == "a" then
 		self.options[self.currentOption][2]()
 	end
 end

@@ -55,23 +55,25 @@ function eventsystem:update(dt)
 				if v.args[1] == "player" then
 					if v.args[2] == "use" then
 						objects["player"][1]:use(v.args[3])
+					elseif v.args[2] == "jump" then
+						objects["player"][1]:jump()
+					elseif v.args[2] == "setscale" then
+						objects["player"][1]:setScale(v.args[3])
 					end
 				elseif v.args[1] == "phoenix" then
 					if v.args[2] == "flamethrower" then
 						objects["phoenix"][1]:flamethrower("left")
+					elseif v.args[2] == "setstate" then
+						objects["phoenix"][1]:setState(v.args[3])
+					elseif v.args[2] == "showbook" then
+						objects["phoenix"][1]:enableBook()
 					end
 				end
 			elseif cmd == "setposition" then
-				if v.args[1] == "turtle" then
-					objects["player"][1].x, objects["player"][1].y = v.args[2], v.args[3]
-				end
-			elseif cmd == "setspeedx" then
+				objects[v.args[1]][1].x, objects[v.args[1]][1].y = v.args[2], v.args[3]
+			elseif cmd == "setspeed" then
 				if v.args[1] == "phoenix" then
-					objects["phoenix"][1].speedx = v.args[2]
-				end
-			elseif cmd == "setspeedy" then
-				if v.args[1] == "phoenix" then
-					objects["phoenix"][1].speedy = v.args[2]
+					objects["phoenix"][1].speedx, objects["phoenix"][1].speedy = v.args[2], v.args[3]
 				end
 			elseif cmd == "walkcharacter" then
 
@@ -94,13 +96,13 @@ function eventsystem:update(dt)
 			elseif cmd == "fadein" then
 				gameFade = 1
 				gameFadeOut = false
-				fadeValue = v.args or 1
+				fadeValue = v.args or 2
 			elseif cmd == "disable" then
 				self.disabled = true
 			elseif cmd == "fadeout" then
 				gameFade = 0
 				gameFadeOut = true
-				fadeValue = v.args or 1
+				fadeValue = v.args or 2
 			elseif cmd == "setmap" then
 				tiled:setMap(v.args)
 			end

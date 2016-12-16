@@ -28,6 +28,9 @@ function titleInit()
 	titleSong:play()
 	
 	menuStart = false
+
+	deleteMode = false
+	deleteTimer = 0
 end
 
 function titleUpdate(dt)
@@ -36,7 +39,7 @@ function titleUpdate(dt)
 	end
 
     if titleDoFade then
-        titleFade = math.min(titleFade + 0.6 * dt, 1)
+        titleFade = math.min(titleFade + 1.2 * dt, 1)
 
         if titleFade == 1 then
             files[menuSelection]:click()
@@ -45,6 +48,10 @@ function titleUpdate(dt)
 
 	menuSelecitonTimer = menuSelecitonTimer + 12 * dt
 	selectionQuadi = math.floor(menuSelecitonTimer % 8) + 1
+
+	if deleteMode then
+		deleteTimer = deleteTimer + 4 * dt
+	end
 end
 
 function titleDraw()
@@ -84,21 +91,23 @@ function titleDraw()
 	
 		love.graphics.print("TOUCH TO BEGIN", love.graphics.getWidth() * 0.5 - menuFont:getWidth("TOUCH TO BEGIN") / 2, love.graphics.getHeight() * 0.5 - menuFont:getHeight() / 2 + 4)
 	else
-		love.graphics.setColor(255, 0, 0)
-		love.graphics.draw(selectionImage, selectionQuads[selectionQuadi], love.graphics.getWidth() * 0.10 + math.cos(love.timer.getTime() * 8) * 2, (240 * 0.14) + (28 - selectionImage:getHeight() / 2) + (menuSelection - 1) * 64)
+		local color, heart = {255, 255, 255}, 1
+		if math.floor(deleteTimer) % 2 ~= 0 then
+			color, heart = {255, 0, 0}, 2
+		end
 				
 		for k, v in ipairs(files) do
 			love.graphics.setColor(128, 128, 128)
 			if menuSelection == k then
-				love.graphics.setColor(255, 255, 255)
+				love.graphics.setColor(unpack(color))
 			end
 			
 			v:draw()
 		end
-	end
 	
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.draw(settingsImage, 4, 4)
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.draw(settingsImage, 4, 4)
+	end
 
     love.graphics.setColor(0, 0, 0, 255 * titleFade)
     love.graphics.rectangle("fill", 0, 0, 320, 240)
@@ -121,8 +130,18 @@ function titleKeyPressed(key)
 		end
 		menuSelection = math.max(menuSelection - 1, 1)
 	elseif key == "a" then
-        titleDoFade = true
-    end
+		if not deleteMode then
+       		titleDoFade = true
+		else
+			files[menuSelection]:delete()
+		end
+    elseif key == "y" then
+		deleteMode = not deleteMode
+
+		if not deleteMode then
+			deleteTimer = 0
+		end
+	end
 end
 
 function titleMousePressed(x, y, button)
@@ -136,9 +155,13 @@ function titleMousePressed(x, y, button)
 
 				if menuSelection ~= k then
 					selectionSound:play()
+				else
+					if not deleteMode then
+						titleDoFade = true
+					else
+						files[menuSelection]:delete()
+					end
 				end
-
-                titleDoFade = true
             end
         end
     end

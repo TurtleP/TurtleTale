@@ -30,7 +30,8 @@ function tiled:cacheMaps()
     local files = 
     {
         "home",
-        "indoors"
+        "indoors",
+        "beach"
     }
 
     for k = 1, #files do
@@ -51,7 +52,8 @@ function tiled:setMap(map)
 end
 
 function tiled:loadData(screen)
-    local mapData, entityData = self.map.layers
+    local mapData, entityData = self.map.layers, {}
+
     for k, v in ipairs(mapData) do
         if v.type == "tilelayer" then
             if v.name == screen .. "Tiles" then
@@ -76,7 +78,7 @@ function tiled:loadData(screen)
     end
 
     
-    for y = 1, self.mapHeight do
+    for y = 1, self.map.height do
         for x = 1, self.map.width do
             local r = mapData[(y - 1) * self.map.width + x]
 

@@ -14,7 +14,7 @@ return
     {"sleep", 2},
     {"shake", 6},
     {"sleep", 1},
-    {"dialog", {"turtle", "I .. don't wanna wake up. Just five more minut--"}},
+    {"dialog", {"turtle", "I don't wanna wake up. Just five more minut--"}},
     {"sleep", 0.2},
     {"shake", 8},
     {"sleep", 0.5},

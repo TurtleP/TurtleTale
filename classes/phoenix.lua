@@ -39,6 +39,8 @@ function phoenix:update(dt)
     if self.state == "glide" then
         if self.speedx == 0 and self.speedy == 0 then
             self.offset = math.sin(love.timer.getTime() * 6) * 4
+        else
+            self.offset = 0
         end
     else
 		self.offset = math.sin(love.timer.getTime() * 6) * 4
@@ -49,7 +51,7 @@ function phoenix:update(dt)
             if self.fireTimer > 0 then
                 self.fireTimer = self.fireTimer - dt
             else
-                table.insert(objects[4], fire:new(self.x + 12, self.y + 12 + self.offset, {-200, 200}))
+                table.insert(objects["phoenix"], fire:new(self.x + 12, self.y + 12 + self.offset, {-200, 200}))
                 self.fireTimer = 0.05
             end
             self.fireDuration = self.fireDuration - dt
@@ -64,7 +66,15 @@ function phoenix:flamethrower(dir)
 end
 
 function phoenix:draw()
+    if self.showBook then
+        love.graphics.draw(bookPrefabImage, self.x + 24, (self.y + self.height) - 18)
+    end
+
     love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x, self.y + self.offset)
+end
+
+function phoenix:enableBook()
+    self.showBook = true
 end
 
 function phoenix:setState(state)
