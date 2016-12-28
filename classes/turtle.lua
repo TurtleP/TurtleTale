@@ -32,20 +32,44 @@ function turtle:init(x, y)
     self.leftKey = false
     self.useKey = false
 
+    self.punching = false
+
+    self.abilities = 
+    {
+        ["punch"] = true
+    }
+
     self.walkSpeed = 2
     self.maxWalkSpeed = 80
 
     self.scale = scale
     self.offsetX = 0
 
-    self.maxHealth = 3
-    self.health = self.maxHealth
+    self.health = saveManager:getSaveData()[3] or 3
+    self.maxHealth = saveManager:getSaveData()[2] or 3
+
     self.render = true
 
     self.frozen = false
+
+    self.invincible = false
+
+    self.disableTimer = 0
+    self.invincibleTimer = 0
+
+    self.changeMap = false
 end
 
 function turtle:update(dt)
+    if self.dead then
+        self:setState("dead")
+        if self.quadi < #turtleQuads[self.state] then
+            self.timer = self.timer + 6 * dt
+            self.quadi = math.floor(self.timer % #turtleQuads[self.state]) + 1
+        end
+        return
+    end
+
     if self.rightKey then
         self.speedx = self.maxWalkSpeed
     elseif self.leftKey then
@@ -54,36 +78,69 @@ function turtle:update(dt)
         self.speedx = 0
     end
 
-    if self.speedx ~= 0 then
-        if self.rightKey then
-            if self.speedx < 0 then
-                self.speedx = math.min(self.speedx + 2, 0)
+    if not self.abilities[self.state] then
+        if self.speedx ~= 0 then
+            local modifier = 2
+
+            if self.rightKey then
+                if self.speedx < 0 then
+                    self.speedx = math.min(self.speedx + modifier, 0)
+                end
+
+                self.scale = scale
+                self.offsetX = 0
+            elseif self.leftKey then
+                if self.speedx > 0 then
+                    self.speedx = math.max(self.speedx - modifier, 0)
+                end
+
+                self.scale = -scale
+                self.offsetX = self.width
             end
 
-            self.scale = scale
-            self.offsetX = 0
-        elseif self.leftKey then
-            if self.speedx > 0 then
-                self.speedx = math.max(self.speedx - 2, 0)
+            if not self.jumping then
+                self:setState("walk")
+                self.timer = self.timer + math.abs(self.speedx) * 0.1 * dt
             end
-
-            self.scale = -scale
-            self.offsetX = self.width
+        elseif self.speedx == 0 and self.speedy == 0 then
+            self:setState("idle")
+            self.timer = self.timer + 6 * dt
         end
-
-        if not self.jumping then
-            self:setState("walk")
-            self.timer = self.timer + math.abs(self.speedx) * 0.1 * dt
+        
+        if self.speedy ~= 0 then
+            self:setState("jump")
+            if self.quadi < 3 then
+                self.timer = self.timer + 4 * dt
+            end
         end
-    elseif self.speedx == 0 and self.speedy == 0 then
-        self:setState("idle")
-        self.timer = self.timer + 6 * dt
+    else
+        if self.quadi < #turtleQuads[self.state] then
+            self.timer = self.timer + 6 * dt
+        else
+            if self.state == "punch" then
+                local check = checkrectangle(self.x + self.width + 12, self.y + 8, 4, 4, {"hermit"})
+                if #check > 0 then
+                    local v = check[1][2]
+                    v:shake(math.random(1, 2))
+                end
+            end
+            self:setState("idle") --blank cause no state?
+        end
     end
-    
-    if self.speedy ~= 0 then
-        self:setState("jump")
-        if self.quadi < 3 then
-            self.timer = self.timer + 4 * dt
+
+    if self.invincible then
+        self.invincibleTimer = self.invincibleTimer + 8 / 0.8 * dt
+
+        if math.floor(self.invincibleTimer) % 2 == 0 then
+            self.render = false
+        else
+            self.render = true
+        end
+
+        if self.invincibleTimer > 16 then
+            self.invincibleTimer = 0
+            self.invincible = false
+            self.render = true
         end
     end
 
@@ -95,11 +152,60 @@ function turtle:draw()
         return
     end
 
-    love.graphics.draw(turtleImage, turtleQuads[self.state][self.quadi], self.x + self.offsetX, self.y - 6, 0, self.scale, 1)
+    love.graphics.draw(turtleImage, turtleQuads[self.state][self.quadi], self.x + self.offsetX, self.y - 6, 0, self.scale, scale)
+end
+
+function turtle:rightCollide(name, data)
+    if name == "hermit" then
+        self:addLife(-1)
+        return false
+    end
+end
+
+function turtle:leftCollide(name, data)
+    if name == "hermit" then
+        self:addLife(-1)
+        return false
+    end
+end
+
+function turtle:upCollide(name, data)
+    if name == "hermit" then
+        self:addLife(-1)
+        return false
+    end
 end
 
 function turtle:downCollide(name, data)
     self.jumping = false
+
+    if name == "hermit" then
+        self:addLife(-1)
+        return false
+    end
+end
+
+function turtle:addLife(health)
+    if health < 0 then
+        if not self.invincible then
+            self.invincible = true
+        else
+            return
+        end
+    end
+    
+    self.health = math.max(self.health + health, 0)
+
+    if self.health == 0 then
+        self:die()
+    end
+end
+
+function turtle:die() -- rip :(
+    self.dead = true
+
+    self.speedx = 0
+    self.speedy = 0
 end
 
 function turtle:setScale(scale)
@@ -120,6 +226,7 @@ function turtle:freeze(freeze)
 
     self.speedx = 0
     self.speedy = 0
+    self.timer = 0
 end
 
 function turtle:moveRight(move)
@@ -144,6 +251,10 @@ function turtle:stopJump()
     if self.speedy < 0 then
         self.speedy = self.speedy * 0.05
     end
+end
+
+function turtle:punch()
+    self:setState("punch")
 end
 
 function turtle:setState(state)

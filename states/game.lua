@@ -1,7 +1,18 @@
 function gameInit(map)
+	if titleSong then
+		titleSong:stop()
+		titleSong = nil
+
+		collectgarbage()
+		collectgarbage()
+	end
+
     gameFade = 1
+
     fadeValue = 1
+
     otherFade = 1
+
     gameFadeOut = false
 
 	eventSystem = eventsystem:new()
@@ -14,9 +25,7 @@ function gameInit(map)
 	paused = false
 
 	shakeValue = 0
-
-	gameCreateTables()
-
+	
 	if map then
 		tiled:setMap(map)
 	end
@@ -36,33 +45,32 @@ function gameCreateTables()
         ["top"] = {0, 0},
         ["bottom"] = {0, 0}
     }
-
-	--[[
-
-		OBJECTS LIST
-
-		1: TILES
-		2: objects["player"][1]
-		3: DOOR
-		4: BARRIER
-
-	--]]
-
-    objects = {}
+	
     objects["tile"] = tiled:getTiles()
-    objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
-	
-	objects["barrier"] =
-	{
-		barrier:new(0, 0, 1, 240),
-		barrier:new(400, 0, 1, 240)
-	}
-	
-	objects["phoenix"] = {}
-	
-	prefabs = tiled:getObjects({"bed", "clock", "door"})
 
+	if not objects["player"] then
+		objects["player"] = {}
+    	objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
+	else
+		objects["player"][1].x, objects["player"][1].y = SPAWN_X, SPAWN_Y
+	end
+
+	objects["barrier"] = {}
 	
+	if not tiled:getNextMap("left") then
+		objects["barrier"][1] = barrier:new(0, 0, 1, 240)
+	end
+
+	if not tiled:getNextMap("right") then
+		objects["barrier"][2] = barrier:new(400, 0, 1, 240)
+	end
+
+	objects["phoenix"] = {}
+	objects["hermit"] = tiled:getObjects("hermit")
+
+	hitNumbers = {}
+
+	prefabs = tiled:getObjects({"bed", "clock", "door", "palm", "trigger", "water"})
 end
 
 function gameUpdate(dt)
@@ -85,10 +93,6 @@ function gameUpdate(dt)
 			if fadeValue ~= 1 then
 				fadeValue = 1
 			end
-
-			if gameFade == 1 and deathRestart then
-				gameLoadMap(currentLevel, true)
-			end
 		end
 	else
 		if gameFade > 0 then
@@ -104,9 +108,17 @@ function gameUpdate(dt)
 
 	eventSystem:update(dt)
 
-	for i = 1, #prefabs do
-		for j = 1, #prefabs[i] do
-			prefabs[i][j]:update(dt)
+	for j, w in ipairs(prefabs) do
+		for s = 1, #w do
+			w[s]:update(dt)
+		end
+	end
+
+	for i, v in ipairs(hitNumbers) do
+		v:update(dt)
+
+		if v.remove then
+			table.remove(hitNumbers, i)
 		end
 	end
 
@@ -134,12 +146,20 @@ function gameDraw()
 		love.graphics.translate(math.floor( (math.random() * 2 - 1) * shakeValue ), math.floor( (math.random() * 2 - 1)  * shakeValue))
 	end
 
+	love.graphics.setDepth(ENTITY_DEPTH)
+
 	tiled:renderBackground()
 
 	for i = 1, #prefabs do
 		for j = 1, #prefabs[i] do
-			prefabs[i][j]:draw()
+			if prefabs[i][j].draw then
+				prefabs[i][j]:draw()
+			end
 		end
+	end
+
+	for i, v in ipairs(hitNumbers) do
+		v:draw()
 	end
 
 	for k, v in ipairs(clouds) do
@@ -154,13 +174,23 @@ function gameDraw()
 		end
 	end
 
+	love.graphics.setDepth(NORMAL_DEPTH)
+
 	love.graphics.pop()
+
+	love.graphics.setDepth(INTERFACE_DEPTH)
 
 	for k, v in pairs(dialogs) do
 		v:draw()
 	end
 
 	gameHUD:draw()
+
+	if paused then
+		pause:draw()
+	end
+
+	love.graphics.setDepth(NORMAL_DEPTH)
 
 	love.graphics.setColor(0, 0, 0, 255 * gameFade)
 	love.graphics.rectangle("fill", 0, 0, util.getWidth(), util.getHeight())
@@ -170,10 +200,6 @@ function gameDraw()
 	love.graphics.rectangle("fill", 0, 0, util.getWidth(), util.getHeight())
 
 	love.graphics.setColor(255, 255, 255)
-
-	if paused then
-		pause:draw()
-	end
 end
 
 function gameKeyPressed(key)
@@ -186,29 +212,37 @@ function gameKeyPressed(key)
 		return
 	end
 
-	if objects["player"][1].frozen then
+	if (not objects["player"][1].render or objects["player"][1].frozen) and not objects["player"][1].invincible then
+		if not objects["player"][1].render then
+			if key == "up" then
+				objects["player"][1]:use(true)
+				return
+			end
+		end 
 		return
 	end
 
-    if key == "right" then
+    if key == controls["right"] then
         objects["player"][1]:moveRight(true)
-    elseif key == "left" then
+    elseif key == controls["left"] then
         objects["player"][1]:moveLeft(true)
-    elseif key == "a" then
+    elseif key == controls["jump"] then
 		objects["player"][1]:jump()
-	elseif key == "up" then
+	elseif key == controls["up"] then
 		objects["player"][1]:use(true)
+	elseif key == controls["punch"] then
+		objects["player"][1]:punch()
 	end
 end
 
 function gameKeyReleased(key)
-    if key == "right" then
+	if key == controls["right"] then
         objects["player"][1]:moveRight(false)
-    elseif key == "left" then
+    elseif key == controls["left"] then
         objects["player"][1]:moveLeft(false)
-    elseif key == "a" then
+    elseif key == controls["jump"] then
 		objects["player"][1]:stopJump()
-	elseif key == "up" then
+	elseif key == controls["up"] then
 		objects["player"][1]:use(false)
 	end
 end

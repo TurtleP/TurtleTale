@@ -31,7 +31,8 @@ function tiled:cacheMaps()
     {
         "home",
         "indoors",
-        "beach"
+        "beach",
+        "cliff"
     }
 
     for k = 1, #files do
@@ -48,7 +49,9 @@ function tiled:setMap(map)
     
     self:loadData("top")
 
-    gameCreateTables()
+    if state == "game" then --gg
+        gameCreateTables()
+    end
 end
 
 function tiled:loadData(screen)
@@ -94,8 +97,18 @@ function tiled:loadData(screen)
         if not self.objects[v.name] then
             self.objects[v.name] = {}
         end
-        table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
+
+        if _G[v.name] then
+            table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
+        end
     end
+end
+
+function tiled:getNextMap(dir)
+    if dir == "right" then
+        return self.map.properties.right
+    end
+    return self.map.properties.left
 end
 
 function tiled:renderBackground()

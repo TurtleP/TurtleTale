@@ -34,7 +34,9 @@ function door:update(dt)
         return
     else
         if ret[1][2].useKey then
-            self.doTransition = true
+            if ret[1][2].speedy == 0 then
+                self.doTransition = true
+            end
         end
 
         if self.doTransition then

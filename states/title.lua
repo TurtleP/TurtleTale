@@ -10,8 +10,8 @@ function titleInit()
 	end
 
 	stars = {}
-	for x = 1, 40 do
-		stars[x] = {math.random(love.graphics.getWidth()), math.random(love.graphics.getHeight() * 0.8)}
+	for x = 1, 64 do
+		stars[x] = {math.random(400), math.random(love.graphics.getHeight() * 0.8)}
 	end
 
 	files = {}
@@ -25,6 +25,11 @@ function titleInit()
     titleFade = 0
     titleDoFade = false
 
+	if not titleSong then
+		titleSong = love.audio.newSource("audio/title.ogg")
+		titleSong:setLooping(true)
+	end
+	
 	titleSong:play()
 	
 	menuStart = false
@@ -59,6 +64,8 @@ function titleDraw()
 
 	love.graphics.setColor(255, 255, 255, 255)
 
+	love.graphics.setDepth(ENTITY_DEPTH)
+
     for k, v in ipairs(stars) do
 	    love.graphics.rectangle("fill", v[1], v[2], 1, 1)
 	end
@@ -71,7 +78,13 @@ function titleDraw()
 		v:draw()
 	end
 	
+	love.graphics.setDepth(NORMAL_DEPTH)
+
+	love.graphics.setDepth(INTERFACE_DEPTH)
+
 	love.graphics.draw(titleImage, love.graphics.getWidth() * 0.5 - titleImage:getWidth() / 2, love.graphics.getHeight() * 0.15)
+
+	love.graphics.setDepth(NORMAL_DEPTH)
 
 	love.graphics.setColor(0, 0, 0, 255 * titleFade)
     love.graphics.rectangle("fill", 0, 0, 400, 240)
@@ -135,7 +148,7 @@ function titleKeyPressed(key)
 		else
 			files[menuSelection]:delete()
 		end
-    elseif key == "y" then
+    elseif key == "rbutton" then
 		deleteMode = not deleteMode
 
 		if not deleteMode then

@@ -2,6 +2,7 @@ io.stdout:setvbuf("no")
 
 _EMULATEHOMEBREW = (love.system.getOS() ~= "3ds")
 
+love.graphics.setDefaultFilter("nearest", "nearest")
 function love.load()
 	tiled = require 'libraries.tiled'
 	class = require 'libraries.middleclass'
@@ -16,17 +17,24 @@ function love.load()
 	saveManager:init()
 	
 	require 'classes.file'
-	require 'classes.prefabs.cloud'
 	require 'classes.turtle'
 	require 'classes.tile'
 	require 'classes.hud'
-	require 'classes.barrier'
-	require 'classes.prefabs.door'
-	require 'classes.dialog'
-	require 'classes.prefabs.clock'
-	require 'classes.phoenix'
 	require 'classes.pause'
+	require 'classes.dialog'
+	require 'classes.barrier'
+	require 'classes.hitnumber'
+
+	require 'classes.enemies.phoenix'
+	require 'classes.enemies.hermit'
+
+	require 'classes.prefabs.cloud'
+	require 'classes.prefabs.door'
+	require 'classes.prefabs.clock'
 	require 'classes.prefabs.bed'
+	require 'classes.prefabs.palm'
+	require 'classes.prefabs.trigger'
+	require 'classes.prefabs.water'
 
 	require 'states.title'
 	require 'states.game'
@@ -91,7 +99,7 @@ function love.load()
 		healthQuads[k] = love.graphics.newQuad((k - 1) * 8, 0, 8, 8, healthImage:getWidth(), healthImage:getHeight())
 	end
 
-	phoenixImage = love.graphics.newImage("graphics/game/phoenix.png")
+	phoenixImage = love.graphics.newImage("graphics/game/enemies/phoenix.png")
 	phoenixQuads = {}
 	for y = 1, 2 do
 		for x = 1, 3 do
@@ -99,7 +107,7 @@ function love.load()
 		end
 	end
 
-	bedImage = love.graphics.newImage("graphics/game/bed.png")
+	bedImage = love.graphics.newImage("graphics/game/prefabs/bed.png")
 	bedQuads = {}
 	for y = 1, 5 do
 		bedQuads[y] = love.graphics.newQuad(0, (y - 1) * 17, 32, 17, bedImage:getWidth(), bedImage:getHeight())
@@ -111,7 +119,7 @@ function love.load()
 		clockQuads[i] = love.graphics.newQuad((i - 1) * 15, 0, 15, 32, clockImage:getWidth(), clockImage:getHeight())
 	end
 	
-	fireImage = love.graphics.newImage("graphics/game/fire.png")
+	fireImage = love.graphics.newImage("graphics/game/enemies/fire.png")
 	fireQuads = {}
 	for i = 1, 5 do
 		fireQuads[i] = love.graphics.newQuad((i - 1) * 8, 0, 8, 8, fireImage:getWidth(), fireImage:getHeight())
@@ -128,12 +136,39 @@ function love.load()
 	introImage = love.graphics.newImage("graphics/intro/intro.png")
 	potionImage = love.graphics.newImage("graphics/intro/potionLogo.png")
 
+	palmTreeImage = love.graphics.newImage("graphics/game/prefabs/palm_tree.png")
+	palmTreeQuads = {}
+	for i = 1, 5 do
+		palmTreeQuads[i] = love.graphics.newQuad((i - 1) * 32, 0, 32, 32, palmTreeImage:getWidth(), palmTreeImage:getHeight())
+	end
+
+	hermitImage = love.graphics.newImage("graphics/game/enemies/hermit.png")
+	hermitQuads = {}
+	hermitStates = {{"walk", 4}, {"idle", 4}, {"attack", 8}}
+	for y = 1, 3 do
+		hermitQuads[hermitStates[y][1]] = {}
+		for x = 1, hermitStates[y][2] do
+			table.insert(hermitQuads[hermitStates[y][1]], love.graphics.newQuad((x - 1) * 16, (y - 1) * 16, 16, 16, hermitImage:getWidth(), hermitImage:getHeight()))
+		end
+	end
+
+	hitNumbersImage = love.graphics.newImage("graphics/game/hitnumbers.png")
+	
+	numbersString = "1234567890"
+	hitNumbersQuads = {}
+	for i = 1, #numbersString do
+		hitNumbersQuads[numbersString:sub(i, i)] = love.graphics.newQuad((i - 1) * 6, 0, 5, 7, hitNumbersImage:getWidth(), hitNumbersImage:getHeight())
+	end
+
+	waterImage = love.graphics.newImage("graphics/game/prefabs/water.png")
+	waterQuads = {}
+	for i = 1, waterImage:getWidth() / 33 do
+		waterQuads[i] = love.graphics.newQuad((i - 1) * 33, 0, 32, 16, waterImage:getWidth(), waterImage:getHeight())
+	end
+
 	jumpSound = love.audio.newSource("audio/jump.ogg")
 	selectionSound = love.audio.newSource("audio/select.ogg")
 	dialogSound = love.audio.newSource("audio/dialog.ogg")
-	
-	titleSong = love.audio.newSource("audio/title.ogg")
-	titleSong:setLooping(true)
 	
 	menuFont = love.graphics.newFont("graphics/PressStart2P.ttf", 16)
 	smallFont = love.graphics.newFont("graphics/PressStart2P.ttf", 8)
@@ -144,9 +179,9 @@ function love.load()
 
 	scale = 1
 
-	tiled:cacheMaps()
+	objects = {}
 
-	currentScript = 1
+	tiled:cacheMaps()
 
 	controls =
 	{
@@ -158,14 +193,18 @@ function love.load()
 		["punch"] = "y"
 	}
 	
-	SPAWN_X, SPAWN_Y = 1, 1
+	INTERFACE_DEPTH = 3
+	ENTITY_DEPTH = 1.5
+	NORMAL_DEPTH = 0
+	
+	love.graphics.set3D(true)
 	
 	cutscenes = {}
 	for i = 1, 2 do
 		cutscenes[i] = {require('scenes.' .. i), false}
 	end
 
-	util.changeState("title")
+	util.changeState("intro")
 end
 
 function love.update(dt)

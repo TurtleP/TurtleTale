@@ -100,6 +100,7 @@ function eventsystem:update(dt)
 			elseif cmd == "disable" then
 				self.disabled = true
 			elseif cmd == "fadeout" then
+				print("ayy")
 				gameFade = 0
 				gameFadeOut = true
 				fadeValue = v.args or 2

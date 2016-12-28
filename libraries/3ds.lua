@@ -8,7 +8,7 @@ if love.system.getOS() ~= "3ds" then
 	end
 
 	function love.system.setModel(s)
-		scale = 1
+		scale = math.max(s - 1, 1)
 		_MODEL = s
 		
 		if love.system.getModel() ~= "PC" then
@@ -214,13 +214,13 @@ if love.system.getOS() == "3ds" or _EMULATEHOMEBREW then
 			local image = args[1]
 			local quad
 			local x, y, r = 0, 0, 0
-			local scalex, scaley
+			local scalex, scaley = 1, 1
 
 			if type(args[2]) == "userdata" then
 				quad = args[2]
 				x = args[3] or 0
 				y = args[4] or 0
-				scalex, scaley = args[6], args[7]
+				scalex, scaley = args[6] or 1, args[7] or 1
 			else
 				x, y = args[2] or 0, args[3] or 0
 				r = args[4] or 0
@@ -235,10 +235,10 @@ if love.system.getOS() == "3ds" or _EMULATEHOMEBREW then
 				if r then
 					olddraw(image, x + image:getWidth() / 2, y + image:getHeight() / 2, r, 1, 1, image:getWidth() / 2, image:getHeight() / 2)
 				else
-					olddraw(image, x, y)
+					olddraw(image, x, y,  0, scale, scale)
 				end
 			else
-				olddraw(image, quad, x, y, args[5], scalex, scaley)
+				olddraw(image, quad, x, y, args[5], scalex * scale, scaley * scale)
 			end
 		end
 
@@ -293,16 +293,8 @@ if love.system.getOS() == "3ds" or _EMULATEHOMEBREW then
 					end
 				end
 
-				if key == "1" or key == "2" then
+				if key == "1" or key == "2" or key == "3" then
 					love.system.setModel(tonumber(key))
-				elseif key == "3" then
-					enableAudio = not enableAudio
-
-					if enableAudio then
-						love.audio.setVolume(1)
-					else
-						love.audio.setVolume(0)
-					end
 				end
 			end
 		end

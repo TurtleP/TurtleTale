@@ -9,15 +9,15 @@ function pausemenu:init()
 			end
 		},
 		{"Save and Continue", 
-			function() 
-				saveManager:save(saveManager:getCurrentSave(), {os.date("%m.%d.%Y"), objects["player"][1]:getHealth(), objects["player"][1]:getMaxHealth(), saveManager:getTime()}) --last save, current HP, time played 
+			function()
+				saveManager:save(saveManager:getCurrentSave(), saveManager:generateSaveData()) --last save, current HP, time played 
 				
 				paused = false 
 			end
 		},
 		{"Save and Quit",
 			function()
-				--saveGame()
+				saveManager:save(saveManager:getCurrentSave(), saveManager:generateSaveData())
 
 				util.changeState("title")
 			end

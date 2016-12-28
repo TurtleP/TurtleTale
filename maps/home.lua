@@ -1,15 +1,18 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "0.17.1",
+  tiledversion = "0.18.0",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 25,
   height = 15,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 3,
-  properties = {},
+  nextobjectid = 7,
+  properties = {
+    ["left"] = "cliff",
+    ["right"] = "beach"
+  },
   tilesets = {
     {
       name = "tiles",
@@ -28,7 +31,21 @@ return {
       properties = {},
       terrains = {},
       tilecount = 198,
-      tiles = {}
+      tiles = {
+        {
+          id = 22,
+          properties = {
+            ["right"] = "home"
+          }
+        },
+        {
+          id = 56,
+          properties = {
+            ["left"] = "cliff",
+            ["right"] = "beach"
+          }
+        }
+      }
     }
   },
   layers = {
@@ -43,10 +60,7 @@ return {
       opacity = 1,
       offsetx = 0,
       offsety = 0,
-      properties = {
-        ["height"] = 15,
-        ["width"] = 25
-      },
+      properties = {},
       encoding = "lua",
       data = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -59,9 +73,9 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 29, 30, 30, 31, 32, 32, 32, 56, 34, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 36, 37, 26, 27, 0, 51, 96, 52, 53, 99, 54, 99, 78, 0, 0, 36, 37, 0, 0, 0, 0, 0,
-        0, 0, 57, 58, 59, 48, 62, 0, 73, 118, 74, 75, 121, 76, 121, 78, 0, 57, 58, 59, 0, 0, 0, 62, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 29, 30, 30, 31, 32, 32, 32, 56, 34, 0, 0, 0, 16, 17, 0, 0, 0,
+        0, 0, 0, 36, 37, 0, 0, 0, 51, 96, 52, 53, 99, 54, 99, 78, 0, 0, 0, 27, 38, 39, 0, 0, 0,
+        0, 57, 0, 58, 59, 62, 0, 0, 73, 118, 74, 75, 121, 76, 121, 78, 0, 0, 57, 0, 60, 61, 0, 62, 0,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24
       }
@@ -88,7 +102,39 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["link"] = "indoors"
+            ["link"] = "indoors",
+            ["x"] = 192,
+            ["y"] = 208
+          }
+        },
+        {
+          id = 5,
+          name = "trigger",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 0,
+          width = 0,
+          height = 208,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["map"] = "cliff;378;192;"
+          }
+        },
+        {
+          id = 6,
+          name = "trigger",
+          type = "",
+          shape = "rectangle",
+          x = 400,
+          y = 0,
+          width = 0,
+          height = 208,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["map"] = "beach;16;192;"
           }
         }
       }

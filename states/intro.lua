@@ -15,13 +15,13 @@ function introUpdate(dt)
 	end
 
 	if introTimer > 6 then
-		gameFunctions.changeState("title")
+		util.changeState("title")
 		introTimer = 0
 	elseif introTimer > 4 then
 		introPotionFade = math.max(introPotionFade - 0.6 * dt, 0)
 	end
 
-	if love.math.random(10) == 1 then
+	if math.random(10) == 1 then
 		createBubble()
 	end
 
@@ -33,10 +33,10 @@ end
 function introDraw()
 	love.graphics.setScreen("top")
 	love.graphics.setColor(255, 255, 255, 255 * introTurtleFade)
-	love.graphics.draw(introImage, gameFunctions.getWidth() / 2 - introImage:getWidth() / 2, gameFunctions.getHeight() / 2 - introImage:getHeight() / 2)
+	love.graphics.draw(introImage, util.getWidth() / 2 - introImage:getWidth() / 2, util.getHeight() / 2 - introImage:getHeight() / 2)
 
-	love.graphics.setFont(endFont)
-	shadowPrint("A game by TurtleP", gameFunctions.getWidth() / 2 - endFont:getWidth("A game by TurtleP") / 2, gameFunctions.getHeight() * .75, introTurtleFade)
+	love.graphics.setFont(menuFont)
+	love.graphics.print("A game by TurtleP", util.getWidth() / 2 - menuFont:getWidth("A game by TurtleP") / 2, util.getHeight() * .75)
 
 	love.graphics.setColor(255, 255, 255, 255 * introPotionFade)
 
@@ -44,16 +44,16 @@ function introDraw()
 		v:draw()
 	end
 
-	love.graphics.draw(potionImage, gameFunctions.getWidth() / 2 - potionImage:getWidth() / 2, gameFunctions.getHeight() / 2 - potionImage:getHeight() / 2)
+	love.graphics.draw(potionImage, util.getWidth() / 2 - potionImage:getWidth() / 2, util.getHeight() / 2 - potionImage:getHeight() / 2)
 end
 
 function skipIntro()
 	if introTimer > 0.5 then
-		gameFunctions.changeState("title")
+		util.changeState("title")
 	end
 end
 
-function introKeypressed(key)
+function introKeyPressed(key)
 	skipIntro()
 end
 

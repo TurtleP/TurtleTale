@@ -10,6 +10,10 @@ function file:init(y, i)
 	
     self.data = saveManager:getSaveData(i)
 
+    if self.data then
+        self.data[1] = self.data[1]:gsub('"', "")
+    end
+    
     self.hearti = 1
 end
 
@@ -45,9 +49,7 @@ function file:draw()
 			love.graphics.draw(healthImage, healthQuads[i], (self.x + 2) + (x - 1) * 9, (self.y + 15) + offset)
 		end
 	
-		love.graphics.print(self.data[1], self.x, self.y + self.height - smallFont:getHeight())
-		
-		--love.graphics.print(self.data[4], (self.x + self.width) - smallFont:getWidth(self.data[4]), self.y + 20)
+        love.graphics.print(self.data[1], self.x, self.y + self.height - smallFont:getHeight())
 		
 		local ms = self:convertTime(self.data[4])
 		love.graphics.print(ms, (self.x + self.width) - smallFont:getWidth(ms), (self.y + self.height) - smallFont:getHeight())
@@ -82,8 +84,16 @@ function file:click(x, y)
     end
 
     if pass then
-        util.changeState("game")
-		saveManager:save(self.i, {os.date("%m.%d.%Y"), 3, 3, 0})
+        local room = "indoors"
+        if not self.data then --fresh file
+		    saveManager:save(self.i, {'"' .. os.date("%m.%d.%Y") .. '"', 3, 3, 0, '"' .. "indoors" .. '"', SPAWN_X, SPAWN_Y, 1})
+            currentScript = 1
+        else
+            saveManager:select(self.i)
+            room = saveManager:getMap()
+        end
+
+        util.changeState("game", room)
     end
 end
 

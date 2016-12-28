@@ -59,7 +59,7 @@ function dialog:draw()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
     
     love.graphics.setColor(255, 255, 255, 255)
-    self:print(self.string, self.x + 28, self.y + 6)
+    self:print(self.string, self.x + 28, self.y + 4)
 
     love.graphics.draw(dialogImage[self.speaker], self.x + 2, self.y + (self.height / 2) - 7)
 

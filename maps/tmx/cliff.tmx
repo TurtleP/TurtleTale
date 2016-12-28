@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" nextobjectid="4">
+ <properties>
+  <property name="right" value="home"/>
+  <property name="spawn" value="384;208;"/>
+ </properties>
+ <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" tilecount="198" columns="22">
+  <image source="../../graphics/tiles.png" width="374" height="153"/>
+  <tile id="22">
+   <properties>
+    <property name="right" value="home"/>
+   </properties>
+  </tile>
+  <tile id="56">
+   <properties>
+    <property name="left" value="cliff"/>
+    <property name="right" value="beach"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="topTiles" width="25" height="15">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,104,0,0,0,104,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,126,57,0,62,126,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,1,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,23,24,24,24,24,24,25,157,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,23,24,24,24,24,24,25,157,157,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,23,24,24,24,24,24,47,2,2,3,57,0,0,62,0,0,0,0,0,0,0,
+0,0,0,0,23,24,24,24,24,24,24,24,24,47,2,2,2,3,0,0,0,0,0,0,0,
+0,0,0,0,23,24,24,24,24,24,24,24,24,24,24,24,24,25,157,0,62,0,57,0,0,
+0,0,0,0,23,24,24,24,24,24,24,24,24,24,24,24,24,47,2,2,2,2,2,2,2,
+26,26,26,26,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24
+</data>
+ </layer>
+ <objectgroup name="topObjects">
+  <object id="1" name="chest" x="112" y="96" width="16" height="16">
+   <properties>
+    <property name="item" value="scroll;punch;"/>
+   </properties>
+  </object>
+  <object id="2" name="trigger" x="400" y="0" height="208">
+   <properties>
+    <property name="map" value="home;16;192;"/>
+   </properties>
+  </object>
+  <object id="3" name="water" x="0" y="208" width="64" height="16">
+   <properties>
+    <property name="width" type="int" value="64"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
