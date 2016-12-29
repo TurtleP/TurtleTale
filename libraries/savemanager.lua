@@ -11,9 +11,25 @@ function SGM:init()
 
     self.path = path
 
-    local file = io.open(path .. "/save.lua", "rb")
+    self:generateFiles()
+
+    self.currentSave = nil
+
+    if io.open(path .. "/save.lua", "r") then
+        if not pcall(dofile, path .. "/save.lua") then
+            os.remove(path .. "/save.lua")
+
+            self:generateFiles()
+        end
+    end
+
+    self.files = dofile(self.path .. "/save.lua")
+end
+
+function SGM:generateFiles()
+    local file = io.open(self.path .. "/save.lua", "rb")
     if not file then
-        file = io.open(path .. "/save.lua", "w")
+        file = io.open(self.path .. "/save.lua", "w")
 
         if file then
             file:write("return\n{\n\tnil,\n\tnil,\n\tnil\n}")
@@ -23,15 +39,6 @@ function SGM:init()
             file:close()
         end
     end
-
-    self.currentSave = nil
-
-    local files = nil
-    if io.open(path .. "/save.lua", "r") then
-        files = dofile(path .. "/save.lua")
-    end
-
-    self.files = files 
 end
 
 function SGM:select(i)
@@ -45,24 +52,18 @@ function SGM:getMap()
     return self.files[self:getCurrentSave()][5]:gsub('"', "")
 end
 
-function SGM:generateSaveData(data)
-    if not data then
-        return 
-        {
-            '"' .. os.date("%m.%d.%Y") .. '"', 
-            objects["player"][1]:getHealth(), 
-            objects["player"][1]:getMaxHealth(), 
-            math.floor(self:getTime()),
-            '"' .. tiled:getMapName() .. '"', 
-            math.floor(objects["player"][1].x), 
-            math.floor(objects["player"][1].y),
-            currentScript
-        }
-    else
-        data[1], data[5] = '"' .. data[1] .. '"', '"' .. data[5] .. '"'
-
-        return data
-    end
+function SGM:generateSaveData()
+    return 
+    {
+        '"' .. os.date("%d.%m.%Y") .. '"', 
+        objects["player"][1]:getHealth(), 
+        objects["player"][1]:getMaxHealth(), 
+        math.floor(self:getTime()),
+        '"' .. tiled:getMapName() .. '"', 
+        math.floor(objects["player"][1].x), 
+        math.floor(objects["player"][1].y),
+        currentScript
+    }
 end
 
 function SGM:save(t, toSave)
@@ -83,10 +84,6 @@ function SGM:save(t, toSave)
             file:write("return\n{\n\t")
 
             for i = 1, #self.files do
-                if i ~= self.currentSave then
-                    self.files[i] = self:generateSaveData(self.files[i])
-                end
-
                 if self.files[i] ~= nil then
                     file:write("{")
                     

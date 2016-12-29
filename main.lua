@@ -193,8 +193,8 @@ function love.load()
 		["punch"] = "y"
 	}
 	
-	INTERFACE_DEPTH = 3
-	ENTITY_DEPTH = 1.5
+	INTERFACE_DEPTH = 4
+	ENTITY_DEPTH = 2
 	NORMAL_DEPTH = 0
 	
 	love.graphics.set3D(true)

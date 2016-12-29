@@ -9,10 +9,6 @@ function file:init(y, i)
 	self.i = i
 	
     self.data = saveManager:getSaveData(i)
-
-    if self.data then
-        self.data[1] = self.data[1]:gsub('"', "")
-    end
     
     self.hearti = 1
 end
@@ -49,7 +45,7 @@ function file:draw()
 			love.graphics.draw(healthImage, healthQuads[i], (self.x + 2) + (x - 1) * 9, (self.y + 15) + offset)
 		end
 	
-        love.graphics.print(self.data[1], self.x, self.y + self.height - smallFont:getHeight())
+        love.graphics.print(self.data[1]:gsub('"', ""), self.x, self.y + self.height - smallFont:getHeight())
 		
 		local ms = self:convertTime(self.data[4])
 		love.graphics.print(ms, (self.x + self.width) - smallFont:getWidth(ms), (self.y + self.height) - smallFont:getHeight())
