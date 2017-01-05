@@ -70,12 +70,18 @@ function turtle:update(dt)
         return
     end
 
-    if self.rightKey then
-        self.speedx = self.maxWalkSpeed
-    elseif self.leftKey then
-        self.speedx = -self.maxWalkSpeed
-    elseif not self.rightKey and not self.leftKey then
-        self.speedx = 0
+    if self.state ~= "punch" then
+        if self.rightKey then
+            self.speedx = self.maxWalkSpeed
+        elseif self.leftKey then
+            self.speedx = -self.maxWalkSpeed
+        elseif not self.rightKey and not self.leftKey then
+            self.speedx = 0
+        end
+    else
+        if self.speedy == 0 then
+            self.speedx = 0
+        end
     end
 
     if not self.abilities[self.state] then
