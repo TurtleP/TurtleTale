@@ -32,7 +32,9 @@ function tiled:cacheMaps()
         "home",
         "indoors",
         "beach",
-        "cliff"
+        "beach2",
+        "cliff",
+        "throne"
     }
 
     for k = 1, #files do
@@ -62,7 +64,7 @@ function tiled:loadData(screen)
             if v.name == screen .. "Tiles" then
                 mapData = self.map.layers[k].data
 
-                self.mapWidth[screen] = self.map.layers[k].properties.width
+                self.mapWidth[screen] = self.map.width
                 self.mapHeight = self.map.layers[k].properties.height
 
                 if screen == "top" then
@@ -105,10 +107,21 @@ function tiled:loadData(screen)
 end
 
 function tiled:getNextMap(dir)
-    if dir == "right" then
-        return self.map.properties.right
+    if not self.objects["trigger"] then
+        return false
     end
-    return self.map.properties.left
+
+    for i = 1, #self.objects["trigger"] do
+        local v = self.objects["trigger"][i]
+
+        if dir == "left" and v.x == 0 then
+            return true
+        elseif dir == "right" and v.x == self:getWidth("top") * 16 then
+            return true
+        end 
+    end
+
+    return false
 end
 
 function tiled:renderBackground()

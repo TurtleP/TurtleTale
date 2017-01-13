@@ -4,6 +4,9 @@ jumpForceAdd = 1.5 * 60
 SPAWN_X = 0
 SPAWN_Y = 0
 
+chargeEasterEgg = false
+circlePadEnabled = false
+
 --TILE MASKS
 tilesMask = 
 {

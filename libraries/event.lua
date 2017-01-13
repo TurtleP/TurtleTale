@@ -67,6 +67,8 @@ function eventsystem:update(dt)
 						objects["phoenix"][1]:setState(v.args[3])
 					elseif v.args[2] == "showbook" then
 						objects["phoenix"][1]:enableBook()
+					elseif v.args[2] == "setscale" then
+						objects["phoenix"][1]:setScale(v.args[3])
 					end
 				end
 			elseif cmd == "setposition" then
@@ -85,6 +87,8 @@ function eventsystem:update(dt)
 				end
 			elseif cmd == "freezeplayer" then
 				objects["player"][1]:freeze(true)
+				objects["player"][1]:moveRight(false)
+				objects["player"][1]:moveLeft(false)
 			elseif cmd == "unfreezeplayer" then
 				objects["player"][1]:freeze(false)
 			elseif cmd == "shake" then

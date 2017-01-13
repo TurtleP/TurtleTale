@@ -30,6 +30,9 @@ function phoenix:init(x, y)
 
     self.fireTimer = 0.05
     self.fireDuration = 2
+    self.scale = 1
+
+    self.offsetX = 0
 end
 
 function phoenix:update(dt)
@@ -70,11 +73,21 @@ function phoenix:draw()
         love.graphics.draw(bookPrefabImage, self.x + 24, (self.y + self.height) - 18)
     end
 
-    love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x, self.y + self.offset)
+    love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x + self.offsetX, self.y + self.offset, 0, self.scale, scale)
 end
 
 function phoenix:enableBook()
     self.showBook = true
+end
+
+function phoenix:setScale(scale)
+    self.scale = scale
+
+    if scale == 1 then
+        self.offsetX = 0
+    elseif scale == -1 then
+        self.offsetX = self.width        
+    end
 end
 
 function phoenix:setState(state)

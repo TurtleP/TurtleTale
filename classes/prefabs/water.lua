@@ -17,9 +17,7 @@ function water:update(dt)
 end
 
 function water:draw()
-    love.graphics.setColor(255, 255, 255, 200)
-    for x = 1, self.width / 32 do
-        love.graphics.draw(waterImage, waterQuads[self.quadi], self.x + (x - 1) * 32, self.y)
+    for x = 1, self.width / 16 do
+        love.graphics.draw(waterImage, waterQuads[self.quadi], self.x + (x - 1) * 16, self.y)
     end
-    love.graphics.setColor(255, 255, 255, 255)
 end

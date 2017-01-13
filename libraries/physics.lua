@@ -294,6 +294,5 @@ function verticalCollide(objName, objData, obj2Name, obj2Data)
 end
 
 function aabb(v1x, v1y, v1width, v1height, v2x, v2y, v2width, v2height)
-	--local v1farx, v1fary, v2farx, v2fary = v1x + v1width, v1y + v1height, v2x + v2width, v2y + v2height
 	return v1x + v1width > v2x and v1x < v2x + v2width and v1y + v1height > v2y and v1y < v2y + v2height
 end

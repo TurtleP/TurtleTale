@@ -7,6 +7,8 @@ function gameInit(map)
 		collectgarbage()
 	end
 
+	gameOver = false
+
     gameFade = 1
 
     fadeValue = 1
@@ -36,6 +38,7 @@ function gameInit(map)
 		eventSystem:decrypt(cutscenes[currentScript][1])
 	end
 
+	mapScroll = 0
 	cameraObjects = {}
 end
 
@@ -53,16 +56,20 @@ function gameCreateTables()
     	objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
 	else
 		objects["player"][1].x, objects["player"][1].y = SPAWN_X, SPAWN_Y
+
+		if objects["player"][1].dead then
+			objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
+		end
 	end
 
 	objects["barrier"] = {}
 	
 	if not tiled:getNextMap("left") then
-		objects["barrier"][1] = barrier:new(0, 0, 1, 240)
+		table.insert(objects["barrier"], barrier:new(0, 0, 1, 240))
 	end
 
 	if not tiled:getNextMap("right") then
-		objects["barrier"][2] = barrier:new(400, 0, 1, 240)
+		table.insert(objects["barrier"], barrier:new(tiled:getWidth("top") * 16, 0, 1, 240))
 	end
 
 	objects["phoenix"] = {}
@@ -73,12 +80,59 @@ function gameCreateTables()
 	prefabs = tiled:getObjects({"bed", "clock", "door", "palm", "trigger", "water"})
 end
 
+function cameraScroll()
+    local MAP_WIDTH = tiled:getWidth("top")
+    local self = objects["player"][1]
+
+    if tiled:getWidth("top") > 25 then
+		if mapScroll >= 0 and mapScroll + love.graphics.getWidth() <= MAP_WIDTH * 16 then
+			if self.x > mapScroll + love.graphics.getWidth() * 1 / 2 then
+				mapScroll = self.x - love.graphics.getWidth() * 1 / 2
+			elseif self.x < mapScroll + love.graphics.getWidth() * 1 / 2 then
+				mapScroll = self.x - love.graphics.getWidth() * 1 / 2
+			end
+		end
+
+		if mapScroll < 0 then
+			mapScroll = 0
+		elseif mapScroll + 400 >= MAP_WIDTH * 16 then
+			mapScroll = MAP_WIDTH * 16 - 400
+		end
+	end
+end
+
 function gameUpdate(dt)
-	if paused then
+	if paused and not gameOver then
 		return
 	end
 
-	cameraObjects = checkCamera(getScrollValue(), 0, 432, 248)
+	if gameOver then
+		if not pitDeathSound:isPlaying() then
+			if not gameFadeOut then
+				gameFadeOut = true
+			end
+		end
+	end
+
+	--[[
+	local state, percent = love.system.getPowerInfo()
+
+	if percent then
+		if not chargeEasterEgg and state ~= "charging" then
+			if percent < 20 then
+				gameNewDialog("turtle", "Oh darn, I think the system is running low on COFFEI! Please plug it in so it does not shut down.")
+				chargeEasterEgg = true
+			end
+		else
+			if percent > 20 and state == "charging" then
+				chargeEasterEgg = false
+			end
+		end
+	end
+	]]--
+
+	cameraScroll()
+	cameraObjects = checkCamera(mapScroll, 0, 432, 248)
 
 	saveManager:tick(dt)
 
@@ -92,6 +146,10 @@ function gameUpdate(dt)
 		else
 			if fadeValue ~= 1 then
 				fadeValue = 1
+			end
+
+			if gameOver then
+				util.changeState("gameOver")
 			end
 		end
 	else
@@ -143,8 +201,10 @@ function gameDraw()
 	love.graphics.push()
 
 	if shakeValue > 0 then
-		love.graphics.translate(math.floor( (math.random() * 2 - 1) * shakeValue ), math.floor( (math.random() * 2 - 1)  * shakeValue))
+		love.graphics.translate(math.floor( (math.random() * 2 - 1) * shakeValue ), 0)
 	end
+
+	love.graphics.translate(-math.floor(mapScroll), 0)
 
 	love.graphics.setDepth(ENTITY_DEPTH)
 
@@ -212,7 +272,7 @@ function gameKeyPressed(key)
 		return
 	end
 
-	if (not objects["player"][1].render or objects["player"][1].frozen) and not objects["player"][1].invincible then
+	if (not objects["player"][1].render or objects["player"][1].frozen or objects["player"][1].dead) and not objects["player"][1].invincible then
 		if not objects["player"][1].render then
 			if key == "up" then
 				objects["player"][1]:use(true)
@@ -251,8 +311,8 @@ function gameMousePressed(x, y)
 
 end
 
-function gameNewDialog(text)
-	table.insert(dialogs, dialog:new(text))
+function gameNewDialog(speaker, text)
+	table.insert(dialogs, dialog:new(speaker, text))
 end
 
 function getScrollValue()

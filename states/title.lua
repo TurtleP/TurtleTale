@@ -36,6 +36,8 @@ function titleInit()
 
 	deleteMode = false
 	deleteTimer = 0
+
+	dialogs = {}
 end
 
 function titleUpdate(dt)
@@ -57,6 +59,14 @@ function titleUpdate(dt)
 	if deleteMode then
 		deleteTimer = deleteTimer + 4 * dt
 	end
+
+	for k, v in ipairs(dialogs) do
+		v:update(dt)
+
+		if v.remove then
+			table.remove(dialogs, k)
+		end
+	end
 end
 
 function titleDraw()
@@ -75,6 +85,10 @@ function titleDraw()
 	end
 
 	for k, v in ipairs(clouds) do
+		v:draw()
+	end
+
+	for k, v in pairs(dialogs) do
 		v:draw()
 	end
 	
@@ -117,9 +131,6 @@ function titleDraw()
 			
 			v:draw()
 		end
-	
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.draw(settingsImage, 4, 4)
 	end
 
     love.graphics.setColor(0, 0, 0, 255 * titleFade)
@@ -154,6 +165,8 @@ function titleKeyPressed(key)
 		if not deleteMode then
 			deleteTimer = 0
 		end
+	elseif key == "select" then
+		titleEnableCirclePad(not circlePadEnabled)
 	end
 end
 
@@ -178,4 +191,42 @@ function titleMousePressed(x, y, button)
             end
         end
     end
+end
+
+function titleEnableCirclePad(enable)
+	circlePadEnabled = enable
+
+	if dialogs[1] then
+		return
+	end
+
+	if enable then
+		controls["right"] = "cpadright"
+		controls["left"] = "cpadleft"
+		controls["up"] = "cpadup"
+		controls["down"] = "cpaddown"
+
+		dialogs[1] = dialog:new("turtle", "The CIRCLE PAD has been enabled!")
+	else
+		controls["right"] = "right"
+		controls["left"] = "left"
+		controls["up"] = "up"
+		controls["down"] = "down"
+
+		dialogs[1] = dialog:new("turtle", "The CIRCLE PAD has been disabled!")
+	end
+
+	local path = "sdmc:/LovePotion/TurtleTale"
+
+    if _EMULATEHOMEBREW then
+        path = love.filesystem.getSaveDirectory() 
+	end
+
+	file = io.open(path .. "/save.lua", "a+")
+
+	if file then
+		file:seek("end")
+		file:write(", " .. tostring(enable))
+		file:close()
+	end
 end

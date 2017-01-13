@@ -1,7 +1,7 @@
 palm = class("palm")
 
 function palm:init(x, y)
-    self.x = x
+    self.x = x - 16
     self.y = y
 
     self.width = 32

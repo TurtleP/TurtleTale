@@ -39,6 +39,7 @@ function love.load()
 	require 'states.title'
 	require 'states.game'
 	require 'states.intro'
+	require 'states.gameover'
 	
 	backgroundColors = 
 	{
@@ -90,7 +91,8 @@ function love.load()
 	dialogImage =
 	{
 		["turtle"] = love.graphics.newImage("graphics/dialog/turtle.png"),
-		["phoenix"] = love.graphics.newImage("graphics/dialog/phoenix.png")
+		["phoenix"] = love.graphics.newImage("graphics/dialog/phoenix.png"),
+		["?"] = love.graphics.newImage("graphics/dialog/unknown.png")
 	}
 
 	healthImage = love.graphics.newImage("graphics/hud/health.png")
@@ -162,13 +164,18 @@ function love.load()
 
 	waterImage = love.graphics.newImage("graphics/game/prefabs/water.png")
 	waterQuads = {}
-	for i = 1, waterImage:getWidth() / 33 do
-		waterQuads[i] = love.graphics.newQuad((i - 1) * 33, 0, 32, 16, waterImage:getWidth(), waterImage:getHeight())
+	for i = 1, waterImage:getWidth() / 17 do
+		waterQuads[i] = love.graphics.newQuad((i - 1) * 17, 0, 16, 16, waterImage:getWidth(), waterImage:getHeight())
 	end
+
+	gameOverImage = { top = love.graphics.newImage("graphics/game/gameover.png"), bottom =  love.graphics.newImage("graphics/game/gameoverbottom.png") }
 
 	jumpSound = love.audio.newSource("audio/jump.ogg")
 	selectionSound = love.audio.newSource("audio/select.ogg")
 	dialogSound = love.audio.newSource("audio/dialog.ogg")
+	gameOverSound = love.audio.newSource("audio/gameover.ogg")
+	
+	pitDeathSound = love.audio.newSource("audio/pit.ogg")
 	
 	menuFont = love.graphics.newFont("graphics/PressStart2P.ttf", 16)
 	smallFont = love.graphics.newFont("graphics/PressStart2P.ttf", 8)
@@ -200,9 +207,13 @@ function love.load()
 	love.graphics.set3D(true)
 	
 	cutscenes = {}
-	for i = 1, 2 do
+	for i = 1, 3 do
 		cutscenes[i] = {require('scenes.' .. i), false}
 	end
+
+	--love.audio.setVolume(0)
+
+	debugInfo = false
 
 	util.changeState("intro")
 end
@@ -225,6 +236,15 @@ function love.draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.print(love.timer.getFPS(), 385, 7)
 
+	if _EMULATEHOMEBREW then
+		if debugInfo then
+			love.graphics.print(love.system.getModel() .. "-" .. love.system.getReigon():sub(1, 3) .. "\nMemory: " .. love.system.getLinearMemory() .. "B", 1, 6)
+
+			love.graphics.setColor(255, 255, 255)
+			love.graphics.print(love.system.getModel() .. "-" .. love.system.getReigon():sub(1, 3) .. "\nMemory: " .. love.system.getLinearMemory() .. "B", 1, 7)
+		end
+	end
+
 	love.graphics.setScreen("bottom")
 	love.graphics.setColor(64, 64, 64)
 	love.graphics.rectangle("fill", -40, 0, 40, 240)
@@ -233,6 +253,10 @@ end
 
 function love.keypressed(key)
 	util.keyPressedState(key)
+
+	if key == "x" then
+		debugInfo = not debugInfo
+	end
 end
 
 function love.keyreleased(key)

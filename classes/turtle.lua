@@ -45,8 +45,8 @@ function turtle:init(x, y)
     self.scale = scale
     self.offsetX = 0
 
-    self.health = saveManager:getSaveData()[3] or 3
-    self.maxHealth = saveManager:getSaveData()[2] or 3
+    self.health = saveManager:getSaveData()[2] or 3
+    self.maxHealth = saveManager:getSaveData()[3] or 3
 
     self.render = true
 
@@ -67,7 +67,14 @@ function turtle:update(dt)
             self.timer = self.timer + 6 * dt
             self.quadi = math.floor(self.timer % #turtleQuads[self.state]) + 1
         end
+
+        gameOver = true
+
         return
+    end
+
+    if self.y > love.graphics.getHeight() then
+        self:die("pit")
     end
 
     if self.state ~= "punch" then
@@ -124,7 +131,12 @@ function turtle:update(dt)
             self.timer = self.timer + 6 * dt
         else
             if self.state == "punch" then
-                local check = checkrectangle(self.x + self.width + 12, self.y + 8, 4, 4, {"hermit"})
+                local add = self.width + 12
+                if self.scale == -1 then
+                    add = -12
+                end
+
+                local check = checkrectangle(self.x + add, self.y + 8, 4, 4, {"hermit"})
                 if #check > 0 then
                     local v = check[1][2]
                     v:shake(math.random(1, 2))
@@ -207,11 +219,27 @@ function turtle:addLife(health)
     end
 end
 
-function turtle:die() -- rip :(
-    self.dead = true
+function turtle:die(pit) -- rip :(
 
-    self.speedx = 0
-    self.speedy = 0
+    if pit then
+        shakeValue = 4
+        pitDeathSound:play()
+        self:addLife(-1)
+    end
+
+    if self.health > 1 then
+        self.x = SPAWN_X
+        self.y = SPAWN_Y
+
+        return
+    end
+
+    if not self.dead then
+        self.speedx = 0
+        self.speedy = 0
+
+        self.dead = true
+    end
 end
 
 function turtle:setScale(scale)
@@ -244,7 +272,7 @@ function turtle:moveLeft(move)
 end
 
 function turtle:jump()
-    if not self.jumping then
+    if not self.jumping and not self.dead then
         
         self.speedy = -jumpForce - (math.abs(self.speedx) / self.maxWalkSpeed) * jumpForceAdd * 0.5
         jumpSound:play()

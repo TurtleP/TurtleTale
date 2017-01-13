@@ -17,6 +17,6 @@ return
 	{"shake", 4},
 	{"dofunction", {"player", "jump"}},
 	{"dofunction", {"player", "setscale", -1}},
-	{"dialog", {"turtle", "Not my family album it's the only thing I have left!"}},
+	{"dialog", {"turtle", "Not my family album! It's the only thing I have left!"}},
 	{"unfreezeplayer"}
 }

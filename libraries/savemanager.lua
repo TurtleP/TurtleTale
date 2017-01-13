@@ -23,7 +23,7 @@ function SGM:init()
         end
     end
 
-    self.files = dofile(self.path .. "/save.lua")
+    self.files, circlePadEnabled = dofile(self.path .. "/save.lua")
 end
 
 function SGM:generateFiles()

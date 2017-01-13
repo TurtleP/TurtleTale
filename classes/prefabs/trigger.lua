@@ -7,7 +7,9 @@ function trigger:init(x, y, property)
     self.width = 8
     self.height = 240
 
-    self.map = property.map:split(";")
+    if property.map then
+        self.map = property.map:split(";")
+    end
 
     self.category = 4
 
@@ -16,6 +18,10 @@ end
 
 function trigger:update(dt)
     local ret = checkrectangle(self.x - 4, self.y, self.width, self.height, {"player"}, self)
+
+    if not self.map then
+        return
+    end
 
     if self.triggered then
         --if gameFadeOut then
