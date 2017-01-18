@@ -8,7 +8,7 @@ return {
   height = 15,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 12,
+  nextobjectid = 13,
   properties = {},
   tilesets = {
     {
@@ -156,6 +156,19 @@ return {
             ["x"] = 208,
             ["y"] = 192
           }
+        },
+        {
+          id = 12,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 208,
+          width = 400,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

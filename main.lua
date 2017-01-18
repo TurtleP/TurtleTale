@@ -62,8 +62,6 @@ function love.load()
 
 	titleImage = love.graphics.newImage("graphics/title.png")
 
-	settingsImage = love.graphics.newImage("graphics/settings.png")
-
 	selectionImage = love.graphics.newImage("graphics/select.png")
 	selectionQuadi = 1
 	selectionQuads = {}
@@ -79,7 +77,7 @@ function love.load()
 
 	turtleImage = love.graphics.newImage("graphics/player/turtle.png")
 	turtleQuads = {}
-	turtleAnimations = { {"idle", 4}, {"walk", 4}, {"jump", 3}, {"punch", 4}, {"dead", 6}, {"ledge", 4}, {"climb", 6} }
+	turtleAnimations = { {"idle", 4}, {"walk", 4}, {"jump", 3}, {"punch", 4}, {"dead", 6}, {"duck", 6}, {"unduck", 5},  {"spin", 5} }
 
 	for y = 1, #turtleAnimations do
 		turtleQuads[turtleAnimations[y][1]] = {}
@@ -97,7 +95,7 @@ function love.load()
 
 	healthImage = love.graphics.newImage("graphics/hud/health.png")
 	healthQuads = {}
-	for k = 1, 2 do
+	for k = 1, 4 do
 		healthQuads[k] = love.graphics.newQuad((k - 1) * 8, 0, 8, 8, healthImage:getWidth(), healthImage:getHeight())
 	end
 
@@ -170,11 +168,22 @@ function love.load()
 
 	gameOverImage = { top = love.graphics.newImage("graphics/game/gameover.png"), bottom =  love.graphics.newImage("graphics/game/gameoverbottom.png") }
 
+	backgroundImages = 
+	{
+		["home"] = 
+		{
+			love.graphics.newImage("graphics/backgrounds/home_sky.png"), 
+			love.graphics.newImage("graphics/backgrounds/home_mountains.png"), 
+			love.graphics.newImage("graphics/backgrounds/home_day.png")
+		},
+		["sky"] = love.graphics.newImage("graphics/backgrounds/sky.png")
+	}
+
 	jumpSound = love.audio.newSource("audio/jump.ogg")
 	selectionSound = love.audio.newSource("audio/select.ogg")
 	dialogSound = love.audio.newSource("audio/dialog.ogg")
 	gameOverSound = love.audio.newSource("audio/gameover.ogg")
-	
+	duckSound = love.audio.newSource("audio/duck.ogg")
 	pitDeathSound = love.audio.newSource("audio/pit.ogg")
 	
 	menuFont = love.graphics.newFont("graphics/PressStart2P.ttf", 16)
@@ -236,19 +245,20 @@ function love.draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.print(love.timer.getFPS(), 385, 7)
 
-	if _EMULATEHOMEBREW then
-		if debugInfo then
-			love.graphics.print(love.system.getModel() .. "-" .. love.system.getReigon():sub(1, 3) .. "\nMemory: " .. love.system.getLinearMemory() .. "B", 1, 6)
-
-			love.graphics.setColor(255, 255, 255)
-			love.graphics.print(love.system.getModel() .. "-" .. love.system.getReigon():sub(1, 3) .. "\nMemory: " .. love.system.getLinearMemory() .. "B", 1, 7)
-		end
-	end
 
 	love.graphics.setScreen("bottom")
 	love.graphics.setColor(64, 64, 64)
 	love.graphics.rectangle("fill", -40, 0, 40, 240)
 	love.graphics.rectangle("fill", 320, 0, 40, 240)
+	
+	if not _EMULATEHOMEBREW then
+		if debugInfo then
+			love.graphics.print(love.system.getModel() .. "-" .. love.system.getRegion():sub(1, 3) .. "\nMemory: " .. (love.system.getLinearMemory() / 1024 / 1024) .. "MB", 1, 6)
+
+			love.graphics.setColor(255, 255, 255)
+			love.graphics.print(love.system.getModel() .. "-" .. love.system.getRegion():sub(1, 3) .. "\nMemory: " .. (love.system.getLinearMemory() / 1024 / 1024) .. "MB", 1, 7)
+		end
+	end
 end
 
 function love.keypressed(key)

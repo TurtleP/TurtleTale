@@ -10,7 +10,7 @@ function cloud:init(x, y, speed)
 end
 
 function cloud:update(dt)
-    if self.x > 400 then
+    if self.x > tiled:getWidth("top") * 16 then
         self.x = -cloudImages[self.i]:getWidth()
         self.speed = math.random(30, 35)
     end

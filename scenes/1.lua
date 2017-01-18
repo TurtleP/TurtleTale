@@ -21,6 +21,7 @@ return
     {"dofunction", {"player", "use", true}},
     {"sleep", 0.1},
     {"dofunction", {"player", "use", false}},
+    {"shakeloop"},
     {"dialog", {"turtle", "Ow! What the heck is going on?"}},
     {"unfreezeplayer"}
 }

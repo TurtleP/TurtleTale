@@ -37,7 +37,7 @@ end
 function hermit:shake(val)
     if self.shakeTimer == 0 then
         self.shakeTimer = 0.5
-        table.insert(hitNumbers, hitnumber:new(math.random(self.x, self.x + self.width), self.y, val))
+        table.insert(hitNumbers, hitnumber:new(self.x + self.width / 2 - 2.5, self.y, val))
         self:addLife(val)
     end
 end
@@ -71,6 +71,14 @@ function hermit:update(dt)
         end
     end
 
+    --check for gaps
+    if self.walkTime > 0 then
+        if #checkrectangle(self.x + self.width + self.speedx * dt, self.y + self.height, self.width, self.height, {"tile"}) == 0 then
+            self.speedx = 32 * -self.scale
+            self:setDirection(-self.scale)
+        end
+    end
+
     self.timer = self.timer + 6 * dt
     self.quadi = math.floor(self.timer % #hermitQuads[self.state]) + 1
 end
@@ -101,6 +109,13 @@ function hermit:rightCollide(name, data)
     if name == "player" then
         return false
     end
+
+    if name == "tile" then
+        self.speedx = 32 * -self.scale
+        self:setDirection(-self.scale)
+        
+        --return false
+    end
 end
 
 function hermit:downCollide(name, data)
@@ -112,6 +127,11 @@ end
 function hermit:leftCollide(name, data)
     if name == "player" then
         return false
+    end
+
+    if name == "tile" then
+        self.speedx = 32 * -self.scale
+        self:setDirection(-self.scale)
     end
 end
 

@@ -28,6 +28,11 @@ function gameInit(map)
 
 	shakeValue = 0
 	
+	clouds = {}
+	for x = 1, 8 do
+		clouds[x] = cloud:new(math.random(love.graphics.getWidth()), math.random(love.graphics.getHeight() * 0.05, love.graphics.getHeight() * 0.4), math.random(30, 35))
+	end
+
 	if map then
 		tiled:setMap(map)
 	end
@@ -137,7 +142,7 @@ function gameUpdate(dt)
 	saveManager:tick(dt)
 
 	if shakeValue > 0 then
-		shakeValue = shakeValue - dt / 0.3
+		shakeValue = math.max(shakeValue - dt / 0.3, 0)
 	end
 
     if gameFadeOut then
@@ -191,6 +196,8 @@ function gameUpdate(dt)
 			table.remove(dialogs, k)
 		end
 	end
+
+	gameHUD:update(dt)
 end
 
 function gameDraw()
@@ -201,31 +208,41 @@ function gameDraw()
 	love.graphics.push()
 
 	if shakeValue > 0 then
-		love.graphics.translate(math.floor( (math.random() * 2 - 1) * shakeValue ), 0)
+		love.graphics.translate( util.clamp((math.random() * 2 - 1) * shakeValue, -0.1, 0.5), 0)
 	end
+
+	love.graphics.draw(backgroundImages["sky"])
 
 	love.graphics.translate(-math.floor(mapScroll), 0)
 
 	love.graphics.setDepth(ENTITY_DEPTH)
 
+	for k, v in ipairs(clouds) do
+		if tiled:getMapName() ~= "indoors" then
+			v:draw()
+		end
+	end
+
 	tiled:renderBackground()
 
-	for i = 1, #prefabs do
-		for j = 1, #prefabs[i] do
-			if prefabs[i][j].draw then
-				prefabs[i][j]:draw()
+	for i, v in ipairs(prefabs) do
+		for j, w in ipairs(v) do
+			if w.draw then
+				love.graphics.push()
+
+				if shakeValue > 0 then
+					love.graphics.translate( util.clamp((math.random() * 2 - 1) * shakeValue, -0.1, 0.5), 0)
+				end
+
+				w:draw()
+
+				love.graphics.pop()
 			end
 		end
 	end
 
 	for i, v in ipairs(hitNumbers) do
 		v:draw()
-	end
-
-	for k, v in ipairs(clouds) do
-		if tiled:getMapName() == "home" then
-			v:draw()
-		end
 	end
 
     for i, v in ipairs(cameraObjects) do
@@ -290,6 +307,8 @@ function gameKeyPressed(key)
 		objects["player"][1]:jump()
 	elseif key == controls["up"] then
 		objects["player"][1]:use(true)
+	elseif key == controls["down"] then
+		objects["player"][1]:duck(true)
 	elseif key == controls["punch"] then
 		objects["player"][1]:punch()
 	end
@@ -302,6 +321,8 @@ function gameKeyReleased(key)
         objects["player"][1]:moveLeft(false)
     elseif key == controls["jump"] then
 		objects["player"][1]:stopJump()
+	elseif key == controls["down"] then
+		objects["player"][1]:duck(false)
 	elseif key == controls["up"] then
 		objects["player"][1]:use(false)
 	end

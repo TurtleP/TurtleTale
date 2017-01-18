@@ -23,7 +23,7 @@ end
 function dialog:update(dt)
     if self.i <= #self.text then
         if #self.string < #self.text and not self.pause then
-            if self.timer < 0.04 then
+            if self.timer < 0.02 then
                 self.timer = self.timer + dt
             else
                 self.string = self.string .. self.text:sub(self.i, self.i)

@@ -1,15 +1,12 @@
 hitnumber = class("hitnumber")
 
 function hitnumber:init(x, y, damage)
-	self.x = x 
+	self.x = x
 	self.y = y
 
 	self.text = tostring(damage)
 
-	local speedxes = {math.random(15, 25), -math.random(15, 25)}
-
-	self.speedx = speedxes[math.random(#speedxes)]
-	self.speedy = math.random(-25, -20)
+	self.speedy = 32
 	self.fade = 1
 
 	self.riseTimer = 0
@@ -19,17 +16,11 @@ function hitnumber:init(x, y, damage)
 end
 
 function hitnumber:update(dt)
-	self.x = self.x + self.speedx * dt
-	self.y = self.y + self.speedy * dt
+	self.y = self.y - self.speedy * dt
 
-	self.fade = math.max(self.fade - 0.4 * dt, 0)
+	self.fade = math.max(self.fade - 0.6 * dt, 0)
 
-	self.riseTimer = self.riseTimer + dt
-	if self.riseTimer > 0.3 then
-		self.speedy = self.speedy + 25 * dt
-	end
-
-	if self.y > util.getHeight() or self.fade == 0 then
+	if self.fade == 0 then
 		self.remove = true
 	end	
 end

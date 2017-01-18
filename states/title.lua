@@ -5,12 +5,12 @@ function titleInit()
 	love.graphics.setBackgroundColor(backgroundColors.midnight)
 
     clouds = {}
-	for x = 1, 6 do
-		clouds[x] = cloud:new(math.random(love.graphics.getWidth()), math.random(love.graphics.getHeight() * 0.1, love.graphics.getHeight() * 0.2), math.random(30, 35))
+	for x = 1, 8 do
+		clouds[x] = cloud:new(math.random(love.graphics.getWidth()), math.random(love.graphics.getHeight() * 0.05, love.graphics.getHeight() * 0.4), math.random(30, 35))
 	end
 
 	stars = {}
-	for x = 1, 64 do
+	for x = 1, 72 do
 		stars[x] = {math.random(400), math.random(love.graphics.getHeight() * 0.8)}
 	end
 
@@ -76,13 +76,15 @@ function titleDraw()
 
 	love.graphics.setDepth(ENTITY_DEPTH)
 
-    for k, v in ipairs(stars) do
+	love.graphics.draw(backgroundImages["home"][1], 0, 0)
+	
+	for k, v in ipairs(stars) do
 	    love.graphics.rectangle("fill", v[1], v[2], 1, 1)
 	end
 
-	for k, v in pairs(tiled:getTiles()) do
-		v:draw()
-	end
+	love.graphics.draw(backgroundImages["home"][2], 0, -16)
+
+	tiled:renderBackground()
 
 	for k, v in ipairs(clouds) do
 		v:draw()

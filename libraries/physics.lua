@@ -19,30 +19,6 @@ function physicsupdate(dt)
 
 			objData.speedy = math.min(objData.speedy + objData.gravity * dt, 15 * 60) --add gravity to objects
 
-			--VS TILES (Because I only wanna check close ones)
-			local xstart = math.floor( (objData.x + objData.speedx * dt) / 16 - 2/16) + 1
-			local ystart = math.floor( (objData.y + objData.speedy * dt) / 16 - 2/16) + 1
-						
-			local xfrom = xstart
-			local xto = xstart + math.ceil(objData.width / 16)
-			local dir = 1
-							
-			if objData.speedx < 0 then
-				xfrom, xto = xto, xfrom
-				dir = -1
-			end
-							
-			for x = xfrom, xto, dir do
-				for y = ystart, ystart + math.ceil(objData.height / 16) do
-					local t = objects["tile"][x .. "-" .. y]
-					if t then
-						if t.active and objData.mask[t.category] and not objData.passive then
-							hor, ver = checkCollision(objData, objName, t, "tile", dt)
-						end
-					end
-				end
-			end
-
 			--VS THINGS NOT TILES
 			if objData.mask and not objData.passive then
 				for cameraOtherIndex, cameraOtherValue in ipairs(cameraObjects) do
@@ -109,11 +85,9 @@ function checkCamera(x, y, width, height)
 	local ret = {}
 
 	for i, v in pairs(objects) do
-		if i ~= "tile" then
-			for j, w in ipairs(v) do
-				if aabb(x, y, width, height, w.x, w.y, w.width, w.height) then
-					table.insert(ret, {i, w, j})
-				end
+		for j, w in ipairs(v) do
+			if aabb(x, y, width, height, w.x, w.y, w.width, w.height) then
+				table.insert(ret, {i, w, j})
 			end
 		end
 	end

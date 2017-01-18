@@ -37,9 +37,9 @@ function file:draw()
 				offset = 4
 			end
 
-            local i = 1
+            local i = 3
             if x > self.data[2] then
-                i = 2
+                i = 4
             end
 
 			love.graphics.draw(healthImage, healthQuads[i], (self.x + 2) + (x - 1) * 9, (self.y + 15) + offset)

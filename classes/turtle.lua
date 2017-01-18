@@ -31,12 +31,16 @@ function turtle:init(x, y)
     self.rightKey = false
     self.leftKey = false
     self.useKey = false
+    self.ducking = false
 
     self.punching = false
 
     self.abilities = 
     {
-        ["punch"] = true
+        ["punch"] = true,
+        ["duck"] = true,
+        ["unduck"] = true,
+        ["spin"] = true
     }
 
     self.walkSpeed = 2
@@ -58,6 +62,8 @@ function turtle:init(x, y)
     self.invincibleTimer = 0
 
     self.changeMap = false
+
+    self.last = {false, false}
 end
 
 function turtle:update(dt)
@@ -78,10 +84,15 @@ function turtle:update(dt)
     end
 
     if self.state ~= "punch" then
+        local add = 0
+        if self.state == "spin" then
+            add = 80
+        end
+
         if self.rightKey then
-            self.speedx = self.maxWalkSpeed
+            self.speedx = self.maxWalkSpeed + add
         elseif self.leftKey then
-            self.speedx = -self.maxWalkSpeed
+            self.speedx = -self.maxWalkSpeed - add
         elseif not self.rightKey and not self.leftKey then
             self.speedx = 0
         end
@@ -93,27 +104,31 @@ function turtle:update(dt)
 
     if not self.abilities[self.state] then
         if self.speedx ~= 0 then
-            local modifier = 2
+            if not self.ducking then
+                local modifier = 2
 
-            if self.rightKey then
-                if self.speedx < 0 then
-                    self.speedx = math.min(self.speedx + modifier, 0)
+                if self.rightKey then
+                    if self.speedx < 0 then
+                        self.speedx = math.min(self.speedx + modifier, 0)
+                    end
+
+                    self.scale = scale
+                    self.offsetX = 0
+                elseif self.leftKey then
+                    if self.speedx > 0 then
+                        self.speedx = math.max(self.speedx - modifier, 0)
+                    end
+
+                    self.scale = -scale
+                    self.offsetX = self.width
                 end
 
-                self.scale = scale
-                self.offsetX = 0
-            elseif self.leftKey then
-                if self.speedx > 0 then
-                    self.speedx = math.max(self.speedx - modifier, 0)
+                if not self.jumping then
+                    self:setState("walk")
+                    self.timer = self.timer + math.abs(self.speedx) * 0.1 * dt
                 end
-
-                self.scale = -scale
-                self.offsetX = self.width
-            end
-
-            if not self.jumping then
-                self:setState("walk")
-                self.timer = self.timer + math.abs(self.speedx) * 0.1 * dt
+            else
+                self.timer = self.timer + 10 * dt
             end
         elseif self.speedx == 0 and self.speedy == 0 then
             self:setState("idle")
@@ -127,22 +142,49 @@ function turtle:update(dt)
             end
         end
     else
-        if self.quadi < #turtleQuads[self.state] then
-            self.timer = self.timer + 6 * dt
-        else
-            if self.state == "punch" then
-                local add = self.width + 12
-                if self.scale == -1 then
-                    add = -12
-                end
+        if self.state == "punch" then
+            if self.quadi < #turtleQuads[self.state] then
+                self.timer = self.timer + 6 * dt
+            else
+                if self.state == "punch" then
+                    local add = self.width + 12
+                    if self.scale == -1 then
+                        add = -12
+                    end
 
-                local check = checkrectangle(self.x + add, self.y + 8, 4, 4, {"hermit"})
-                if #check > 0 then
-                    local v = check[1][2]
-                    v:shake(math.random(1, 2))
+                    local check = checkrectangle(self.x + add, self.y + 8, 4, 4, {"hermit"})
+                    if #check > 0 then
+                        local v = check[1][2]
+                        v:shake(math.random(1, 2))
+                    end
+                end
+                self:setState("idle") --blank cause no state?
+            end
+        end
+
+        if self.state:find("duck") then
+            if self.quadi < #turtleQuads[self.state] then
+                self.timer = self.timer + 12 * dt
+            else
+                if self.state == "unduck" then
+                    self:setState("idle")
                 end
             end
-            self:setState("idle") --blank cause no state?
+        end
+    end
+
+    if self.speedx ~= 0 and self.ducking then
+        if self.state == "duck" then
+            if self.quadi == #turtleQuads[self.state] then
+                self:setState("spin")
+            end
+        end
+        self.timer = self.timer + 15 * dt
+    end
+
+    if not love.keyboard.isDown(controls["down"]) then --gg ez
+        if self.state == "spin" then
+            self:duck(false)
         end
     end
 
@@ -170,7 +212,12 @@ function turtle:draw()
         return
     end
 
-    love.graphics.draw(turtleImage, turtleQuads[self.state][self.quadi], self.x + self.offsetX, self.y - 6, 0, self.scale, scale)
+    local offsetY = 6
+    if self.ducking then
+        offsetY = 12
+    end
+
+    love.graphics.draw(turtleImage, turtleQuads[self.state][self.quadi], self.x + self.offsetX, self.y - offsetY, 0, self.scale, scale)
 end
 
 function turtle:rightCollide(name, data)
@@ -201,9 +248,19 @@ function turtle:downCollide(name, data)
         self:addLife(-1)
         return false
     end
+
+    if name == "tile" then
+        if self.last[1] ~= data.x then
+            self.last = {data.x, data.y - self.height}
+        end
+    end
 end
 
 function turtle:addLife(health)
+    if self.state == "duck" then
+        return
+    end
+
     if health < 0 then
         if not self.invincible then
             self.invincible = true
@@ -228,8 +285,14 @@ function turtle:die(pit) -- rip :(
     end
 
     if self.health > 1 then
-        self.x = SPAWN_X
-        self.y = SPAWN_Y
+        self.x = self.last[1]
+        self.y = self.last[2]
+        
+        self.speedx = 0
+        self.speedy = 0
+
+        self:duck(false)
+
 
         return
     end
@@ -264,11 +327,62 @@ function turtle:freeze(freeze)
 end
 
 function turtle:moveRight(move)
+    if self.ducking then
+        if not move then
+            return
+        end
+    end
     self.rightKey = move
 end
 
 function turtle:moveLeft(move)
+    if self.ducking then
+        if not move then
+            return
+        end
+    end
     self.leftKey = move
+end
+
+function turtle:duck(move)
+    if self.speedy ~= 0 then
+        return
+    end
+
+    if move then
+        if self.state == "spin" then
+            return
+        end
+    end
+
+    local state = "duck"
+    
+    if move then
+        duckSound:play()
+        
+        if self.height ~= 8 then
+            self.height = 8
+            self.y = self.y + 6
+        end
+    else
+        state = "unduck"
+
+        if self.rightKey then
+            self.rightKey = false
+        end
+
+        if self.leftKey then
+            self.leftKey = false
+        end
+
+        if self.height ~= 14 then
+            self.height = 14
+            self.y = self.y - 6
+        end
+    end
+
+    self:setState(state)
+    self.ducking = move
 end
 
 function turtle:jump()

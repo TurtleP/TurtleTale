@@ -3,4 +3,5 @@ function love.conf(t)
 	t.window.height = 240
 	t.window.vsync = true
 	t.console = true
+	t.identity = "Turtle-Tale"
 end

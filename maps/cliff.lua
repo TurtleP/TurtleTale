@@ -8,7 +8,7 @@ return {
   height = 15,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 4,
+  nextobjectid = 11,
   properties = {
     ["right"] = "home",
     ["spawn"] = "384;208;"
@@ -23,14 +23,14 @@ return {
       margin = 0,
       image = "../graphics/tiles.png",
       imagewidth = 374,
-      imageheight = 153,
+      imageheight = 255,
       tileoffset = {
         x = 0,
         y = 0
       },
       properties = {},
       terrains = {},
-      tilecount = 198,
+      tilecount = 330,
       tiles = {
         {
           id = 22,
@@ -134,6 +134,97 @@ return {
           properties = {
             ["width"] = 64
           }
+        },
+        {
+          id = 4,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 64,
+          y = 112,
+          width = 112,
+          height = 128,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 5,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 176,
+          y = 160,
+          width = 48,
+          height = 80,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 6,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 224,
+          y = 176,
+          width = 64,
+          height = 64,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 7,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 288,
+          y = 208,
+          width = 112,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 8,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 176,
+          y = 128,
+          width = 16,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 9,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 192,
+          y = 144,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 10,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 288,
+          y = 192,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

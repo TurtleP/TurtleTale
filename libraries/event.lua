@@ -14,9 +14,22 @@ function eventsystem:init()
 	self.i = 0
 	self.events = {}
 	self.running = false
+	self.shakeLoop = false
+	self.shakeDelay = 2
 end
 
 function eventsystem:update(dt)
+	if self.shakeLoop then
+		if self.shakeDelay > 0 then
+			if shakeValue == 0 then
+				self.shakeDelay = self.shakeDelay - dt
+			end
+		else
+			shakeValue = 12
+			self.shakeDelay = math.random(1, 1.5)
+		end
+	end
+
 	if not self.running then
 		return
 	end
@@ -104,12 +117,13 @@ function eventsystem:update(dt)
 			elseif cmd == "disable" then
 				self.disabled = true
 			elseif cmd == "fadeout" then
-				print("ayy")
 				gameFade = 0
 				gameFadeOut = true
 				fadeValue = v.args or 2
 			elseif cmd == "setmap" then
 				tiled:setMap(v.args)
+			elseif cmd == "shakeloop" then
+				self.shakeLoop = true
 			end
 		end
 	else

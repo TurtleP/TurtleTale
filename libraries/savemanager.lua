@@ -5,8 +5,13 @@ function SGM:init()
 
     if _EMULATEHOMEBREW then
         path = love.filesystem.getSaveDirectory() 
+        love.filesystem.write("dummy.txt", "")
     else
         love.filesystem.createDirectory(path)
+    end
+
+    if love.system.getOS() == "Windows" then
+        path = path:gsub("/", "\\")
     end
 
     self.path = path
@@ -15,21 +20,56 @@ function SGM:init()
 
     self.currentSave = nil
 
-    if io.open(path .. "/save.lua", "r") then
-        if not pcall(dofile, path .. "/save.lua") then
-            os.remove(path .. "/save.lua")
+    if self:open(path .. "/save.lua", "r") then
+        if not self:catchError(dofile, path .. "/save.lua") then
+            self:deleteCorruptFiles(path .. "/save.lua")
 
             self:generateFiles()
         end
     end
 
-    self.files, circlePadEnabled = dofile(self.path .. "/save.lua")
+    self.files, circlePadEnabled = self:loadFile(self.path .. "/save.lua")
+end
+
+function SGM:catchError(func, arg)
+    if love.system.getOS() == "Windows" then
+        arg = arg:gsub("/", "\\")
+    end
+
+    return pcall(func, arg)
+end
+
+function SGM:loadFile(path)
+    if love.system.getOS() == "Windows" then
+        path = path:gsub("/", "\\")
+    end
+
+    return dofile(path)
+end
+
+function SGM:deleteCorruptFiles(path)
+    if love.system.getOS() == "Windows" then
+        path = path:gsub("/", "\\")
+    end
+
+    os.remove(path)
+end
+
+function SGM:open(path, mode)
+    if love.system.getOS() == "Windows" then
+        path = path:gsub("/", "\\")
+    end
+
+    print(path, mode)
+
+    return io.open(path, mode)
 end
 
 function SGM:generateFiles()
-    local file = io.open(self.path .. "/save.lua", "rb")
+    local file = self:open(self.path .. "/save.lua", "rb")
+
     if not file then
-        file = io.open(self.path .. "/save.lua", "w")
+        file = self:open(self.path .. "/save.lua", "w")
 
         if file then
             file:write("return\n{\n\tnil,\n\tnil,\n\tnil\n}")
@@ -52,10 +92,15 @@ function SGM:getMap()
     return self.files[self:getCurrentSave()][5]:gsub('"', "")
 end
 
-function SGM:generateSaveData()
+function SGM:generateSaveData() --hipsters..
+    local date = os.date("%m.%d.%Y")
+    if love.system.getModel() ~= "usa" then
+        date = os.date("%d.%m.%Y")
+    end
+
     return 
     {
-        '"' .. os.date("%d.%m.%Y") .. '"', 
+        '"' .. date .. '"', 
         objects["player"][1]:getHealth(), 
         objects["player"][1]:getMaxHealth(), 
         math.floor(self:getTime()),

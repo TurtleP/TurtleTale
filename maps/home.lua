@@ -8,10 +8,9 @@ return {
   height = 15,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 7,
+  nextobjectid = 8,
   properties = {
-    ["left"] = "cliff",
-    ["right"] = "beach"
+    ["background"] = 3
   },
   tilesets = {
     {
@@ -23,14 +22,14 @@ return {
       margin = 0,
       image = "../graphics/tiles.png",
       imagewidth = 374,
-      imageheight = 153,
+      imageheight = 255,
       tileoffset = {
         x = 0,
         y = 0
       },
       properties = {},
       terrains = {},
-      tilecount = 198,
+      tilecount = 330,
       tiles = {
         {
           id = 22,
@@ -74,7 +73,7 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 29, 30, 30, 31, 32, 32, 32, 56, 34, 0, 0, 0, 16, 17, 0, 0, 0,
-        0, 0, 0, 36, 37, 0, 0, 0, 51, 96, 52, 53, 99, 54, 99, 78, 0, 0, 0, 27, 38, 39, 0, 0, 0,
+        0, 0, 0, 36, 37, 0, 0, 0, 51, 96, 52, 53, 99, 54, 99, 78, 0, 0, 0, 0, 38, 39, 0, 0, 0,
         0, 57, 0, 58, 59, 62, 0, 0, 73, 118, 74, 75, 121, 76, 121, 78, 0, 0, 57, 0, 60, 61, 0, 62, 0,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24
@@ -134,8 +133,21 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["map"] = "beach;16;192;"
+            ["map"] = "pathway;16;192;"
           }
+        },
+        {
+          id = 7,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 208,
+          width = 400,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     }
