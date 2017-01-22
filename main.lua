@@ -189,6 +189,8 @@ function love.load()
 	menuFont = love.graphics.newFont("graphics/PressStart2P.ttf", 16)
 	smallFont = love.graphics.newFont("graphics/PressStart2P.ttf", 8)
 	
+	cliffSong = love.audio.newSource("audio/cliffs.ogg")
+	
 	math.randomseed(os.time())
 	math.random()
 	math.random()

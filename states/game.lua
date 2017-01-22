@@ -119,6 +119,12 @@ function gameUpdate(dt)
 		end
 	end
 
+	if not eventSystem:isRunning() then
+		if not cliffSong:isPlaying() then
+			cliffSong:play()
+		end
+	end
+
 	--[[
 	local state, percent = love.system.getPowerInfo()
 
@@ -208,7 +214,7 @@ function gameDraw()
 	love.graphics.push()
 
 	if shakeValue > 0 then
-		love.graphics.translate( util.clamp((math.random() * 2 - 1) * shakeValue, -0.1, 0.5), 0)
+		love.graphics.translate((math.random() * 2 - 1) * shakeValue, 0)
 	end
 
 	love.graphics.draw(backgroundImages["sky"])
@@ -228,15 +234,7 @@ function gameDraw()
 	for i, v in ipairs(prefabs) do
 		for j, w in ipairs(v) do
 			if w.draw then
-				love.graphics.push()
-
-				if shakeValue > 0 then
-					love.graphics.translate( util.clamp((math.random() * 2 - 1) * shakeValue, -0.1, 0.5), 0)
-				end
-
 				w:draw()
-
-				love.graphics.pop()
 			end
 		end
 	end

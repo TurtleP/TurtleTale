@@ -91,8 +91,12 @@ function turtle:update(dt)
 
         if self.rightKey then
             self.speedx = self.maxWalkSpeed + add
+
+            self:setScale(scale)
         elseif self.leftKey then
             self.speedx = -self.maxWalkSpeed - add
+
+            self:setScale(-scale)
         elseif not self.rightKey and not self.leftKey then
             self.speedx = 0
         end
@@ -111,16 +115,10 @@ function turtle:update(dt)
                     if self.speedx < 0 then
                         self.speedx = math.min(self.speedx + modifier, 0)
                     end
-
-                    self.scale = scale
-                    self.offsetX = 0
                 elseif self.leftKey then
                     if self.speedx > 0 then
                         self.speedx = math.max(self.speedx - modifier, 0)
                     end
-
-                    self.scale = -scale
-                    self.offsetX = self.width
                 end
 
                 if not self.jumping then
@@ -225,12 +223,24 @@ function turtle:rightCollide(name, data)
         self:addLife(-1)
         return false
     end
+
+    if name == "tile" then
+        if self.state == "spin" then
+            self:duck(false)
+        end
+    end
 end
 
 function turtle:leftCollide(name, data)
     if name == "hermit" then
         self:addLife(-1)
         return false
+    end
+
+    if name == "tile" then
+        if self.state == "spin" then
+            self:duck(false)
+        end
     end
 end
 
@@ -250,9 +260,7 @@ function turtle:downCollide(name, data)
     end
 
     if name == "tile" then
-        if self.last[1] ~= data.x then
-            self.last = {data.x, data.y - self.height}
-        end
+        self.last = {self.x, data.y - self.height}
     end
 end
 
@@ -282,19 +290,18 @@ function turtle:die(pit) -- rip :(
         shakeValue = 4
         pitDeathSound:play()
         self:addLife(-1)
-    end
+    
+        if self.health > 0 then
+            self.x = self.last[1]
+            self.y = self.last[2]
+            
+            self.speedx = 0
+            self.speedy = 0
 
-    if self.health > 1 then
-        self.x = self.last[1]
-        self.y = self.last[2]
-        
-        self.speedx = 0
-        self.speedy = 0
-
-        self:duck(false)
-
-
-        return
+            self:duck(false)
+            
+            return
+        end
     end
 
     if not self.dead then
@@ -324,11 +331,13 @@ function turtle:freeze(freeze)
     self.speedx = 0
     self.speedy = 0
     self.timer = 0
+
+    self:duck(false)
 end
 
 function turtle:moveRight(move)
-    if self.ducking then
-        if not move then
+    if self.ducking and not self.frozen then
+        if not move or (move and self.state == "spin") then
             return
         end
     end
@@ -336,8 +345,8 @@ function turtle:moveRight(move)
 end
 
 function turtle:moveLeft(move)
-    if self.ducking then
-        if not move then
+    if self.ducking and not self.frozen then
+        if not move or (move and self.state == "spin") then
             return
         end
     end
@@ -365,19 +374,23 @@ function turtle:duck(move)
             self.y = self.y + 6
         end
     else
-        state = "unduck"
+        if self.state == "duck" or self.state == "spin" then
+            state = "unduck"
 
-        if self.rightKey then
-            self.rightKey = false
-        end
+            if self.rightKey then
+                self.rightKey = false
+            end
 
-        if self.leftKey then
-            self.leftKey = false
-        end
+            if self.leftKey then
+                self.leftKey = false
+            end
 
-        if self.height ~= 14 then
-            self.height = 14
-            self.y = self.y - 6
+            if self.height ~= 14 then
+                self.height = 14
+                self.y = self.y - 6
+            end
+        else
+            return
         end
     end
 
@@ -389,6 +402,11 @@ function turtle:jump()
     if not self.jumping and not self.dead then
         
         self.speedy = -jumpForce - (math.abs(self.speedx) / self.maxWalkSpeed) * jumpForceAdd * 0.5
+
+        if self.ducking then
+            self.speedy = self.speedy * 0.75
+        end
+
         jumpSound:play()
 
         self.jumping = true
@@ -411,10 +429,6 @@ function turtle:setState(state)
         self.timer = 0
         self.state = state
     end
-end
-
-function turtle:hurt()
-
 end
 
 function turtle:setRender(render)

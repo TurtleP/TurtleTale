@@ -100,7 +100,7 @@ function SGM:generateSaveData() --hipsters..
 
     return 
     {
-        '"' .. date .. '"', 
+        '"' .. tostring(date) .. '"', 
         objects["player"][1]:getHealth(), 
         objects["player"][1]:getMaxHealth(), 
         math.floor(self:getTime()),

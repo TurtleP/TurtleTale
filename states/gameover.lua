@@ -1,4 +1,6 @@
 function gameOverInit()
+    love.audio.stop()
+    
     phoenixObject = phoenix:new(love.graphics.getWidth() / 2, 80)
 
     gameOveri = 1

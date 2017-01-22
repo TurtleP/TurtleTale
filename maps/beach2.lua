@@ -153,7 +153,7 @@ return {
           visible = true,
           properties = {
             ["link"] = "throne",
-            ["x"] = 208,
+            ["x"] = 192,
             ["y"] = 192
           }
         },
