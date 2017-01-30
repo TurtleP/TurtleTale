@@ -162,6 +162,10 @@ function gameUpdate(dt)
 			if gameOver then
 				util.changeState("gameOver")
 			end
+
+			if skipScene then
+				gameInit(tiled:getMapName())
+			end
 		end
 	else
 		if gameFade > 0 then
@@ -287,7 +291,15 @@ function gameKeyPressed(key)
 		return
 	end
 
-	if (not objects["player"][1].render or objects["player"][1].frozen or objects["player"][1].dead) and not objects["player"][1].invincible then
+	if eventSystem:isRunning() then
+		if key == "a" then
+			skipScene = true
+			gameFadeOut = true
+			return
+		end
+	end
+
+	if (not objects["player"][1].render or objects["player"][1].frozen or objects["player"][1].dead) then
 		if not objects["player"][1].render then
 			if key == "up" then
 				objects["player"][1]:use(true)

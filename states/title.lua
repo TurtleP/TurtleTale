@@ -145,6 +145,10 @@ function titleKeyPressed(key)
 		return
 	end
 
+	if titleDoFade then
+		return
+	end
+	
 	if key == "down" then
 		if menuSelection < 3 then
 			selectionSound:play()

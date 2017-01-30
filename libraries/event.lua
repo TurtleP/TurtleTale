@@ -5,8 +5,11 @@ local blackList =
 	["dialog"] = true,
 	["sleep"] = true,
 	["shake"] = true,
-	["usedoor"] = true,
-	["walkcharacter"] = true
+	["dofunction"] = true,
+	["fadein"] = true,
+	["fadeout"] = true,
+	["spawncharacter"] = {phoenix = true},
+	["freezeplayer"] = true
 }
 
 function eventsystem:init()
@@ -130,6 +133,7 @@ function eventsystem:update(dt)
 		if self.running then
 			self.running = false
 			currentScript = currentScript + 1
+			skipScene = false
 		end
 	end
 end
@@ -160,8 +164,8 @@ function eventsystem:decrypt(scriptString)
 
 		self.running = true
 
-		if deathRestart then
-			if not blackList[cmd] then
+		if skipScene then
+			if (type(blackList[cmd]) == "boolean" and not blackList[cmd]) or (type(blackList[cmd]) == "table" and not blackList[cmd][arg]) then
 				self:queue(cmd, arg)
 			end
 		else

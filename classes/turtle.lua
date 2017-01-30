@@ -189,16 +189,9 @@ function turtle:update(dt)
     if self.invincible then
         self.invincibleTimer = self.invincibleTimer + 8 / 0.8 * dt
 
-        if math.floor(self.invincibleTimer) % 2 == 0 then
-            self.render = false
-        else
-            self.render = true
-        end
-
         if self.invincibleTimer > 16 then
             self.invincibleTimer = 0
             self.invincible = false
-            self.render = true
         end
     end
 
@@ -206,7 +199,7 @@ function turtle:update(dt)
 end
 
 function turtle:draw()
-    if not self.render then
+    if not self.render or (math.floor(self.invincibleTimer) % 2 == 0 and self.invincible) then
         return
     end
 

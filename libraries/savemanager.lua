@@ -111,6 +111,10 @@ function SGM:generateSaveData() --hipsters..
     }
 end
 
+function SGM:fixSaveData(i)
+    self.files[i][1], self.files[i][5] = '"' .. self.files[i][1] .. '"', '"' .. self.files[i][5] .. '"'
+end
+
 function SGM:save(t, toSave)
     if self.files then
         self.files[t] = toSave
@@ -130,6 +134,10 @@ function SGM:save(t, toSave)
 
             for i = 1, #self.files do
                 if self.files[i] ~= nil then
+                    if i ~= self:getCurrentSave() then
+                        self:fixSaveData(i)
+                    end
+                    
                     file:write("{")
                     
                     for j = 1, #self.files[i] do
