@@ -1,3 +1,4 @@
+
 # Compiled Lua sources
 luac.out
 
@@ -41,6 +42,9 @@ luac.out
 
 # VisualStudioCode
 .vscode/
+
+# LOVE files
+.love
 
 # Dropbox
 .dropbox
