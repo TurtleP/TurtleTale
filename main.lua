@@ -77,7 +77,7 @@ function love.load()
 
 	turtleImage = love.graphics.newImage("graphics/player/turtle.png")
 	turtleQuads = {}
-	turtleAnimations = { {"idle", 4}, {"walk", 4}, {"jump", 3}, {"punch", 4}, {"dead", 6}, {"duck", 6}, {"unduck", 5},  {"spin", 5} }
+	turtleAnimations = { {"idle", 4}, {"walk", 4}, {"jump", 3}, {"dead", 6}, {"duck", 6}, {"unduck", 5}, {"spin", 5}, {"punch", 4} }
 
 	for y = 1, #turtleAnimations do
 		turtleQuads[turtleAnimations[y][1]] = {}
@@ -185,11 +185,9 @@ function love.load()
 	gameOverSound = love.audio.newSource("audio/gameover.ogg")
 	duckSound = love.audio.newSource("audio/duck.ogg")
 	pitDeathSound = love.audio.newSource("audio/pit.ogg")
-	
+
 	menuFont = love.graphics.newFont("graphics/PressStart2P.ttf", 16)
 	smallFont = love.graphics.newFont("graphics/PressStart2P.ttf", 8)
-	
-	cliffSong = love.audio.newSource("audio/cliffs.ogg")
 	
 	math.randomseed(os.time())
 	math.random()

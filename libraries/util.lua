@@ -35,9 +35,9 @@ function util.changeState(toState, ...)
 	local arg = {...} or {}
 
 	if _G[toState .. "Init"] then
-		state = toState
-		
 		_G[toState .. "Init"](unpack(arg))
+		
+		state = toState
 	end
 
 end

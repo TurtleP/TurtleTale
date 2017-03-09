@@ -24,21 +24,22 @@ function trigger:update(dt)
     end
 
     if self.triggered then
-        --if gameFadeOut then
-            local player = objects["player"][1]
-            --if gameFade == 1 then
-                local map = self.map[1]
-                SPAWN_X, SPAWN_Y = tonumber(self.map[2]), tonumber(self.map[3])
-                player.speedx = 0
+        local player = objects["player"][1]
+        local map = self.map[1]
+        
+        SPAWN_X, SPAWN_Y = tonumber(self.map[2]), tonumber(self.map[3])
 
-                player:moveRight(false)
-                player:moveLeft(false)
+        player:moveRight(false)
+        player:moveLeft(false)
+        player:punch(false)
 
-                self.triggered = false
+        player.speedx = 0
 
-                gameInit(map)
-            --end
-       -- end         
+        player:setState("idle")
+                
+        self.triggered = false
+
+        gameInit(map)         
     end
 
     if #ret == 0 then
@@ -59,7 +60,6 @@ function trigger:update(dt)
                 player:moveLeft(true)
             end
 
-            --gameFadeOut = true
             self.triggered = true
         end
     end

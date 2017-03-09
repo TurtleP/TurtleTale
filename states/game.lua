@@ -35,6 +35,7 @@ function gameInit(map)
 
 	if map then
 		tiled:setMap(map)
+		gameCreateTables()
 	end
 	
 	love.graphics.setBackgroundColor(backgroundColors.sky)
@@ -111,17 +112,15 @@ function gameUpdate(dt)
 		return
 	end
 
+	if not eventSystem:isRunning() then
+		tiled:playCurrentSong()
+	end
+
 	if gameOver then
 		if not pitDeathSound:isPlaying() then
 			if not gameFadeOut then
 				gameFadeOut = true
 			end
-		end
-	end
-
-	if not eventSystem:isRunning() then
-		if not cliffSong:isPlaying() then
-			cliffSong:play()
 		end
 	end
 
@@ -320,7 +319,7 @@ function gameKeyPressed(key)
 	elseif key == controls["down"] then
 		objects["player"][1]:duck(true)
 	elseif key == controls["punch"] then
-		objects["player"][1]:punch()
+		objects["player"][1]:punch(true)
 	end
 end
 
@@ -335,6 +334,8 @@ function gameKeyReleased(key)
 		objects["player"][1]:duck(false)
 	elseif key == controls["up"] then
 		objects["player"][1]:use(false)
+	elseif key == controls["punch"] then
+		objects["player"][1]:punch(false)
 	end
 end
 

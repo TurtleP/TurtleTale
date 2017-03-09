@@ -56,9 +56,22 @@ function eventsystem:update(dt)
 			if cmd == "dialog" then
 				table.insert(dialogs, dialog:new(unpack(v.args)))
 			elseif cmd == "stopmusic" then
-				love.audio.stop()
+				if not self.lastSong or v.args == "all" then
+					love.audio.stop()
+				else
+					self.lastSong:stop()
+					self.lastSong = nil
+					collectgarbage()
+					collectgarbage()
+				end
 			elseif cmd == "playmusic" then
-				_G[v.args]:play()
+				if v.args ~= "map" then
+					self.lastSong = love.audio.newSource("audio/music/" .. v.args .. ".ogg")
+					self.lastSong:setLooping(true)
+					self.lastSong:play()
+				else
+					tiled:playCurrentSong()
+				end
 			elseif cmd == "sleep" then
 				self.sleep = v.args
 			elseif cmd == "spawncharacter" then

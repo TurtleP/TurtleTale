@@ -1,6 +1,8 @@
 return
 {	
 	{"setmap", "indoors"},
+    {"stopmusic"},
+    {"playmusic", "sleeping"},
     {"spawncharacter", {"turtle", 32, 64}},
     {"freezeplayer"},
 	{"fadein", 0.15},
@@ -16,6 +18,8 @@ return
     {"sleep", 1},
     {"dialog", {"turtle", "I don't wanna wake up. Just five more minut--"}},
     {"sleep", 0.2},
+    {"stopmusic"},
+    {"playmusic", "danger"},
     {"shake", 8},
     {"sleep", 0.5},
     {"dofunction", {"player", "use", true}},

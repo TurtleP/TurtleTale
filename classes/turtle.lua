@@ -101,8 +101,12 @@ function turtle:update(dt)
             self.speedx = 0
         end
     else
-        if self.speedy == 0 then
-            self.speedx = 0
+        if self.punching then
+            if self.scale == 1 then
+                self.speedx = self.maxWalkSpeed + 15
+            else
+                self.speedx = -self.maxWalkSpeed - 15
+            end
         end
     end
 
@@ -141,22 +145,17 @@ function turtle:update(dt)
         end
     else
         if self.state == "punch" then
-            if self.quadi < #turtleQuads[self.state] then
-                self.timer = self.timer + 6 * dt
-            else
-                if self.state == "punch" then
-                    local add = self.width + 12
-                    if self.scale == -1 then
-                        add = -12
-                    end
+            self.timer = self.timer + 14 * dt
 
-                    local check = checkrectangle(self.x + add, self.y + 8, 4, 4, {"hermit"})
-                    if #check > 0 then
-                        local v = check[1][2]
-                        v:shake(math.random(1, 2))
-                    end
-                end
-                self:setState("idle") --blank cause no state?
+            local add = self.width + 12
+            if self.scale == -1 then
+                add = -12
+            end
+
+            local check = checkrectangle(self.x + add, self.y + 8, 4, 4, {"hermit"})
+            if #check > 0 then
+                local v = check[1][2]
+                v:shake(math.random(1, 2))
             end
         end
 
@@ -412,8 +411,13 @@ function turtle:stopJump()
     end
 end
 
-function turtle:punch()
-    self:setState("punch")
+function turtle:punch(move)
+    if move then
+        self:setState("punch")
+    else
+        self:setState("idle")
+    end
+    self.punching = move
 end
 
 function turtle:setState(state)

@@ -51,8 +51,20 @@ function tiled:setMap(map)
     
     self:loadData("top")
 
-    if state == "game" then --gg
-        gameCreateTables()
+    if self.map.properties.song then
+        if self.songName and self.songName ~= self.map.properties.song then
+            self.song:stop()
+            self.song = nil
+
+            collectgarbage()
+            collectgarbage()
+        end
+
+        if not self.song then
+            self.song = love.audio.newSource("audio/music/" .. self.map.properties.song .. ".ogg")
+            self.song:setLooping(true)
+            self.songName = self.map.properties.song
+        end
     end
 end
 
@@ -99,6 +111,14 @@ function tiled:loadData(screen)
             else
                 table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
             end
+        end
+    end
+end
+
+function tiled:playCurrentSong()
+    if self.song then
+        if not self.song:isPlaying() then
+            self.song:play()
         end
     end
 end

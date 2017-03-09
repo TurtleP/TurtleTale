@@ -1,7 +1,7 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "0.18.0",
+  tiledversion = "0.18.1",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 50,
@@ -9,7 +9,9 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextobjectid = 27,
-  properties = {},
+  properties = {
+    ["song"] = "beach"
+  },
   tilesets = {
     {
       name = "tiles",
@@ -66,7 +68,7 @@ return {
     {
       type = "objectgroup",
       name = "topObjects",
-      visible = true,
+      visible = false,
       opacity = 1,
       offsetx = 0,
       offsety = 0,

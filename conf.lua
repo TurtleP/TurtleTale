@@ -4,4 +4,5 @@ function love.conf(t)
 	t.window.vsync = true
 	t.console = true
 	t.identity = "Turtle-Tale"
+	t.window.fullscreen = true
 end

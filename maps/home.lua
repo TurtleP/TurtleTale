@@ -1,7 +1,7 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "0.18.0",
+  tiledversion = "0.18.1",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 25,
@@ -10,7 +10,8 @@ return {
   tileheight = 16,
   nextobjectid = 8,
   properties = {
-    ["background"] = 3
+    ["background"] = 3,
+    ["song"] = "cliffs"
   },
   tilesets = {
     {

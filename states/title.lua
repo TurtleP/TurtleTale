@@ -1,6 +1,6 @@
 function titleInit()
     --menu stuff below
-	tiled:setMap("home")
+	home = love.graphics.newImage("maps/home.png")
 
 	love.graphics.setBackgroundColor(backgroundColors.midnight)
 
@@ -26,7 +26,7 @@ function titleInit()
     titleDoFade = false
 
 	if not titleSong then
-		titleSong = love.audio.newSource("audio/title.ogg")
+		titleSong = love.audio.newSource("audio/music/title.ogg")
 		titleSong:setLooping(true)
 	end
 	
@@ -85,6 +85,8 @@ function titleDraw()
 	love.graphics.draw(backgroundImages["home"][2], 0, -16)
 
 	tiled:renderBackground()
+
+	love.graphics.draw(home, 0, 0)
 
 	for k, v in ipairs(clouds) do
 		v:draw()
