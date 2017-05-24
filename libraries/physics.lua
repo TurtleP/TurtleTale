@@ -36,14 +36,14 @@ function physicsupdate(dt)
 			if ver == false then
 				objData.y = objData.y + objData.speedy * dt
 			end
-				
-			if objData.remove then
-				table.remove(objects[objName], objIndex)
-			end
+		end
 
-			if objData.update then
-				objData:update(dt)
-			end
+		if objData.remove then
+			table.remove(objects[objName], objIndex)
+		end
+
+		if objData.update then
+			objData:update(dt)
 		end
 	end
 end

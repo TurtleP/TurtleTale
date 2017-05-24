@@ -2,10 +2,10 @@
 
 >>1.21.17 : The Obligatory License Update
 - Fixed custscenes not freezing the player
-    - Caused from spinning and entering a "freeze" cutscene
+	- Caused from spinning and entering a "freeze" cutscene
 - Fixed the "two heart" glitch where pits give game overs too quickly
 - Fixed respawning positions from pit falls
 - Changed "spin" state jump height -- reduced by 25%
-    - You can still jump over one block (or so)
+	- You can still jump over one block (or so)
 - Fixed not being able to turn around in any "special" state
-    - Spin in particular
+	- Spin in particular

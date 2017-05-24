@@ -24,6 +24,8 @@ function love.load()
 	require 'classes.dialog'
 	require 'classes.barrier'
 	require 'classes.hitnumber'
+	require 'classes.chest'
+	require 'classes.crate'
 
 	require 'classes.enemies.phoenix'
 	require 'classes.enemies.hermit'
@@ -131,6 +133,18 @@ function love.load()
 		bookQuads[x] = love.graphics.newQuad((x - 1) * 32, 0, 32, 32, bookImage:getWidth(), bookImage:getHeight())
 	end
 
+	chestImage = love.graphics.newImage("graphics/game/chest.png")
+	chestQuads = {}
+	for i = 1, 5 do
+		chestQuads[i] = love.graphics.newQuad((i - 1) * 32, 0, 32, 32, chestImage:getWidth(), chestImage:getHeight())
+	end
+
+	crateImage = love.graphics.newImage("graphics/game/crate.png")
+	crateQuads = {}
+	for i = 1, 5 do
+		crateQuads[i] = love.graphics.newQuad((i - 1) * 16, 0, 16, 16, crateImage:getWidth(), crateImage:getHeight())
+	end
+
 	bookPrefabImage = love.graphics.newImage("graphics/game/book.png")
 
 	introImage = love.graphics.newImage("graphics/intro/intro.png")
@@ -176,7 +190,8 @@ function love.load()
 			love.graphics.newImage("graphics/backgrounds/home_mountains.png"), 
 			love.graphics.newImage("graphics/backgrounds/home_day.png")
 		},
-		["sky"] = love.graphics.newImage("graphics/backgrounds/sky.png")
+		["sky"] = love.graphics.newImage("graphics/backgrounds/sky.png"),
+		["cave"] = love.graphics.newImage("graphics/backgrounds/cave.png")
 	}
 
 	jumpSound = love.audio.newSource("audio/jump.ogg")
@@ -185,7 +200,8 @@ function love.load()
 	gameOverSound = love.audio.newSource("audio/gameover.ogg")
 	duckSound = love.audio.newSource("audio/duck.ogg")
 	pitDeathSound = love.audio.newSource("audio/pit.ogg")
-
+	chargeSound = love.audio.newSource("audio/charge.ogg")
+	
 	menuFont = love.graphics.newFont("graphics/PressStart2P.ttf", 16)
 	smallFont = love.graphics.newFont("graphics/PressStart2P.ttf", 8)
 	

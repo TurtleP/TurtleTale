@@ -1,196 +1,202 @@
 local tiled = {}
 
 function tiled:init()
-    self.mapWidth = {["top"] = 0, ["bottom"] = 0}
-    self.mapHeight = 15
+	self.mapWidth = {["top"] = 0, ["bottom"] = 0}
+	self.mapHeight = 15
 
-    self.objects = {}
+	self.objects = {}
 
-    self.music = {["top"] = "", ["bottom"] = ""}
-    self.background = nil
+	self.music = {["top"] = "", ["bottom"] = ""}
+	self.background = nil
 
-    self.tiles = nil
+	self.tiles = nil
 end
 
 function tiled:loadMap(path)
-    self:init()
+	self:init()
 
-    self.map = require(path)
+	self.map = require(path)
 
-    self:loadData("top")
-    self:loadData("bottom")
+	self:loadData("top")
+	self:loadData("bottom")
 end
 
 function tiled:cacheMaps()
-    self:init()
+	self:init()
 
-    self.maps = {}
-    
-    local files = 
-    {
-        "home",
-        "indoors",
-        "beach",
-        "beach2",
-        "cliff",
-        "throne",
-        "pathway"
-    }
+	self.maps = {}
+	
+	local files = 
+	{
+		"home",
+		"indoors",
+		"beach",
+		"beach2",
+		"cliff",
+		"throne",
+		"pathway",
+		"pathway2",
+		"cave"
+	}
 
-    for k = 1, #files do
-        self.maps[files[k]] = require("maps/" .. files[k])
-    end
+	for k = 1, #files do
+		self.maps[files[k]] = require("maps/" .. files[k])
+	end
 end
 
 function tiled:setMap(map)
-    self:init()
+	self:init()
 
-    self.map = self.maps[map]
+	self.map = self.maps[map]
 
-    self.currentMap = map
-    
-    self:loadData("top")
+	self.currentMap = map
+	
+	self:loadData("top")
 
-    if self.map.properties.song then
-        if self.songName and self.songName ~= self.map.properties.song then
-            self.song:stop()
-            self.song = nil
+	if self.map.properties.song then
+		if self.songName and self.songName ~= self.map.properties.song then
+			self.song:stop()
+			self.song = nil
 
-            collectgarbage()
-            collectgarbage()
-        end
+			collectgarbage()
+			collectgarbage()
+		end
 
-        if not self.song then
-            self.song = love.audio.newSource("audio/music/" .. self.map.properties.song .. ".ogg")
-            self.song:setLooping(true)
-            self.songName = self.map.properties.song
-        end
-    end
+		if not self.song then
+			self.song = love.audio.newSource("audio/music/" .. self.map.properties.song .. ".ogg")
+			self.song:setLooping(true)
+			self.songName = self.map.properties.song
+		end
+	end
 end
 
 function tiled:loadData(screen)
-    local mapData, entityData = self.map.layers, {}
+	local mapData, entityData = self.map.layers, {}
 
-    if screen == "top" then
-        if love.filesystem.isFile("maps/" .. self.currentMap .. ".png") then
-            self.tiles = love.graphics.newImage("maps/" .. self.currentMap .. ".png")
-        end
-        
-        if backgroundImages[self.currentMap] then
-            if backgroundImages[self.currentMap][self.map.properties.background] then
-                self.background = backgroundImages[self.currentMap][self.map.properties.background]
-            end
-        end
-    end
+	if screen == "top" then
+		if love.filesystem.isFile("maps/" .. self.currentMap .. ".png") then
+			self.tiles = love.graphics.newImage("maps/" .. self.currentMap .. ".png")
+		end
+		
+		if backgroundImages[self.currentMap] then
+			if backgroundImages[self.currentMap][self.map.properties.background] then
+				self.background = backgroundImages[self.currentMap][self.map.properties.background]
+			else
+				self.background = backgroundImages[self.currentMap]
+			end
+		end
+	end
 
-    for k, v in ipairs(mapData) do
-        if v.type == "tilelayer" then
-            if v.name == screen .. "Tiles" then
-                mapData = self.map.layers[k].data
+	for k, v in ipairs(mapData) do
+		if v.type == "tilelayer" then
+			if v.name == screen .. "Tiles" then
+				mapData = self.map.layers[k].data
 
-                self.mapWidth[screen] = self.map.width
-                self.mapHeight = self.map.layers[k].properties.height
+				self.mapWidth[screen] = self.map.width
+				self.mapHeight = self.map.layers[k].properties.height
 
-                self.music[screen] = self.map.layers[k].properties.music
-            end
-        elseif v.type == "objectgroup" then
-            if v.name == screen .. "Objects" then
-                entityData = self.map.layers[k].objects
-            end
-        end
-    end
+				self.music[screen] = self.map.layers[k].properties.music
+			end
+		elseif v.type == "objectgroup" then
+			if v.name == screen .. "Objects" then
+				entityData = self.map.layers[k].objects
+			end
+		end
+	end
 
-    for k, v in ipairs(entityData) do
-        if not self.objects[v.name] then
-            self.objects[v.name] = {}
-        end
+	for k, v in ipairs(entityData) do
+		if not self.objects[v.name] then
+			self.objects[v.name] = {}
+		end
 
-        if _G[v.name] then
-            if v.name == "tile" then
-                table.insert(self.objects["tile"], tile:new(v.x, v.y, v.width, v.height))
-            else
-                table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
-            end
-        end
-    end
+		if _G[v.name] then
+			if v.name == "tile" then
+				table.insert(self.objects["tile"], tile:new(v.x, v.y, v.width, v.height))
+			else
+				table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
+			end
+		end
+	end
 end
 
 function tiled:playCurrentSong()
-    if self.song then
-        if not self.song:isPlaying() then
-            self.song:play()
-        end
-    end
+	if self.song then
+		if not self.song:isPlaying() then
+			self.song:play()
+		end
+	end
 end
 
 function tiled:getNextMap(dir)
-    if not self.objects["trigger"] then
-        return false
-    end
+	if not self.objects["trigger"] then
+		return false
+	end
 
-    for i = 1, #self.objects["trigger"] do
-        local v = self.objects["trigger"][i]
+	for i = 1, #self.objects["trigger"] do
+		local v = self.objects["trigger"][i]
 
-        if dir == "left" and v.x == 0 then
-            return true
-        elseif dir == "right" and v.x == self:getWidth("top") * 16 then
-            return true
-        end 
-    end
+		if dir == "left" and v.x == 0 then
+			return true
+		elseif dir == "right" and v.x == self:getWidth("top") * 16 then
+			return true
+		end 
+	end
 
-    return false
+	return false
 end
 
 function tiled:renderBackground()
-    if self.background then
-        if state ~= "title" then
-            love.graphics.draw(self.background, 0, 0)
-        end
-    end
+	if self.background then
+		if state ~= "title" then
+			for x = 1, math.ceil((self.map.width * 16) / self.background:getWidth()) do
+				love.graphics.draw(self.background, (x - 1) * 400, 0)
+			end
+		end
+	end
 
-    if self.tiles then
-        love.graphics.draw(self.tiles, 0, 0)
-    end
+	if self.tiles then
+		love.graphics.draw(self.tiles, 0, 0)
+	end
 end
 
 function tiled:getBackgroundColor()
-    return backgroundColors[backgroundColori[player.screen]]
+	return backgroundColors[backgroundColori[player.screen]]
 end
 
 function tiled:changeSong(screen)
-    local otherScreen = "top"
-    if screen == "top" then
-        otherScreen = "bottom"
-    end
-    _G[self.music[otherScreen] .. "Song"]:stop()
-    playSound(_G[self.music[screen] .. "Song"])
+	local otherScreen = "top"
+	if screen == "top" then
+		otherScreen = "bottom"
+	end
+	_G[self.music[otherScreen] .. "Song"]:stop()
+	playSound(_G[self.music[screen] .. "Song"])
 end
 
 function tiled:getWidth(screen)
-    return self.mapWidth[screen]
+	return self.mapWidth[screen]
 end
 
 function tiled:getTiles()
-    return self.objects["tile"]
+	return self.objects["tile"]
 end
 
 function tiled:getObjects(name)
-    if type(name) == "table" then
-        local ret = {}
+	if type(name) == "table" then
+		local ret = {}
 
-        for i = 1, #name do
-            if self.objects[name[i]] then
-                table.insert(ret, self.objects[name[i]])
-            end
-        end
+		for i = 1, #name do
+			if self.objects[name[i]] then
+				table.insert(ret, self.objects[name[i]])
+			end
+		end
 
-        return ret
-    end
-    return self.objects[name]
+		return ret
+	end
+	return self.objects[name]
 end
 
 function tiled:getMapName()
-    return self.currentMap
+	return self.currentMap
 end
 
 return tiled

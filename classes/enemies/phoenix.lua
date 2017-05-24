@@ -1,25 +1,25 @@
 phoenix = class("phoenix")
 
 function phoenix:init(x, y)
-    self.x = x
-    self.y = y
+	self.x = x
+	self.y = y
 
-    self.width = 76
-    self.height = 50
+	self.width = 76
+	self.height = 50
 
-    self.animations =
-    {
-        ["flight"] = {rate = 8, anim = {1, 2, 3}},
-        ["glide"] = {rate = 2, anim = {4, 5}}
-    }
+	self.animations =
+	{
+		["flight"] = {rate = 8, anim = {1, 2, 3}},
+		["glide"] = {rate = 2, anim = {4, 5}}
+	}
 
 	self.mask = {}
 	
-    self.state = "flight"
+	self.state = "flight"
 
-    self.timer = 0
-    self.quadi = 1
-    self.offset = 0
+	self.timer = 0
+	self.quadi = 1
+	self.offset = 0
 	
 	self.active = true
 	
@@ -28,120 +28,120 @@ function phoenix:init(x, y)
 	
 	self.gravity = 0
 
-    self.fireTimer = 0.05
-    self.fireDuration = 2
-    self.scale = 1
+	self.fireTimer = 0.05
+	self.fireDuration = 2
+	self.scale = 1
 
-    self.offsetX = 0
+	self.offsetX = 0
 end
 
 function phoenix:update(dt)
-    self.timer = self.timer + self.animations[self.state].rate * dt
-    self.quadi = self.animations[self.state].anim[math.floor(self.timer % #self.animations[self.state].anim) + 1]
+	self.timer = self.timer + self.animations[self.state].rate * dt
+	self.quadi = self.animations[self.state].anim[math.floor(self.timer % #self.animations[self.state].anim) + 1]
 
-    if self.state == "glide" then
-        if self.speedx == 0 and self.speedy == 0 then
-            self.offset = math.sin(love.timer.getTime() * 6) * 4
-        else
-            self.offset = 0
-        end
-    else
+	if self.state == "glide" then
+		if self.speedx == 0 and self.speedy == 0 then
+			self.offset = math.sin(love.timer.getTime() * 6) * 4
+		else
+			self.offset = 0
+		end
+	else
 		self.offset = math.sin(love.timer.getTime() * 6) * 4
 	end
 
-    if self.flameThrower then
-        if self.fireDuration > 0 then
-            if self.fireTimer > 0 then
-                self.fireTimer = self.fireTimer - dt
-            else
-                table.insert(objects["phoenix"], fire:new(self.x + 12, self.y + 12 + self.offset, {-200, 200}))
-                self.fireTimer = 0.05
-            end
-            self.fireDuration = self.fireDuration - dt
-        else
-            self.flameThrower = false
-        end
-    end
+	if self.flameThrower then
+		if self.fireDuration > 0 then
+			if self.fireTimer > 0 then
+				self.fireTimer = self.fireTimer - dt
+			else
+				table.insert(objects["phoenix"], fire:new(self.x + 12, self.y + 12 + self.offset, {-200, 200}))
+				self.fireTimer = 0.05
+			end
+			self.fireDuration = self.fireDuration - dt
+		else
+			self.flameThrower = false
+		end
+	end
 end
 
 function phoenix:flamethrower(dir)
-    self.flameThrower = true
+	self.flameThrower = true
 end
 
 function phoenix:draw()
-    if self.showBook then
-        love.graphics.draw(bookPrefabImage, self.x + 24, (self.y + self.height) - 18)
-    end
+	if self.showBook then
+		love.graphics.draw(bookPrefabImage, self.x + 24, (self.y + self.height) - 18)
+	end
 
-    love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x + self.offsetX, self.y + self.offset, 0, self.scale, scale)
+	love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x + self.offsetX, self.y + self.offset, 0, self.scale, scale)
 end
 
 function phoenix:enableBook()
-    self.showBook = true
+	self.showBook = true
 end
 
 function phoenix:setScale(scale)
-    self.scale = scale
+	self.scale = scale
 
-    if scale == 1 then
-        self.offsetX = 0
-    elseif scale == -1 then
-        self.offsetX = self.width        
-    end
+	if scale == 1 then
+		self.offsetX = 0
+	elseif scale == -1 then
+		self.offsetX = self.width		
+	end
 end
 
 function phoenix:setState(state)
-    if self.state ~= state then
-        self.timer = 0
-        self.quadi = 1
-        self.state = state
-    end
+	if self.state ~= state then
+		self.timer = 0
+		self.quadi = 1
+		self.state = state
+	end
 end
 
 fire = class("fire")
 
 function fire:init(x, y, speed)
-    self.x = x
-    self.y = y
+	self.x = x
+	self.y = y
 
-    self.width = 8
-    self.height = 8
+	self.width = 8
+	self.height = 8
 
-    local ang = math.atan2(y - objects["player"][1].y, x - objects["player"][1].x)
+	local ang = math.atan2(y - objects["player"][1].y, x - objects["player"][1].x)
 
-    self.speedx = math.cos(ang) * speed[1] or 0
-    self.speedy = -math.sin(ang) * speed[2] or 0
+	self.speedx = math.cos(ang) * speed[1] or 0
+	self.speedy = -math.sin(ang) * speed[2] or 0
 
-    self.active = true
+	self.active = true
 
-    self.gravity = 0
+	self.gravity = 0
 
-    self.mask = 
-    {
-        true
-    }
+	self.mask = 
+	{
+		true
+	}
 
-    self.category = 4
+	self.category = 4
 
-    self.quadi = 1
-    self.timer = 0
+	self.quadi = 1
+	self.timer = 0
 end
 
 function fire:update(dt)
-    self.timer = self.timer + 4 * dt
-    self.quadi = math.floor(self.timer % 5) + 1
+	self.timer = self.timer + 4 * dt
+	self.quadi = math.floor(self.timer % 5) + 1
 end
 
 function fire:draw()
-    love.graphics.draw(fireImage, fireQuads[self.quadi], self.x, self.y)
+	love.graphics.draw(fireImage, fireQuads[self.quadi], self.x, self.y)
 end
 
 function fire:passiveCollide(name, data)
-    
+	
 end
 
 function fire:downCollide(name, data)
-    if name == "tile" then
-        self.remove = true
-    end
+	if name == "tile" then
+		self.remove = true
+	end
 end

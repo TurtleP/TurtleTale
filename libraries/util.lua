@@ -171,7 +171,7 @@ function string:split(delimiter) --Not by me
 end
 
 function string:replace(position, replace)
-    return self:sub(1, position - 1) .. replace .. self:sub(position + 1)
+	return self:sub(1, position - 1) .. replace .. self:sub(position + 1)
 end
 
 Color =

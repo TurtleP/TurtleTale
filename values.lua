@@ -1,5 +1,5 @@
 jumpForce = 2 * 60
-jumpForceAdd = 1.5 * 60
+jumpForceAdd = 1 * 60
 
 SPAWN_X = 0
 SPAWN_Y = 0

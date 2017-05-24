@@ -9,13 +9,13 @@ function gameInit(map)
 
 	gameOver = false
 
-    gameFade = 1
+	gameFade = 1
 
-    fadeValue = 1
+	fadeValue = 1
 
-    otherFade = 1
+	otherFade = 1
 
-    gameFadeOut = false
+	gameFadeOut = false
 
 	eventSystem = eventsystem:new()
 
@@ -43,23 +43,23 @@ function gameInit(map)
 	if cutscenes[currentScript] then
 		eventSystem:decrypt(cutscenes[currentScript][1])
 	end
-
+	print(tiled:getMapName())
 	mapScroll = 0
 	cameraObjects = {}
 end
 
 function gameCreateTables()
 	scrollValues =
-    {
-        ["top"] = {0, 0},
-        ["bottom"] = {0, 0}
-    }
+	{
+		["top"] = {0, 0},
+		["bottom"] = {0, 0}
+	}
 	
-    objects["tile"] = tiled:getTiles()
+	objects["tile"] = tiled:getTiles()
 
 	if not objects["player"] then
 		objects["player"] = {}
-    	objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
+		objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
 	else
 		objects["player"][1].x, objects["player"][1].y = SPAWN_X, SPAWN_Y
 
@@ -80,6 +80,8 @@ function gameCreateTables()
 
 	objects["phoenix"] = {}
 	objects["hermit"] = tiled:getObjects("hermit")
+	objects["chest"] = tiled:getObjects("chest")
+	objects["crate"] = tiled:getObjects("crate")
 
 	hitNumbers = {}
 
@@ -87,10 +89,10 @@ function gameCreateTables()
 end
 
 function cameraScroll()
-    local MAP_WIDTH = tiled:getWidth("top")
-    local self = objects["player"][1]
+	local MAP_WIDTH = tiled:getWidth("top")
+	local self = objects["player"][1]
 
-    if tiled:getWidth("top") > 25 then
+	if tiled:getWidth("top") > 25 then
 		if mapScroll >= 0 and mapScroll + love.graphics.getWidth() <= MAP_WIDTH * 16 then
 			if self.x > mapScroll + love.graphics.getWidth() * 1 / 2 then
 				mapScroll = self.x - love.graphics.getWidth() * 1 / 2
@@ -150,7 +152,7 @@ function gameUpdate(dt)
 		shakeValue = math.max(shakeValue - dt / 0.3, 0)
 	end
 
-    if gameFadeOut then
+	if gameFadeOut then
 		if gameFade < 1 then
 			gameFade = math.min(gameFade + fadeValue * dt, 1)
 		else
@@ -176,7 +178,7 @@ function gameUpdate(dt)
 		end
 	end
 
-    physicsupdate(dt)
+	physicsupdate(dt)
 
 	eventSystem:update(dt)
 
@@ -194,7 +196,7 @@ function gameUpdate(dt)
 		end
 	end
 
-    for k, v in ipairs(clouds) do
+	for k, v in ipairs(clouds) do
 		v:update(dt)
 	end
 
@@ -210,7 +212,7 @@ function gameUpdate(dt)
 end
 
 function gameDraw()
-    love.graphics.setScreen("top")
+	love.graphics.setScreen("top")
 
 	love.graphics.setColor(255, 255, 255)
 
@@ -246,7 +248,7 @@ function gameDraw()
 		v:draw()
 	end
 
-    for i, v in ipairs(cameraObjects) do
+	for i, v in ipairs(cameraObjects) do
 		if v[2].draw then
 			v[2]:draw()
 		end
@@ -308,11 +310,11 @@ function gameKeyPressed(key)
 		return
 	end
 
-    if key == controls["right"] then
-        objects["player"][1]:moveRight(true)
-    elseif key == controls["left"] then
-        objects["player"][1]:moveLeft(true)
-    elseif key == controls["jump"] then
+	if key == controls["right"] then
+		objects["player"][1]:moveRight(true)
+	elseif key == controls["left"] then
+		objects["player"][1]:moveLeft(true)
+	elseif key == controls["jump"] then
 		objects["player"][1]:jump()
 	elseif key == controls["up"] then
 		objects["player"][1]:use(true)
@@ -325,10 +327,10 @@ end
 
 function gameKeyReleased(key)
 	if key == controls["right"] then
-        objects["player"][1]:moveRight(false)
-    elseif key == controls["left"] then
-        objects["player"][1]:moveLeft(false)
-    elseif key == controls["jump"] then
+		objects["player"][1]:moveRight(false)
+	elseif key == controls["left"] then
+		objects["player"][1]:moveLeft(false)
+	elseif key == controls["jump"] then
 		objects["player"][1]:stopJump()
 	elseif key == controls["down"] then
 		objects["player"][1]:duck(false)
@@ -348,5 +350,5 @@ function gameNewDialog(speaker, text)
 end
 
 function getScrollValue()
-    return math.floor(scrollValues[objects["player"][1].screen][1])
+	return math.floor(scrollValues[objects["player"][1].screen][1])
 end

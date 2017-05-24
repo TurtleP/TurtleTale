@@ -1,10 +1,10 @@
 function titleInit()
-    --menu stuff below
+	--menu stuff below
 	home = love.graphics.newImage("maps/home.png")
 
 	love.graphics.setBackgroundColor(backgroundColors.midnight)
 
-    clouds = {}
+	clouds = {}
 	for x = 1, 8 do
 		clouds[x] = cloud:new(math.random(love.graphics.getWidth()), math.random(love.graphics.getHeight() * 0.05, love.graphics.getHeight() * 0.4), math.random(30, 35))
 	end
@@ -22,8 +22,8 @@ function titleInit()
 	menuSelection = 1
 	menuSelecitonTimer = 0
 
-    titleFade = 0
-    titleDoFade = false
+	titleFade = 0
+	titleDoFade = false
 
 	if not titleSong then
 		titleSong = love.audio.newSource("audio/music/title.ogg")
@@ -41,17 +41,17 @@ function titleInit()
 end
 
 function titleUpdate(dt)
-    for k, v in pairs(clouds) do
+	for k, v in pairs(clouds) do
 		v:update(dt)
 	end
 
-    if titleDoFade then
-        titleFade = math.min(titleFade + 1.2 * dt, 1)
+	if titleDoFade then
+		titleFade = math.min(titleFade + 1.2 * dt, 1)
 
-        if titleFade == 1 then
-            files[menuSelection]:click()
-        end
-    end
+		if titleFade == 1 then
+			files[menuSelection]:click()
+		end
+	end
 
 	menuSelecitonTimer = menuSelecitonTimer + 12 * dt
 	selectionQuadi = math.floor(menuSelecitonTimer % 8) + 1
@@ -70,7 +70,7 @@ function titleUpdate(dt)
 end
 
 function titleDraw()
-    love.graphics.setScreen("top")
+	love.graphics.setScreen("top")
 
 	love.graphics.setColor(255, 255, 255, 255)
 
@@ -79,7 +79,7 @@ function titleDraw()
 	love.graphics.draw(backgroundImages["home"][1], 0, 0)
 	
 	for k, v in ipairs(stars) do
-	    love.graphics.rectangle("fill", v[1], v[2], 1, 1)
+		love.graphics.rectangle("fill", v[1], v[2], 1, 1)
 	end
 
 	love.graphics.draw(backgroundImages["home"][2], 0, -16)
@@ -105,7 +105,7 @@ function titleDraw()
 	love.graphics.setDepth(NORMAL_DEPTH)
 
 	love.graphics.setColor(0, 0, 0, 255 * titleFade)
-    love.graphics.rectangle("fill", 0, 0, 400, 240)
+	love.graphics.rectangle("fill", 0, 0, 400, 240)
 
 	--BOTTOM SCREEN
 
@@ -137,12 +137,12 @@ function titleDraw()
 		end
 	end
 
-    love.graphics.setColor(0, 0, 0, 255 * titleFade)
-    love.graphics.rectangle("fill", 0, 0, 320, 240)
+	love.graphics.setColor(0, 0, 0, 255 * titleFade)
+	love.graphics.rectangle("fill", 0, 0, 320, 240)
 end
 
 function titleKeyPressed(key)
-    if not menuStart then
+	if not menuStart then
 		menuStart = true
 		return
 	end
@@ -163,11 +163,11 @@ function titleKeyPressed(key)
 		menuSelection = math.max(menuSelection - 1, 1)
 	elseif key == "a" then
 		if not deleteMode then
-       		titleDoFade = true
+	   		titleDoFade = true
 		else
 			files[menuSelection]:delete()
 		end
-    elseif key == "rbutton" then
+	elseif key == "rbutton" then
 		deleteMode = not deleteMode
 
 		if not deleteMode then
@@ -179,12 +179,12 @@ function titleKeyPressed(key)
 end
 
 function titleMousePressed(x, y, button)
-    if not menuStart then
+	if not menuStart then
 		menuStart = true
 		return
 	else
-        for k, v in ipairs(files) do
-            if v:inside(x, y) then
+		for k, v in ipairs(files) do
+			if v:inside(x, y) then
 				menuSelection = k
 
 				if menuSelection ~= k then
@@ -196,9 +196,9 @@ function titleMousePressed(x, y, button)
 						files[menuSelection]:delete()
 					end
 				end
-            end
-        end
-    end
+			end
+		end
+	end
 end
 
 function titleEnableCirclePad(enable)
@@ -226,8 +226,8 @@ function titleEnableCirclePad(enable)
 
 	local path = "sdmc:/LovePotion/TurtleTale"
 
-    if _EMULATEHOMEBREW then
-        path = love.filesystem.getSaveDirectory() 
+	if _EMULATEHOMEBREW then
+		path = love.filesystem.getSaveDirectory() 
 	end
 
 	file = io.open(path .. "/save.lua", "a+")
