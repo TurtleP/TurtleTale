@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" nextobjectid="8">
  <properties>
-  <property name="background" type="int" value="3"/>
+  <property name="background" value="home_day"/>
   <property name="song" value="cliffs"/>
  </properties>
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">

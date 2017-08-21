@@ -14,7 +14,7 @@ function hud:update(dt)
 end
 
 function hud:draw()
-	if eventSystem:isRunning() then
+	if eventSystem and eventSystem:isRunning() then
 		return
 	end
 	

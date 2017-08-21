@@ -7,6 +7,10 @@ if love.system.getOS() ~= "3ds" then
 		return models[_MODEL]
 	end
 
+	function love.system.getRegion()
+		return "USA"
+	end
+
 	function love.system.setModel(s)
 		scale = math.max(s - 1, 1)
 		_MODEL = s
@@ -88,7 +92,7 @@ if love.system.getOS() ~= "3ds" then
 		["right"] = "right",
 		["down"] = "down",
 		["rbutton"] = "/",
-		["lbutton"] = "rcontrol",
+		["lbutton"] = ",",
 		["cpadright"] = "",
 		["cpadleft"] = "",
 		["cpadup"] = "",
@@ -128,7 +132,7 @@ if love.system.getOS() ~= "3ds" then
 
 	local oldMousePressed = love.mousepressed
 	function love.mousepressed(x, y, button)
-		x, y = math.clamp(0, x - 40, 320), math.clamp(0, y - 240, 240)
+		x, y = math.clamp(0, x, 320), math.clamp(0, y - 240, 240)
 
 		if oldMousePressed then
 			oldMousePressed(x, y, 1)

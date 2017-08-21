@@ -1,6 +1,18 @@
-hermit = class("hermit")
+hermit = class("hermit", ai)
 
-function hermit:init(x, y)
+local hermitImage = love.graphics.newImage("graphics/game/enemies/hermit.png")
+local hermitQuads = {}
+local hermitStates = {{"walk", 4}, {"idle", 4}, {"attack", 8}}
+for y = 1, 3 do
+	hermitQuads[hermitStates[y][1]] = {}
+	for x = 1, hermitStates[y][2] do
+		table.insert(hermitQuads[hermitStates[y][1]], love.graphics.newQuad((x - 1) * 16, (y - 1) * 16, 16, 16, hermitImage:getWidth(), hermitImage:getHeight()))
+	end
+end
+
+function hermit:init(x, y, properties)
+	ai.init(self, x, y)
+
 	self.x = x
 	self.y = y
 
@@ -12,8 +24,6 @@ function hermit:init(x, y)
 		true, true, true
 	}
 
-	self.state = "idle"
-
 	self.quadi = 1
 	self.timer = 0
 
@@ -24,123 +34,46 @@ function hermit:init(x, y)
 	self.speedx = 0
 	self.speedy = 0
 
-	self.idleTime = math.random(1, 2)
-	self.walkTime = math.random(2, 4)
-
 	self.scale = -1
-	self.offsetX = 14
+	self.offsets = {0, 14}
 
-	self.health = 4
-	self.shakeTimer = 0
-end
-
-function hermit:shake(val)
-	if self.shakeTimer == 0 then
-		self.shakeTimer = 0.5
-		table.insert(hitNumbers, hitnumber:new(self.x + self.width / 2 - 2.5, self.y, val))
-		self:addLife(val)
-	end
+	self.dialog = properties.speak
+	self.render = false
 end
 
 function hermit:update(dt)
-	if self.shakeTimer > 0 then
-		self.shakeTimer = math.max(self.shakeTimer - dt, 0)
-		self.speedx = 0
-		return
-	end
+	if self.dialog then
+		local ret = checkrectangle(self.x + 4, self.y, self.width - 8, self.height, {"player"}, self)
 
-	if self.walkTime > 0 then
-		self.walkTime = self.walkTime - dt
-		self.speedx = 32 * -self.scale
-	else
-		self.speedx = 0
-		if self.idleTime > 0 then
-			self.idleTime = self.idleTime - dt
+		self.render = #ret > 0
+
+		if not self.render then
+			return
 		else
-			self:setDirection(-self.scale)
-			self.idleTime = math.random(1, 2)
-			self.walkTime = math.random(2, 4)
+			if ret[1][2].useKey then
+				self:speak(self.dialog)
+			end
 		end
 	end
 
-	if self.speedx ~= 0 then
-		self.state = "walk"
-	else
-		if not self.attacking then
-			self.state = "idle"
-		end
-	end
-
-	--check for gaps
-	if self.walkTime > 0 then
-		if #checkrectangle(self.x + self.width + self.speedx * dt, self.y + self.height, self.width, self.height, {"tile"}) == 0 then
-			self.speedx = 32 * -self.scale
-			self:setDirection(-self.scale)
-		end
-	end
+	ai.passiveThink(self, dt)
 
 	self.timer = self.timer + 6 * dt
 	self.quadi = math.floor(self.timer % #hermitQuads[self.state]) + 1
 end
 
 function hermit:draw()
-	local offset = 0
-	if self.shakeTimer > 0 then
-		offset = math.sin(love.timer.getTime() * 8)
-	end
-	love.graphics.draw(hermitImage, hermitQuads[self.state][self.quadi], self.x + self.offsetX + offset, self.y - 4, 0, self.scale, 1)
-end
+	love.graphics.draw(hermitImage, hermitQuads[self.state][self.quadi], self.x + self:getOffset(), self.y - 4, 0, self.scale, 1)
 
-function hermit:addLife(health)
-	self.health = math.max(self.health - health, 0)
-
-	if self.health == 0 then
-		self.remove = true
-	end
-end
-
-function hermit:upCollide(name, data)
-	if name == "player" then
-		return false
-	end
-end
-
-function hermit:rightCollide(name, data)
-	if name == "player" then
-		return false
+	if not self.render then
+		return
 	end
 
-	if name == "tile" then
-		self.speedx = 32 * -self.scale
-		self:setDirection(-self.scale)
-		
-		--return false
-	end
-end
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.draw(selectionVerImage, selectionVerQuads[self.quadi], (self.x + (self.width / 2)) - 6, (self.y - 19) + math.sin(love.timer.getTime() * 4))
 
-function hermit:downCollide(name, data)
-	if name == "player" then
-		return false
-	end
-end
+	love.graphics.setColor(255, 0, 0)
+	love.graphics.draw(selectionVerImage, selectionVerQuads[self.quadi], (self.x + (self.width / 2)) - 5, (self.y - 18) + math.sin(love.timer.getTime() * 4))
 
-function hermit:leftCollide(name, data)
-	if name == "player" then
-		return false
-	end
-
-	if name == "tile" then
-		self.speedx = 32 * -self.scale
-		self:setDirection(-self.scale)
-	end
-end
-
-function hermit:setDirection(dir)
-	self.scale = dir
-
-	if dir == 1 then
-		self.offsetX = -2
-	else
-		self.offsetX = 14
-	end
+	love.graphics.setColor(255, 255, 255)
 end

@@ -1,6 +1,19 @@
-turtle = class("turtle")
+turtle = class("turtle", entity)
+
+local turtleImage = love.graphics.newImage("graphics/player/turtle.png")
+local turtleQuads = {}
+local turtleAnimations = { {"idle", 4}, {"walk", 4}, {"jump", 3}, {"dead", 6}, {"duck", 6}, {"unduck", 5}, {"spin", 5}, {"punch", 4} }
+
+for y = 1, #turtleAnimations do
+	turtleQuads[turtleAnimations[y][1]] = {}
+	for x = 1, turtleAnimations[y][2] do
+		table.insert(turtleQuads[turtleAnimations[y][1]], love.graphics.newQuad((x - 1) * 12, (y - 1) * 20, 12, 20, turtleImage:getWidth(), turtleImage:getHeight()))
+	end
+end
 
 function turtle:init(x, y)
+	entity.init(self, x, y)
+
 	self.x = x
 	self.y = y
 
@@ -25,7 +38,9 @@ function turtle:init(x, y)
 
 	self.mask =
 	{
-		true, false, true, false, true
+		true, false, true, 
+		false, true, true,
+		true
 	}
 
 	self.rightKey = false
@@ -40,7 +55,7 @@ function turtle:init(x, y)
 		["punch"] = true,
 		["duck"] = true,
 		["unduck"] = true,
-		["spin"] = true
+		["spin"] = false
 	}
 
 	self.walkSpeed = 2
@@ -61,10 +76,11 @@ function turtle:init(x, y)
 	self.disableTimer = 0
 	self.invincibleTimer = 0
 	self.punchCoolDown = 0
+	self.punchTimer = turtlePunchDuration
 
 	self.changeMap = false
 
-	self.last = {false, false}
+	self.last = {0, 0}
 end
 
 function turtle:update(dt)
@@ -158,10 +174,11 @@ function turtle:update(dt)
 				add = -12
 			end
 
-			local check = checkrectangle(self.x + add, self.y + 8, 4, 4, {"hermit"})
-			if #check > 0 then
-				local v = check[1][2]
-				v:shake(math.random(1, 2))
+			self.punchTimer = self.punchTimer - dt
+			if self.punchTimer < 0 then
+				self.punching = false
+				self:setState("idle")
+				self.punchTimer = turtlePunchDuration
 			end
 		end
 
@@ -175,14 +192,16 @@ function turtle:update(dt)
 			end
 		end
 	end
-
-	if self.speedx ~= 0 and self.ducking then
-		if self.state == "duck" then
-			if self.quadi == #turtleQuads[self.state] then
-				self:setState("spin")
+	
+	if self.abilities["spin"] then
+		if self.speedx ~= 0 and self.ducking then
+			if self.state == "duck" then
+				if self.quadi == #turtleQuads[self.state] then
+					self:setState("spin")
+				end
 			end
+			self.timer = self.timer + 15 * dt
 		end
-		self.timer = self.timer + 15 * dt
 	end
 
 	if not love.keyboard.isDown(controls["down"]) then --gg ez
@@ -218,7 +237,10 @@ end
 
 function turtle:rightCollide(name, data)
 	if name == "hermit" then
-		self:addLife(-1)
+		if self.punching then
+			data:getPunched(self.scale)
+			self.speedx = -self.speedx / 2
+		end
 		return false
 	end
 
@@ -242,11 +264,39 @@ function turtle:rightCollide(name, data)
 			return false
 		end
 	end
+
+	if name == "spider" then
+		self:addLife(-1)
+		return false
+	end
+
+	if name == "health" then
+		data:collect(self)
+		return false
+	end
+
+	if name == "bat" then
+		if self.punching then
+			data:getPunched(self.scale)
+			self.speedx = -self.speedx / 2
+		else
+			self:addLife(-1)
+		end
+		return false
+	end
 end
 
 function turtle:leftCollide(name, data)
 	if name == "hermit" then
-		self:addLife(-1)
+		if self.punching then
+			data:getPunched(self.scale)
+			self.speedx = -self.speedx / 2
+		end
+		return false
+	end
+
+	if name == "health" then
+		data:collect(self)
 		return false
 	end
 
@@ -254,6 +304,11 @@ function turtle:leftCollide(name, data)
 		if self.state == "spin" then
 			self:duck(false)
 		end
+	end
+
+	if name == "spider" then
+		self:addLife(-1)
+		return false
 	end
 
 	if name == "crate" then
@@ -274,10 +329,34 @@ function turtle:leftCollide(name, data)
 			return false
 		end
 	end
+
+	if name == "bat" then
+		if self.punching then
+			data:getPunched(self.scale)
+			self.speedx = -self.speedx / 2
+		else
+			self:addLife(-1)
+		end
+		return false
+	end
 end
 
 function turtle:upCollide(name, data)
 	if name == "hermit" then
+		return false
+	end
+
+	if name == "spider" then
+		self:addLife(-1)
+		return false
+	end
+
+	if name == "health" then
+		data:collect(self)
+		return false
+	end
+
+	if name == "bat" then
 		self:addLife(-1)
 		return false
 	end
@@ -287,6 +366,16 @@ function turtle:downCollide(name, data)
 	self.jumping = false
 
 	if name == "hermit" then
+		return false
+	end
+
+	if name == "spider" then
+		self:hop()
+		data:die()
+		return false
+	end
+
+	if name == "bat" then
 		self:addLife(-1)
 		return false
 	end
@@ -294,11 +383,18 @@ function turtle:downCollide(name, data)
 	if name == "tile" then
 		self.last = {self.x, data.y - self.height}
 	end
+
+	if name == "health" then
+		data:collect(self)
+		return false
+	end
 end
 
-function turtle:addLife(health)
-	if self.state == "duck" then
-		return
+function turtle:addLife(health, isPit)
+	if not isPit then
+		if self.state == "duck" then
+			return
+		end
 	end
 
 	if health < 0 then
@@ -309,7 +405,10 @@ function turtle:addLife(health)
 		end
 	end
 	
-	self.health = math.max(self.health + health, 0)
+	if turtleInvincible then
+		return
+	end
+	self.health = util.clamp(self.health + health, 0, self.maxHealth)
 
 	if self.health == 0 then
 		self:die()
@@ -321,10 +420,14 @@ function turtle:die(pit) -- rip :(
 	if pit then
 		shakeValue = 4
 		pitDeathSound:play()
-		self:addLife(-1)
+		self:addLife(-1, true)
 	
 		if self.health > 0 then
-			self.x = self.last[1]
+			local off = 24 * self.scale
+			if self.jumping then
+				off = 0
+			end
+			self.x = self.last[1] - off
 			self.y = self.last[2]
 			
 			self.speedx = 0
@@ -369,29 +472,21 @@ end
 
 function turtle:moveRight(move)
 	if self.ducking and not self.frozen then
-		if not move or (move and self.state == "spin") then
-			return
-		end
+		return
 	end
 	self.rightKey = move
 end
 
 function turtle:moveLeft(move)
 	if self.ducking and not self.frozen then
-		if not move or (move and self.state == "spin") then
-			return
-		end
+		return
 	end
 	self.leftKey = move
 end
 
 function turtle:duck(move)
-	if self.speedy ~= 0 then
-		return
-	end
-
 	if move then
-		if self.state == "spin" then
+		if self.speedx ~= 0 or self.state == "spin" then
 			return
 		end
 	end
@@ -431,9 +526,13 @@ function turtle:duck(move)
 end
 
 function turtle:jump()
-	if not self.jumping and not self.dead then
+	if self.speedy == 0 and not self.jumping and not self.dead then
 		
-		self.speedy = -jumpForce - (math.abs(self.speedx) / self.maxWalkSpeed) * jumpForceAdd * 0.5
+		local speed = self.speedx
+		if self.punching then
+			self.speed = self.maxWalkSpeed
+		end
+		self.speedy = -jumpForce - (math.abs(speed) / self.maxWalkSpeed) * jumpForceAdd * 0.5
 
 		if self.ducking then
 			self.speedy = self.speedy * 0.75
@@ -445,6 +544,12 @@ function turtle:jump()
 	end
 end
 
+function turtle:hop() --how?
+	self.speedy = -self.speedy / 2
+	jumpSound:play()
+	self.jumping = true
+end
+
 function turtle:stopJump()
 	if self.speedy < 0 then
 		self.speedy = self.speedy * 0.05
@@ -452,11 +557,16 @@ function turtle:stopJump()
 end
 
 function turtle:punch(move)
+	if not self.abilities["punch"] or self.ducking then
+		return
+	end
+
 	if move then
 		self:setState("punch")
 		chargeSound:play()
 	else
 		self:setState("idle")
+		self.punchTimer = turtlePunchDuration
 	end
 	self.punching = move
 end
@@ -479,4 +589,14 @@ end
 
 function turtle:getMaxHealth()
 	return self.maxHealth
+end
+
+function turtle:hasLowHealth()
+	return self.health < self.maxHealth
+end
+
+function turtle:getAbility(name)
+	if self.abilities[name] ~= nil then
+		self.abilities[name] = true
+	end
 end

@@ -1,11 +1,11 @@
 trigger = class("trigger")
 
-function trigger:init(x, y, property)
+function trigger:init(x, y, width, height, property)
 	self.x = x
 	self.y = y
 
-	self.width = 8
-	self.height = 240
+	self.width = width
+	self.height = height
 
 	if property.map then
 		self.map = property.map:split(";")
@@ -52,11 +52,16 @@ function trigger:update(dt)
 		if player.speedx < 0 then
 			dir = "left"
 		end
+		
+		if player.speedy > 0 then
+			player.speedx = 0
+			dir = "idek"
+		end
 
 		if not self.triggered then
 			if dir == "right" then
 				player:moveRight(true)
-			else
+			elseif dir == "left" then
 				player:moveLeft(true)
 			end
 

@@ -19,6 +19,8 @@ function pausemenu:init()
 			function()
 				saveManager:save(saveManager:getCurrentSave(), saveManager:generateSaveData())
 
+				tiled:clearCache()
+				
 				util.changeState("title")
 			end
 		},

@@ -66,7 +66,7 @@ function eventsystem:update(dt)
 				end
 			elseif cmd == "playmusic" then
 				if v.args ~= "map" then
-					self.lastSong = love.audio.newSource("audio/music/" .. v.args .. ".ogg")
+					self.lastSong = love.audio.newSource("audio/music/" .. v.args .. ".ogg", "stream")
 					self.lastSong:setLooping(true)
 					self.lastSong:play()
 				else
@@ -114,6 +114,8 @@ function eventsystem:update(dt)
 				if v.args[1] == "enemy" then
 					objects["enemy"][1]:faceDirection(v.args[2])
 				end
+			elseif cmd == "giveability" then
+				objects["player"][1]:getAbility(v.args)
 			elseif cmd == "freezeplayer" then
 				objects["player"][1]:freeze(true)
 				objects["player"][1]:moveRight(false)
@@ -168,21 +170,18 @@ function eventsystem:decrypt(scriptString)
 		local cmd, arg = v[1], v[2]
 		if cmd == "levelequals" then
 			if tiled:getMapName() ~= arg then
-				print("Won't load script {Level Equals: " .. arg .. "} (doesn't belong to level!)")
 				break
-			else
-				print("Using script {Level Equals: " .. arg .. "}")
 			end
 		end
 
 		self.running = true
 
-		if skipScene then
+		--[[if skipScene then
 			if (type(blackList[cmd]) == "boolean" and not blackList[cmd]) or (type(blackList[cmd]) == "table" and not blackList[cmd][arg]) then
 				self:queue(cmd, arg)
 			end
-		else
+		else]]
 			self:queue(cmd, arg)
-		end
+		--end
 	end
 end

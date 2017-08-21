@@ -1,9 +1,10 @@
-io.stdout:setvbuf("no")
+_EMULATEHOMEBREW = (love.system.getOS() ~= "Horizon")
 
-_EMULATEHOMEBREW = (love.system.getOS() ~= "3ds")
-
-love.graphics.setDefaultFilter("nearest", "nearest")
 function love.load()
+	love.graphics.setDefaultFilter("nearest", "nearest")
+	
+	require 'states.test' -- out of sight
+
 	tiled = require 'libraries.tiled'
 	class = require 'libraries.middleclass'
 	util = require 'libraries.util'
@@ -13,9 +14,11 @@ function love.load()
 	require 'libraries.physics'
 	require 'libraries.event'
 
+	json = require 'libraries.json'
 	saveManager = require 'libraries.savemanager'
 	saveManager:init()
 	
+	require 'classes.entity'
 	require 'classes.file'
 	require 'classes.turtle'
 	require 'classes.tile'
@@ -23,12 +26,17 @@ function love.load()
 	require 'classes.pause'
 	require 'classes.dialog'
 	require 'classes.barrier'
-	require 'classes.hitnumber'
+	require 'classes.smoke'
 	require 'classes.chest'
 	require 'classes.crate'
+	require 'classes.health'
 
+	require 'classes.enemies.ai'
+	require 'classes.enemies.fish'
 	require 'classes.enemies.phoenix'
 	require 'classes.enemies.hermit'
+	require 'classes.enemies.spider'
+	require 'classes.enemies.bat'
 
 	require 'classes.prefabs.cloud'
 	require 'classes.prefabs.door'
@@ -46,7 +54,8 @@ function love.load()
 	backgroundColors = 
 	{
 		["midnight"] = {16, 51, 90},
-		["sky"] = {107,161,228}
+		["sky"] = {107,161,228},
+		["indoors"] = {43, 19, 23}
 	}
 
 	gameTiles = love.graphics.newImage("graphics/tiles.png")
@@ -76,24 +85,6 @@ function love.load()
 	for y = 1, 8 do
 		selectionVerQuads[y] = love.graphics.newQuad(0, (y - 1) * 5, 10, 5, selectionVerImage:getWidth(), selectionVerImage:getHeight())
 	end
-
-	turtleImage = love.graphics.newImage("graphics/player/turtle.png")
-	turtleQuads = {}
-	turtleAnimations = { {"idle", 4}, {"walk", 4}, {"jump", 3}, {"dead", 6}, {"duck", 6}, {"unduck", 5}, {"spin", 5}, {"punch", 4} }
-
-	for y = 1, #turtleAnimations do
-		turtleQuads[turtleAnimations[y][1]] = {}
-		for x = 1, turtleAnimations[y][2] do
-			table.insert(turtleQuads[turtleAnimations[y][1]], love.graphics.newQuad((x - 1) * 12, (y - 1) * 20, 12, 20, turtleImage:getWidth(), turtleImage:getHeight()))
-		end
-	end
-
-	dialogImage =
-	{
-		["turtle"] = love.graphics.newImage("graphics/dialog/turtle.png"),
-		["phoenix"] = love.graphics.newImage("graphics/dialog/phoenix.png"),
-		["?"] = love.graphics.newImage("graphics/dialog/unknown.png")
-	}
 
 	healthImage = love.graphics.newImage("graphics/hud/health.png")
 	healthQuads = {}
@@ -132,6 +123,9 @@ function love.load()
 	for x = 1, 10 do
 		bookQuads[x] = love.graphics.newQuad((x - 1) * 32, 0, 32, 32, bookImage:getWidth(), bookImage:getHeight())
 	end
+	bookTimer = 0
+	bookQuadi = 1
+	bookFade = 1
 
 	chestImage = love.graphics.newImage("graphics/game/chest.png")
 	chestQuads = {}
@@ -148,30 +142,12 @@ function love.load()
 	bookPrefabImage = love.graphics.newImage("graphics/game/book.png")
 
 	introImage = love.graphics.newImage("graphics/intro/intro.png")
-	potionImage = love.graphics.newImage("graphics/intro/potionLogo.png")
+	siteImage = love.graphics.newImage("graphics/intro/site.png")
 
 	palmTreeImage = love.graphics.newImage("graphics/game/prefabs/palm_tree.png")
 	palmTreeQuads = {}
 	for i = 1, 5 do
 		palmTreeQuads[i] = love.graphics.newQuad((i - 1) * 32, 0, 32, 32, palmTreeImage:getWidth(), palmTreeImage:getHeight())
-	end
-
-	hermitImage = love.graphics.newImage("graphics/game/enemies/hermit.png")
-	hermitQuads = {}
-	hermitStates = {{"walk", 4}, {"idle", 4}, {"attack", 8}}
-	for y = 1, 3 do
-		hermitQuads[hermitStates[y][1]] = {}
-		for x = 1, hermitStates[y][2] do
-			table.insert(hermitQuads[hermitStates[y][1]], love.graphics.newQuad((x - 1) * 16, (y - 1) * 16, 16, 16, hermitImage:getWidth(), hermitImage:getHeight()))
-		end
-	end
-
-	hitNumbersImage = love.graphics.newImage("graphics/game/hitnumbers.png")
-	
-	numbersString = "1234567890"
-	hitNumbersQuads = {}
-	for i = 1, #numbersString do
-		hitNumbersQuads[numbersString:sub(i, i)] = love.graphics.newQuad((i - 1) * 6, 0, 5, 7, hitNumbersImage:getWidth(), hitNumbersImage:getHeight())
 	end
 
 	waterImage = love.graphics.newImage("graphics/game/prefabs/water.png")
@@ -188,12 +164,12 @@ function love.load()
 		{
 			love.graphics.newImage("graphics/backgrounds/home_sky.png"), 
 			love.graphics.newImage("graphics/backgrounds/home_mountains.png"), 
-			love.graphics.newImage("graphics/backgrounds/home_day.png")
 		},
 		["sky"] = love.graphics.newImage("graphics/backgrounds/sky.png"),
-		["cave"] = love.graphics.newImage("graphics/backgrounds/cave.png")
 	}
 
+	introSound = love.audio.newSource("audio/jingle.ogg")
+	
 	jumpSound = love.audio.newSource("audio/jump.ogg")
 	selectionSound = love.audio.newSource("audio/select.ogg")
 	dialogSound = love.audio.newSource("audio/dialog.ogg")
@@ -201,9 +177,18 @@ function love.load()
 	duckSound = love.audio.newSource("audio/duck.ogg")
 	pitDeathSound = love.audio.newSource("audio/pit.ogg")
 	chargeSound = love.audio.newSource("audio/charge.ogg")
-	
-	menuFont = love.graphics.newFont("graphics/PressStart2P.ttf", 16)
-	smallFont = love.graphics.newFont("graphics/PressStart2P.ttf", 8)
+	poofSound = love.audio.newSource("audio/poof.ogg")
+	punchSound = love.audio.newSource("audio/punch.ogg")
+	batChaseSound = love.audio.newSource("audio/bat_distress.ogg")
+	batIdleSound = {love.audio.newSource("audio/bat_pitchup.ogg"), love.audio.newSource("audio/bat_pitchdown.ogg")}
+
+	if _EMULATEHOMEBREW then
+		menuFont = love.graphics.newFont("graphics/Gohu.ttf", 14)
+		smallFont = love.graphics.newFont("graphics/Gohu.ttf", 14)
+	else
+		menuFont = love.graphics.newFont("graphics/Gohu.10")
+		smallFont = love.graphics.newFont("graphics/Gohu.10")
+	end
 	
 	math.randomseed(os.time())
 	math.random()
@@ -236,45 +221,51 @@ function love.load()
 		cutscenes[i] = {require('scenes.' .. i), false}
 	end
 
-	--love.audio.setVolume(0)
-
 	debugInfo = false
+
+	--love.audio.setVolume(0)
 
 	util.changeState("intro")
 end
 
 function love.update(dt)
-	dt = math.min(0.1666667, dt)
+	dt = math.min(1/60, dt)
 
 	util.updateState(dt)
+
+	if savingData then
+		if bookQuadi < #bookQuads then
+			bookTimer = bookTimer + 10 * dt
+			bookQuadi = math.floor(bookTimer % #bookQuads) + 1
+		else
+			bookFade = math.max(bookFade - dt, 0)
+			if bookFade <= 0 then
+				savingData = false
+				bookTimer = 0
+				bookQuadi = 1
+				bookFade = 1
+			end
+		end
+	end
 end
 
 function love.draw()
 	util.renderState()
 
 	love.graphics.setScreen("top")
-	love.graphics.setFont(smallFont)
 
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.print(love.timer.getFPS(), 384, 6)
-
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.print(love.timer.getFPS(), 385, 7)
-
+	if savingData then
+		love.graphics.setColor(255, 255, 255, 255 * bookFade)
+		love.graphics.draw(bookImage, bookQuads[bookQuadi], love.graphics.getWidth() - 40, love.graphics.getHeight() - 40)
+		love.graphics.setColor(255, 255, 255, 255)
+	end
 
 	love.graphics.setScreen("bottom")
-	love.graphics.setColor(64, 64, 64)
-	love.graphics.rectangle("fill", -40, 0, 40, 240)
-	love.graphics.rectangle("fill", 320, 0, 40, 240)
-	
-	if not _EMULATEHOMEBREW then
-		if debugInfo then
-			love.graphics.print(love.system.getModel() .. "-" .. love.system.getRegion():sub(1, 3) .. "\nMemory: " .. (love.system.getLinearMemory() / 1024 / 1024) .. "MB", 1, 6)
 
-			love.graphics.setColor(255, 255, 255)
-			love.graphics.print(love.system.getModel() .. "-" .. love.system.getRegion():sub(1, 3) .. "\nMemory: " .. (love.system.getLinearMemory() / 1024 / 1024) .. "MB", 1, 7)
-		end
-	end
+	love.graphics.setFont(smallFont)
+
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.print(love.timer.getFPS(), 300, 0)
 end
 
 function love.keypressed(key)
@@ -291,18 +282,6 @@ end
 
 function love.mousepressed(x, y, button)
 	util.mousePressedState(x, y, button)
-end
-
-function saveData()
-	local file = io.open("save.txt", "w")
-	
-	local str = "1:\n2:\n3:\n"
-	
-	if file then
-		file:write(str)
-		file:flush()
-		file:close()
-	end
 end
 
 if _EMULATEHOMEBREW then

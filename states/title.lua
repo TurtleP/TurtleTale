@@ -25,13 +25,11 @@ function titleInit()
 	titleFade = 0
 	titleDoFade = false
 
-	if not titleSong then
-		titleSong = love.audio.newSource("audio/music/title.ogg")
-		titleSong:setLooping(true)
-	end
+	titleSong = love.audio.newSource("audio/music/title.ogg", "stream")
+	titleSong:setLooping(true)
 	
 	titleSong:play()
-	
+
 	menuStart = false
 
 	deleteMode = false
@@ -120,7 +118,7 @@ function titleDraw()
 		love.graphics.setColor(255, 255, 255, 255)
 
 	
-		love.graphics.print("TOUCH TO BEGIN", love.graphics.getWidth() * 0.5 - menuFont:getWidth("TOUCH TO BEGIN") / 2, love.graphics.getHeight() * 0.5 - menuFont:getHeight() / 2 + 4)
+		love.graphics.print("TOUCH TO BEGIN", love.graphics.getWidth() * 0.5 - menuFont:getWidth("TOUCH TO BEGIN") / 2, love.graphics.getHeight() * 0.5 - menuFont:getHeight() / 2)
 	else
 		local color, heart = {255, 255, 255}, 1
 		if math.floor(deleteTimer) % 2 ~= 0 then
@@ -176,6 +174,10 @@ function titleKeyPressed(key)
 	elseif key == "select" then
 		titleEnableCirclePad(not circlePadEnabled)
 	end
+
+	if key == "lbutton" then
+		util.changeState("test")
+	end
 end
 
 function titleMousePressed(x, y, button)
@@ -222,19 +224,5 @@ function titleEnableCirclePad(enable)
 		controls["down"] = "down"
 
 		dialogs[1] = dialog:new("turtle", "The CIRCLE PAD has been disabled!")
-	end
-
-	local path = "sdmc:/LovePotion/TurtleTale"
-
-	if _EMULATEHOMEBREW then
-		path = love.filesystem.getSaveDirectory() 
-	end
-
-	file = io.open(path .. "/save.lua", "a+")
-
-	if file then
-		file:seek("end")
-		file:write(", " .. tostring(enable))
-		file:close()
 	end
 end

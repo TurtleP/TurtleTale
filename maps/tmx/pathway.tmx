@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="16" tileheight="16" nextobjectid="33">
+ <properties>
+  <property name="song" value="cliffs"/>
+ </properties>
  <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
   <image source="../../graphics/tiles.png" width="374" height="255"/>
  </tileset>
@@ -25,12 +28,9 @@
  <objectgroup name="topObjects">
   <object id="1" name="water" x="336" y="192" width="48" height="16">
    <properties>
-    <property name="width" type="int" value="64"/>
+    <property name="width" type="int" value="48"/>
    </properties>
   </object>
-  <object id="2" name="box" x="640" y="80" width="16" height="16"/>
-  <object id="3" name="box" x="640" y="96" width="16" height="16"/>
-  <object id="4" name="box" x="640" y="112" width="16" height="16"/>
   <object id="5" name="trigger" x="800" y="160" height="48">
    <properties>
     <property name="map" value="pathway2;16;192;"/>
@@ -61,7 +61,6 @@
   <object id="25" name="tile" x="608" y="144" width="16" height="64"/>
   <object id="26" name="tile" x="576" y="176" width="16" height="32"/>
   <object id="27" name="tile" x="560" y="192" width="16" height="16"/>
-  <object id="28" name="hermit" x="752" y="192" width="16" height="16"/>
   <object id="29" name="tile" x="672" y="144" width="16" height="64"/>
   <object id="30" name="tile" x="688" y="160" width="16" height="48"/>
   <object id="31" name="tile" x="704" y="176" width="16" height="32"/>

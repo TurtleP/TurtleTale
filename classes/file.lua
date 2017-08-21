@@ -20,9 +20,7 @@ end
 function file:draw()
 	love.graphics.setScreen("bottom")
 
-	--love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
-
-	if not self.data then
+	if #self.data == 0 then
 		love.graphics.setFont(menuFont)
 		
 		love.graphics.print("NEW FILE", self.x + (self.width / 2) - menuFont:getWidth("NEW FILE") / 2, (self.y + (self.height / 2)) - menuFont:getHeight() / 2 + 4)
@@ -81,14 +79,14 @@ function file:click(x, y)
 
 	if pass then
 		local room = "indoors"
-		if not self.data then --fresh file
-			saveManager:save(self.i, {'"' .. os.date("%m.%d.%Y") .. '"', 3, 3, 0, '"' .. "indoors" .. '"', SPAWN_X, SPAWN_Y, 1})
+		if #self.data == 0 then --fresh file
+			saveManager:save(self.i, {os.date("%m.%d.%Y"), 3, 3, 0, room, SPAWN_X, SPAWN_Y, 1, circlePadEnabled})
 			currentScript = 1
 		else
 			saveManager:select(self.i)
 			room = saveManager:getMap()
+			circlePadEnabled = self.data[9]
 		end
-		room = "cave"
 		util.changeState("game", room)
 	end
 end

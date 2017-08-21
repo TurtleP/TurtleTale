@@ -1,21 +1,10 @@
 [===========]
-1. Jumping tutorial
-2. Obtain punch ability as cutscene
-3. King hermit crab cutscene
-4. Load Lua scripts *only* needed for that map
-	- Load common ones (ie hud, player, tile, etc) once
-		"The other main job of require is to avoid loading the same file twice. 
-		For that purpose, it keeps a table with the names of all loaded files. 
-		If a required file is already in the table, require simply returns. 
-		The table keeps the virtual names of the loaded files, not their real names. 
-		Therefore, if you load the same file with two different virtual names, it will be loaded twice. 
-		For instance, the command require"foo" followed by require"foo.lua", with a path like "?;?.lua", 
-		will load the file foo.lua twice. You can access this control table through the global variable _LOADED. 
-		Using this table, you can check which files have been loaded; you can also fool require into running a file twice. 
-		For instance, after a successful require"foo", _LOADED["foo"] will not be nil. 
-		If you then assign nil to _LOADED["foo"], a subsequent require"foo" will run the file again."
-
-		tl;dr _LOADED["hermit] = nil = delet this, and require 'hermit' reloads
- 
-5. Load map backgrounds dynamically (see audio implementation)
+1. Jumping tutorial [X]
+2. Obtain punch ability as cutscene [X]
+3. Spider [ ]
+4. Bat [ ]
+5. Puff of Smoke [ ]
+6. Map background colors [ ]
+4. Load map backgrounds dynamically (see audio implementation) [X]
+5. Save manager -> JSON [X]
 [===========]

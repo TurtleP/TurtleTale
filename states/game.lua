@@ -17,33 +17,31 @@ function gameInit(map)
 
 	gameFadeOut = false
 
-	eventSystem = eventsystem:new()
-
 	dialogs = {}
 
+	eventSystem = eventsystem:new()
 	gameHUD = hud:new()
 	pause = pausemenu:new()
 
 	paused = false
 
 	shakeValue = 0
-	
-	clouds = {}
-	for x = 1, 8 do
-		clouds[x] = cloud:new(math.random(love.graphics.getWidth()), math.random(love.graphics.getHeight() * 0.05, love.graphics.getHeight() * 0.4), math.random(30, 35))
-	end
 
 	if map then
 		tiled:setMap(map)
 		gameCreateTables()
 	end
 	
-	love.graphics.setBackgroundColor(backgroundColors.sky)
+	local color = backgroundColors.sky
+	if map == "indoors" then
+		color = backgroundColors.indoors
+	end
+	love.graphics.setBackgroundColor(color)
 	
 	if cutscenes[currentScript] then
 		eventSystem:decrypt(cutscenes[currentScript][1])
 	end
-	print(tiled:getMapName())
+
 	mapScroll = 0
 	cameraObjects = {}
 end
@@ -82,8 +80,11 @@ function gameCreateTables()
 	objects["hermit"] = tiled:getObjects("hermit")
 	objects["chest"] = tiled:getObjects("chest")
 	objects["crate"] = tiled:getObjects("crate")
+	objects["fish"] = {}
+	objects["health"] = {}
+	objects["spider"] = {}
 
-	hitNumbers = {}
+	smokes = {}
 
 	prefabs = tiled:getObjects({"bed", "clock", "door", "palm", "trigger", "water"})
 end
@@ -114,8 +115,10 @@ function gameUpdate(dt)
 		return
 	end
 
-	if not eventSystem:isRunning() then
-		tiled:playCurrentSong()
+	if eventSystem then
+		if not eventSystem:isRunning() then
+			tiled:playCurrentSong()
+		end
 	end
 
 	if gameOver then
@@ -125,23 +128,6 @@ function gameUpdate(dt)
 			end
 		end
 	end
-
-	--[[
-	local state, percent = love.system.getPowerInfo()
-
-	if percent then
-		if not chargeEasterEgg and state ~= "charging" then
-			if percent < 20 then
-				gameNewDialog("turtle", "Oh darn, I think the system is running low on COFFEI! Please plug it in so it does not shut down.")
-				chargeEasterEgg = true
-			end
-		else
-			if percent > 20 and state == "charging" then
-				chargeEasterEgg = false
-			end
-		end
-	end
-	]]--
 
 	cameraScroll()
 	cameraObjects = checkCamera(mapScroll, 0, 432, 248)
@@ -182,17 +168,16 @@ function gameUpdate(dt)
 
 	eventSystem:update(dt)
 
+	for i, v in ipairs(smokes) do
+		if v.remove then
+			table.remove(smokes, i)
+		end
+		v:update(dt)
+	end
+
 	for j, w in ipairs(prefabs) do
 		for s = 1, #w do
 			w[s]:update(dt)
-		end
-	end
-
-	for i, v in ipairs(hitNumbers) do
-		v:update(dt)
-
-		if v.remove then
-			table.remove(hitNumbers, i)
 		end
 	end
 
@@ -218,11 +203,11 @@ function gameDraw()
 
 	love.graphics.push()
 
-	if shakeValue > 0 then
-		love.graphics.translate((math.random() * 2 - 1) * shakeValue, 0)
+	if not paused then
+		if shakeValue > 0 then
+			love.graphics.translate(util.round((math.random() * 2 - 1) * shakeValue, 2), 0)
+		end
 	end
-
-	love.graphics.draw(backgroundImages["sky"])
 
 	love.graphics.translate(-math.floor(mapScroll), 0)
 
@@ -244,7 +229,7 @@ function gameDraw()
 		end
 	end
 
-	for i, v in ipairs(hitNumbers) do
+	for i, v in ipairs(smokes) do
 		v:draw()
 	end
 
@@ -293,11 +278,11 @@ function gameKeyPressed(key)
 	end
 
 	if eventSystem:isRunning() then
-		if key == "a" then
+		--[[if key == "a" then
 			skipScene = true
 			gameFadeOut = true
 			return
-		end
+		end]]
 	end
 
 	if (not objects["player"][1].render or objects["player"][1].frozen or objects["player"][1].dead) then

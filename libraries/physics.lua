@@ -10,6 +10,16 @@ local floor = math.floor
 local dist = util.dist
 local abs = math.abs
 
+--[[
+1. Tile
+2. Player
+3. Barrier
+4. Phoenix/Door? Wat
+5. Crate
+6. AI
+7. Health
+--]]
+
 function physicsupdate(dt)
 	for cameraIndex, cameraValue in ipairs(cameraObjects) do
 		local objName, objData, objIndex = cameraValue[1], cameraValue[2], cameraValue[3]
@@ -22,7 +32,9 @@ function physicsupdate(dt)
 			--VS THINGS NOT TILES
 			if objData.mask and not objData.passive then
 				for cameraOtherIndex, cameraOtherValue in ipairs(cameraObjects) do
-					if objData ~= cameraOtherValue[2] and objData.mask[cameraOtherValue[2].category] then
+					local checkCategory, versusCategory = cameraValue[2].category, cameraOtherValue[2].category
+
+					if objData ~= cameraOtherValue[2] and objData.mask[versusCategory] then
 						local obj2Name, obj2Data = cameraOtherValue[1], cameraOtherValue[2]
 						hor, ver = checkCollision(objData, objName, obj2Data, obj2Name, dt)
 					end

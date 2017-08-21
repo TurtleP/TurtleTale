@@ -1,50 +1,30 @@
-local bubbles = {}
-
 function introInit()
-	introTurtleFade = 1
-	introPotionFade = 0
-
+	introFade = 0
 	introTimer = 0
+
+	introSound:play()
 end
 
 function introUpdate(dt)
 	introTimer = introTimer + dt
-	if introTimer > 1 and introTimer < 4 then
-		introTurtleFade = math.max(introTurtleFade - 0.6 * dt, 0)
-		introPotionFade = math.min(introPotionFade + 0.6 * dt, 1)
+	if introTimer < 2 then
+		introFade = math.min(introFade + 0.6 * dt, 1)
 	end
 
-	if introTimer > 6 then
+	if introTimer > 4 then
 		util.changeState("title")
 		introTimer = 0
-	elseif introTimer > 4 then
-		introPotionFade = math.max(introPotionFade - 0.6 * dt, 0)
-	end
-
-	if math.random(10) == 1 then
-		createBubble()
-	end
-
-	for k, v in pairs(bubbles) do
-		v:update(dt)
+	elseif introTimer > 2 then
+		introFade = math.max(introFade - 0.6 * dt, 0)
 	end
 end
 
 function introDraw()
 	love.graphics.setScreen("top")
-	love.graphics.setColor(255, 255, 255, 255 * introTurtleFade)
+	love.graphics.setColor(255, 255, 255, 255 * introFade)
 	love.graphics.draw(introImage, util.getWidth() / 2 - introImage:getWidth() / 2, util.getHeight() / 2 - introImage:getHeight() / 2)
 
-	love.graphics.setFont(menuFont)
-	love.graphics.print("A game by TurtleP", util.getWidth() / 2 - menuFont:getWidth("A game by TurtleP") / 2, util.getHeight() * .75)
-
-	love.graphics.setColor(255, 255, 255, 255 * introPotionFade)
-
-	for k, v in pairs(bubbles) do
-		v:draw()
-	end
-
-	love.graphics.draw(potionImage, util.getWidth() / 2 - potionImage:getWidth() / 2, util.getHeight() / 2 - potionImage:getHeight() / 2)
+	love.graphics.draw(siteImage, util.getWidth() - siteImage:getWidth(), util.getHeight() - siteImage:getHeight())
 end
 
 function skipIntro()
@@ -55,24 +35,4 @@ end
 
 function introKeyPressed(key)
 	skipIntro()
-end
-
-function createBubble()
-	local newBubble = {x = 0, y = 0, speed = 0, size = 0, states = {'bottom', 'top'}}
-
-	newBubble.speed = math.random(50, 125)
-	newBubble.size = 32
-	newBubble.x = math.random(-400, 400)
-	newBubble.y = love.graphics.getHeight() + newBubble.size
-	newBubble.img = love.graphics.newImage("graphics/intro/bubble.png")
-
-	function newBubble:update(dt)
-		self.y = self.y - self.speed * dt
-	end
-
-	function newBubble:draw()
-		love.graphics.draw(self.img, self.x, self.y)
-	end
-
-	table.insert(bubbles, newBubble)
 end

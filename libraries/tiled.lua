@@ -5,10 +5,7 @@ function tiled:init()
 	self.mapHeight = 15
 
 	self.objects = {}
-
-	self.music = {["top"] = "", ["bottom"] = ""}
 	self.background = nil
-
 	self.tiles = nil
 end
 
@@ -36,7 +33,8 @@ function tiled:cacheMaps()
 		"throne",
 		"pathway",
 		"pathway2",
-		"cave"
+		"cave",
+		"test"
 	}
 
 	for k = 1, #files do
@@ -63,27 +61,37 @@ function tiled:setMap(map)
 		end
 
 		if not self.song then
-			self.song = love.audio.newSource("audio/music/" .. self.map.properties.song .. ".ogg")
+			self.song = love.audio.newSource("audio/music/" .. self.map.properties.song .. ".ogg", "stream")
 			self.song:setLooping(true)
 			self.songName = self.map.properties.song
 		end
 	end
+
+	local background
+	if self.map.properties.background then
+		self.background = nil
+
+		collectgarbage()
+		collectgarbage()
+
+		background = love.graphics.newImage("graphics/backgrounds/" .. self.map.properties.background .. ".png")
+	else
+		background = love.graphics.newImage("graphics/backgrounds/sky.png")
+	end
+	self.background = background
 end
 
 function tiled:loadData(screen)
 	local mapData, entityData = self.map.layers, {}
 
 	if screen == "top" then
+		self.tiles = nil
+
+		collectgarbage()
+		collectgarbage()
+
 		if love.filesystem.isFile("maps/" .. self.currentMap .. ".png") then
 			self.tiles = love.graphics.newImage("maps/" .. self.currentMap .. ".png")
-		end
-		
-		if backgroundImages[self.currentMap] then
-			if backgroundImages[self.currentMap][self.map.properties.background] then
-				self.background = backgroundImages[self.currentMap][self.map.properties.background]
-			else
-				self.background = backgroundImages[self.currentMap]
-			end
 		end
 	end
 
@@ -94,8 +102,6 @@ function tiled:loadData(screen)
 
 				self.mapWidth[screen] = self.map.width
 				self.mapHeight = self.map.layers[k].properties.height
-
-				self.music[screen] = self.map.layers[k].properties.music
 			end
 		elseif v.type == "objectgroup" then
 			if v.name == screen .. "Objects" then
@@ -113,7 +119,11 @@ function tiled:loadData(screen)
 			if v.name == "tile" then
 				table.insert(self.objects["tile"], tile:new(v.x, v.y, v.width, v.height))
 			else
-				table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
+				if v.name == "trigger" then
+					table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.width, v.height, v.properties, screen))
+				else
+					table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
+				end
 			end
 		end
 	end
@@ -125,6 +135,18 @@ function tiled:playCurrentSong()
 			self.song:play()
 		end
 	end
+end
+
+function tiled:clearCache()
+	self:init()
+
+	if self.song then
+		self.song:stop()
+		self.song = nil
+	end
+	
+	collectgarbage()
+	collectgarbage()
 end
 
 function tiled:getNextMap(dir)

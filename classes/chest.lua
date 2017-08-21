@@ -35,8 +35,8 @@ function chest:update(dt)
 			if ret[1][2].useKey then
 				self.timer = 0
 
-				if self.item[1] == "dialog" then
-					gameNewDialog(self.item[2], self.item[3])
+				if self.item[1] == "cutscene" then
+					eventSystem:decrypt(dofile(self.item[2]))
 				end
 
 				self.open = true

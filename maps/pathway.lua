@@ -9,7 +9,9 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextobjectid = 33,
-  properties = {},
+  properties = {
+    ["song"] = "cliffs"
+  },
   tilesets = {
     {
       name = "base",
@@ -85,47 +87,8 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["width"] = 64
+            ["width"] = 48
           }
-        },
-        {
-          id = 2,
-          name = "box",
-          type = "",
-          shape = "rectangle",
-          x = 640,
-          y = 80,
-          width = 16,
-          height = 16,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 3,
-          name = "box",
-          type = "",
-          shape = "rectangle",
-          x = 640,
-          y = 96,
-          width = 16,
-          height = 16,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 4,
-          name = "box",
-          type = "",
-          shape = "rectangle",
-          x = 640,
-          y = 112,
-          width = 16,
-          height = 16,
-          rotation = 0,
-          visible = true,
-          properties = {}
         },
         {
           id = 5,
@@ -410,19 +373,6 @@ return {
           type = "",
           shape = "rectangle",
           x = 560,
-          y = 192,
-          width = 16,
-          height = 16,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 28,
-          name = "hermit",
-          type = "",
-          shape = "rectangle",
-          x = 752,
           y = 192,
           width = 16,
           height = 16,
