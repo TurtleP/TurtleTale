@@ -91,23 +91,25 @@ function inventory:checkItem(step)
 end
 
 function inventory:keypressed(key)
-	if key == "lbutton" then
-		self.itemi = self.itemi - 1
-		if self.itemi < 1 then
-			self.itemi = self.itemLength
-		end
+	if self.itemLength > 0 then
+		if key == "lbutton" then
+			self.itemi = self.itemi - 1
+			if self.itemi < 1 then
+				self.itemi = self.itemLength
+			end
 
-		self:checkItem(-1)
-	elseif key == "rbutton" then
-		self.itemi = self.itemi - 1
-		if self.itemi > self.itemLength then
-			self.itemi = 1
-		end
+			self:checkItem(-1)
+		elseif key == "rbutton" then
+			self.itemi = self.itemi - 1
+			if self.itemi > self.itemLength then
+				self.itemi = 1
+			end
 
-		self:checkItem(1)
-	elseif key == "x" then
-		if self:getItemCount(self:getCurrentItem(true)) > 0 then
-			self:use(self:getCurrentItem(true), false)
+			self:checkItem(1)
+		elseif key == "x" then
+			if self:getItemCount(self:getCurrentItem(true)) > 0 then
+				self:use(self:getCurrentItem(true), false)
+			end
 		end
 	end
 end
