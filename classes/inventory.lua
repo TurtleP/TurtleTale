@@ -76,7 +76,10 @@ function inventory:getCurrentItem(isName)
 end
 
 function inventory:getItemCount(name)
-	return self.items[name]
+	if self.items[name] then
+		return self.items[name]
+	end
+	return 0
 end
 
 function inventory:getItems()
@@ -84,9 +87,11 @@ function inventory:getItems()
 end
 
 function inventory:checkItem(step)
-	if not inventoryIconQuads[self:getCurrentItem()] then
-		self.itemi = self.itemi + step
-		self:checkItem(step)
+	if self.itemLength > 0 then
+		if not inventoryIconQuads[self:getCurrentItem()] then
+			self.itemi = self.itemi + step
+			self:checkItem(step)
+		end
 	end
 end
 
