@@ -1,5 +1,26 @@
 # Changelog
 
+## 11.10.17
+
+### Additions
+- Lots of rooms/screens
+	- First area in the mountain
+- Inventory items
+- Hermit boss
+- Lots of things
+
+## 9.2.17 : Storyline and Goodies
+
+### Additions
+- Added money
+	- Used to purchase things at shops
+
+### Changes
+- Reworked the intro scene
+- Removed caves area
+- Changed save file format
+	- Please delete old saves before using this version
+
 ## 8.20.17 : Overdue Update
 
 ### Additions

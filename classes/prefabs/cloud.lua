@@ -7,16 +7,15 @@ function cloud:init(x, y, speed)
 	self.speed = speed
 
 	self.i = math.random(1, 4)
-
-	local max = 400
-	if tiled:getMapName() ~= nil then
-		max = tiled:getWidth("top") * 16
-	end
-	self.max = max
 end
 
 function cloud:update(dt)
-	if self.x > self.max then
+	local max = 400
+	if state ~= "title" then
+		max = tiled:getWidth("top") * 16
+	end
+
+	if self.x > max then
 		self.x = -cloudImages[self.i]:getWidth()
 		self.speed = math.random(30, 35)
 	end

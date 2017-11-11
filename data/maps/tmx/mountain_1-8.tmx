@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="40" height="15" tilewidth="16" tileheight="16" nextobjectid="59">
+ <properties>
+  <property name="background" value="cave"/>
+  <property name="song" value="cave"/>
+ </properties>
+ <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
+  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+ </tileset>
+ <layer name="topTiles" width="40" height="15">
+  <data encoding="csv">
+268,268,268,268,268,202,289,0,226,268,223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,268,268,268,268,268,268,268,268,268,268,268,268,268,268,
+268,201,202,203,289,0,0,0,226,268,245,311,0,0,0,0,0,0,0,0,0,0,0,0,0,226,268,268,268,268,268,268,268,268,268,268,268,268,268,268,
+203,289,0,269,0,0,312,311,290,202,202,289,0,0,0,0,0,0,0,0,0,0,0,0,0,290,204,268,268,268,268,268,268,268,268,268,268,268,268,268,
+0,0,0,291,0,0,226,223,0,0,269,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,268,268,268,268,201,202,204,268,268,268,268,268,268,
+0,0,0,0,0,0,226,245,311,0,291,0,0,0,0,0,221,0,0,0,0,0,0,0,0,0,290,204,268,201,202,289,0,290,204,268,268,268,268,268,
+0,221,0,0,0,312,248,268,223,0,0,0,0,0,0,312,247,246,311,0,0,0,0,0,0,0,0,290,202,289,0,0,0,0,290,204,268,268,268,268,
+247,311,0,0,0,226,268,268,245,311,0,0,0,0,312,313,203,204,223,0,0,227,0,0,0,0,0,0,288,0,0,0,0,0,0,290,202,203,202,203,
+223,0,0,0,246,248,268,268,268,245,311,0,0,0,226,223,0,226,268,247,246,247,311,0,0,0,0,0,0,0,0,0,0,0,0,269,0,0,0,0,
+223,0,0,0,288,226,268,268,268,268,223,0,228,0,226,223,0,290,312,248,268,268,223,0,0,0,0,0,0,0,0,0,0,0,0,291,0,0,0,0,
+268,246,0,0,0,226,268,201,203,204,245,311,250,0,226,223,0,0,290,202,203,202,314,311,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+223,0,0,0,0,226,201,289,0,290,204,245,246,247,290,289,0,0,288,0,0,0,290,289,0,0,0,0,0,0,0,270,0,0,0,0,0,0,0,0,
+223,267,0,0,246,0,0,0,0,0,290,0,0,0,0,0,0,0,0,0,267,0,0,0,0,0,0,0,0,0,0,292,0,0,0,0,0,0,0,0,
+245,311,0,0,0,0,0,0,0,270,0,0,0,0,0,0,0,0,312,246,311,0,0,0,0,0,0,0,0,312,247,246,247,246,247,311,0,0,0,0,
+268,245,311,0,0,0,0,0,0,292,0,0,0,0,0,0,0,312,248,268,245,311,0,0,0,0,0,0,312,248,268,268,268,268,268,245,246,247,246,247,
+268,268,268,268,245,0,0,0,0,246,247,0,0,0,0,246,247,248,268,268,268,268,245,245,246,247,246,247,248,248,268,268,268,268,268,268,268,245,268,268
+</data>
+ </layer>
+ <objectgroup name="topObjects">
+  <object id="1" name="tile" x="0" y="0" width="112" height="16"/>
+  <object id="2" name="tile" x="0" y="16" width="80" height="16"/>
+  <object id="3" name="tile" x="0" y="32" width="32" height="16"/>
+  <object id="4" name="tile" x="0" y="112" width="16" height="80"/>
+  <object id="6" name="tile" x="0" y="208" width="48" height="32"/>
+  <object id="7" name="tile" x="240" y="224" width="400" height="16"/>
+  <object id="8" name="tile" x="400" y="0" width="240" height="48"/>
+  <object id="10" name="tile" x="560" y="48" width="80" height="64"/>
+  <object id="11" name="tile" x="528" y="48" width="32" height="32"/>
+  <object id="12" name="tile" x="416" y="48" width="96" height="32"/>
+  <object id="13" name="tile" x="464" y="192" width="112" height="32"/>
+  <object id="14" name="tile" x="272" y="112" width="96" height="32"/>
+  <object id="15" name="tile" x="80" y="112" width="96" height="48"/>
+  <object id="16" name="tile" x="128" y="16" width="64" height="32"/>
+  <object id="17" name="tile" x="128" y="0" width="48" height="16"/>
+  <object id="18" name="tile" x="80" y="80" width="64" height="32"/>
+  <object id="19" name="tile" x="96" y="32" width="32" height="48"/>
+  <object id="20" name="tile" x="80" y="160" width="32" height="16"/>
+  <object id="21" name="tile" x="160" y="160" width="80" height="16"/>
+  <object id="22" name="tile" x="224" y="96" width="16" height="64"/>
+  <object id="23" name="tile" x="240" y="112" width="16" height="64"/>
+  <object id="24" name="tile" x="240" y="80" width="64" height="32"/>
+  <object id="25" name="tile" x="288" y="144" width="64" height="16"/>
+  <object id="26" name="tile" x="352" y="144" width="32" height="32"/>
+  <object id="27" name="tile" x="288" y="192" width="48" height="16"/>
+  <object id="28" name="tile" x="272" y="208" width="80" height="16"/>
+  <object id="29" name="tile" x="576" y="208" width="64" height="16"/>
+  <object id="30" name="tile" x="432" y="80" width="48" height="16"/>
+  <object id="31" name="tile" x="512" y="48" width="16" height="16"/>
+  <object id="32" name="tile" x="544" y="80" width="16" height="16"/>
+  <object id="33" name="tile" x="448" y="208" width="16" height="16"/>
+  <object id="34" name="tile" x="176" y="144" width="16" height="16"/>
+  <object id="35" name="tile" x="144" y="96" width="16" height="16"/>
+  <object id="36" name="tile" x="128" y="64" width="16" height="16"/>
+  <object id="37" name="tile" x="64" y="112" width="16" height="16"/>
+  <object id="38" name="tile" x="16" y="144" width="16" height="16"/>
+  <object id="39" name="tile" x="64" y="176" width="16" height="16"/>
+  <object id="40" name="tile" x="0" y="192" width="32" height="16"/>
+  <object id="41" name="tile" x="192" y="128" width="16" height="32"/>
+  <object id="42" name="tile" x="336" y="103" width="16" height="9"/>
+  <object id="43" name="tile" x="112" y="160" width="16" height="16"/>
+  <object id="44" name="tile" x="144" y="160" width="16" height="16"/>
+  <object id="45" name="tile" x="0" y="96" width="32" height="16"/>
+  <object id="47" name="spider" x="512" y="176" width="16" height="16"/>
+  <object id="48" name="bat" x="368" y="176" width="16" height="16"/>
+  <object id="49" name="bat" x="128" y="160" width="16" height="16"/>
+  <object id="50" name="trigger" x="640" y="112" height="96">
+   <properties>
+    <property name="map" value="mountain_1-9;0;192;"/>
+   </properties>
+  </object>
+  <object id="53" name="tile" x="144" y="224" width="32" height="16"/>
+  <object id="54" name="tile" x="48" y="224" width="32" height="16"/>
+  <object id="55" name="tile" x="160" y="176" width="16" height="16"/>
+  <object id="57" name="trigger" x="0" y="48" height="48">
+   <properties>
+    <property name="map" value="mountain_1-6;544;80;"/>
+   </properties>
+  </object>
+  <object id="58" name="tile" x="64" y="96" width="16" height="16">
+   <properties>
+    <property name="breakable" type="bool" value="true"/>
+    <property name="id" type="int" value="305"/>
+    <property name="passive" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

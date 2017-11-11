@@ -17,54 +17,33 @@ function trigger:init(x, y, width, height, property)
 end
 
 function trigger:update(dt)
-	local ret = checkrectangle(self.x - 4, self.y, self.width, self.height, {"player"}, self)
+	local ret = checkrectangle(self.x, self.y, self.width, self.height, {"player"}, self)
 
 	if not self.map then
 		return
-	end
-
-	if self.triggered then
-		local player = objects["player"][1]
-		local map = self.map[1]
-		
-		SPAWN_X, SPAWN_Y = tonumber(self.map[2]), tonumber(self.map[3])
-
-		player:moveRight(false)
-		player:moveLeft(false)
-		player:punch(false)
-
-		player.speedx = 0
-
-		player:setState("idle")
-				
-		self.triggered = false
-
-		gameInit(map)		 
-	end
-
-	if #ret == 0 then
-		return
 	else
-		local player = ret[1][2]
-		 
-		player.speedx = 48 * player.scale
-		local dir = "right"
-		if player.speedx < 0 then
-			dir = "left"
-		end
-		
-		if player.speedy > 0 then
-			player.speedx = 0
-			dir = "idek"
-		end
+		if #ret == 0 then
+			if self.triggered then
+				local map = self.map[1]
+			
+				SPAWN_X, SPAWN_Y = tonumber(self.map[2]), tonumber(self.map[3])
+						
+				self.triggered = false
 
-		if not self.triggered then
-			if dir == "right" then
-				player:moveRight(true)
-			elseif dir == "left" then
-				player:moveLeft(true)
+				gameInit(map)
 			end
-
+			return
+		else
+			local player = ret[1][2]
+			
+			player.speedx = 48 * player.scale
+			if player.speedx < 0 then
+				player.leftKey = true
+			elseif player.speedx > 0 then
+				player.rightKey = true
+			end
+			
+			player.teleport = true
 			self.triggered = true
 		end
 	end

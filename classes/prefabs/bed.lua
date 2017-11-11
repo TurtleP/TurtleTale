@@ -1,6 +1,6 @@
 bed = class("bed")
 
-function bed:init(x, y)
+function bed:init(x, y, properties)
 	self.x = x
 	self.y = y - 1
 
@@ -16,6 +16,18 @@ function bed:init(x, y)
 	self.useTimer = 0.5
 
 	self.player = nil
+
+	local scale = 1
+	if properties.scale then
+		scale = properties.scale
+	end
+	self.scale = scale
+
+	local offset = 0
+	if scale < 1 then
+		offset = self.width
+	end
+	self.offset = offset
 end
 
 function bed:update(dt)
@@ -24,6 +36,9 @@ function bed:update(dt)
 	if self.player then
 		self.timer = self.timer + dt
 		self.quadi = 1 + math.floor(self.timer % 4) + 1
+
+		self.player.x = self.x + self.width / 2
+		self.player.y = self.y
 
 		if self.useTimer == 0 then
 			if self.player.useKey then
@@ -51,17 +66,20 @@ function bed:update(dt)
 end
 
 function bed:draw()
+	love.graphics.draw(bedImage, bedQuads[self.quadi], self.x + self.offset, self.y, 0, self.scale, 1)
+
 	if self.player then
 		if math.floor(self.timer) % 2 == 0 then
-			love.graphics.print("z", self.x + 12, self.y - 8)
+			love.graphics.print("z", self.x + 12, self.y - 14)
 		end
 	end
-	love.graphics.draw(bedImage, bedQuads[self.quadi], self.x, self.y)
 end
 
 function bed:use(player)
 	if player then
 		self.player = player
+		player.x = self.x + 8
+		player.y = self.y - 14
 		player:setRender(false)
 	else
 		self.player:setRender(true)

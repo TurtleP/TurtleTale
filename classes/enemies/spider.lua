@@ -16,7 +16,7 @@ function spider:init(x, y)
 
 	self.x = x
 	self.y = y
-	self.width = 14
+	self.width = 20
 	self.height = 14
 
 	self.mask = {true}
@@ -42,12 +42,8 @@ function spider:init(x, y)
 end
 
 function spider:update(dt)
-	ai.update(self, dt)
-
 	local rate = 6
 	if not self.attacking then
-		self.speedx = self.walkSpeed * -self.scale
-
 		ai.passiveThink(self, dt)
 	else
 		rate = 9
@@ -55,8 +51,10 @@ function spider:update(dt)
 		if self.state ~= "jump" then
 			if self.attacking.x > self.x then
 				self.speedx = self.runSpeed
+				self.scale = -1
 			elseif self.attacking.x < self.x then
 				self.speedx = -self.runSpeed
+				self.scale = 1
 			else
 				self.state = "idle"
 				self.speedx = 0
@@ -84,13 +82,15 @@ function spider:update(dt)
 	self.quadi = math.floor(self.timer % #spiderQuads[self.state]) + 1
 	
 	--line of sight, fam
-	local ret = checkrectangle(self.x + self.width, self.y, 80, self.height, {"player"})
+	local sight = self.x + self.width
+	if self.speedx < 0 then
+		sight = self.x - self.width
+	end
+	local ret = checkrectangle(sight + self.speedx, self.y, 96, self.height, {"player"})
 	if #ret > 0 then
 		self.attacking = ret[1][2]
 		self.chaseTimer = 1.5
 	end
-
-	self.dt = dt
 end
 
 function spider:jump()
@@ -104,27 +104,30 @@ end
 function spider:upCollide(name, data)
 	ai.upCollide(self, name, data)
 
+	self:addLife(-1)
+
 	self:die()
 end
 
 function spider:leftCollide(name, data)
 	if not self.attacking then
-		ai.leftCollide(self, name, data)
+		return ai.leftCollide(self, name, data)
 	end
 end
 
 function spider:rightCollide(name, data)
 	if not self.attacking then
-		ai.rightCollide(self, name, data)
+		return ai.rightCollide(self, name, data)
 	end
 end
 
 function spider:downCollide(name, data)
-	ai.downCollide(self, name, data)
 
-	if name == "tile" then
+	if name == "tile" and self.state ~= "walk" then
 		self.state = "walk"
 	end
+
+	return ai.downCollide(self, name, data)
 end
 
 function spider:draw()

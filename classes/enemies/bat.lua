@@ -40,6 +40,11 @@ function bat:init(x, y)
 	self.idleTimer = math.random(2, 3)
 	self.idleAnim = {2, 3, 2, 1}
 	self.squeakTimer = math.random(1, 2)
+
+	self.speed = math.random(64, 72)
+
+	self.graphic = batImage
+	self.quad = batQuads
 end
 
 function bat:update(dt)
@@ -47,7 +52,7 @@ function bat:update(dt)
 		return
 	end
 
-	ai.update(self, dt)
+	self:updateDirection(dt)
 
 	if self.state == "idle" then
 		self.idleTimer = self.idleTimer - dt
@@ -81,9 +86,7 @@ function bat:update(dt)
 		end
 
 		if util.dist(objects["player"][1].x, objects["player"][1].y, self.x, self.y) < 64 then
-			self.timer = 0
-			self.quadi = 1
-			self.state = "drop"
+			self:drop()
 		end
 	end
 
@@ -96,10 +99,10 @@ function bat:update(dt)
 	end
 
 	if self.state == "fly" then
-		local angle = math.atan2(objects["player"][1].y - self.y, objects["player"][1].x - self.x)
+		local angle = self:getPlayerAngle()
 
-		self.speedx = math.cos(angle) * 64
-		self.speedy = math.sin(angle) * 64
+		self.speedx = math.cos(angle) * self.speed
+		self.speedy = math.sin(angle) * self.speed
 
 		self.squeakTimer = self.squeakTimer - dt
 		if self.squeakTimer < 0 then
@@ -114,8 +117,17 @@ function bat:draw()
 end
 
 function bat:getPunched(dir)
-	ai.getPunched(self, dir)
+	self:addLife(-1)
 
-	self.mask[1] = true
-	self.gravity = 480
+	self:die()
+end
+
+function bat:getPlayerAngle()
+	return math.atan2((objects["player"][1].y + objects["player"][1].height / 2) - self.y, objects["player"][1].x - self.x)
+end
+
+function bat:drop()
+	self.timer = 0
+	self.quadi = 1
+	self.state = "drop"
 end

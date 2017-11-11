@@ -1,7 +1,7 @@
 ai = class("ai", entity)
 
 function ai:init(x, y)
-	entity.init(self)
+	entity.init(self, x, y)
 
 	self.x = x
 	self.y = y
@@ -63,23 +63,24 @@ function ai:passiveThink(dt)
 	--check for gaps
 	if self:checkGaps(dt) then
 		self.speedx = 32 * -self.scale
+		self:setDirection(-self.scale)
 	end
 end
 
 function ai:checkGaps(dt)
-	if self.walkTime > 0 and self.speedy == 0 then
+	if self.walkTime > 0 then
 		local math = self.x + self.width
 		if self.speedx < 0 then
 			math = self.x - self.width
 		end
-		return #checkrectangle(math, self.y + self.height, self.width, self.height, {"tile"}) == 0
+		return #checkrectangle(math + self.speedx * dt, self.y + self.height, self.width, self.height, {"tile"}) == 0
 	end
 end
 
 function ai:drawTileCheck(dt)
 	local math = self.x + self.width
 	if self.speedx < 0 then
-		math = self.x
+		math = self.x - self.width
 	end
 	love.graphics.rectangle("line", math, self.y + self.height, self.width, self.height)
 end
@@ -95,7 +96,7 @@ function ai:rightCollide(name, data)
 		return false
 	end
 
-	if name == "tile" then
+	if name == "tile" or name == "barrier" then
 		self.speedx = 32 * -self.scale
 		self:setDirection(-self.scale)
 	end
@@ -117,7 +118,7 @@ function ai:leftCollide(name, data)
 		return false
 	end
 
-	if name == "tile" then
+	if name == "tile" or name == "barrier" then
 		self.speedx = 32 * -self.scale
 		self:setDirection(-self.scale)
 	end

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" nextobjectid="21">
+ <properties>
+  <property name="background" value="cave"/>
+  <property name="offset" type="int" value="40"/>
+  <property name="song" value="shop"/>
+ </properties>
+ <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
+  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+ </tileset>
+ <layer name="topTiles" width="20" height="15">
+  <data encoding="csv">
+268,201,203,202,203,202,203,202,203,202,203,202,203,202,203,202,203,202,204,268,
+201,289,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,290,204,
+223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
+223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
+223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
+223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
+223,0,0,0,0,0,0,270,0,0,0,0,0,0,0,0,0,0,0,226,
+223,0,221,0,0,0,0,292,0,0,0,0,0,0,0,0,0,0,0,226,
+223,246,247,246,247,246,247,311,0,0,0,0,0,0,0,0,0,0,0,226,
+223,202,203,202,203,202,204,223,0,0,0,0,0,0,0,0,0,312,246,311,
+223,224,224,224,224,224,290,289,0,0,0,0,0,0,0,143,0,226,268,223,
+223,224,224,224,224,224,224,224,0,0,0,0,0,0,0,312,246,248,268,223,
+223,224,224,224,224,224,224,224,0,0,0,0,0,267,0,226,268,268,268,223,
+245,246,247,246,247,246,247,246,247,246,247,246,247,246,247,248,268,268,268,268,
+268,268,268,268,268,268,268,268,268,268,268,268,268,268,268,268,268,268,268,268
+</data>
+ </layer>
+ <layer name="foreground" width="20" height="15">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,271,0,0,0,0,287,0,226,268,268,268,268,268,268,0,0,
+0,0,0,0,293,0,0,0,0,0,0,226,268,268,268,268,268,268,268,0,
+0,0,0,0,0,0,0,0,0,0,0,290,268,268,268,268,268,268,268,0,
+0,0,0,0,0,0,0,0,0,0,0,0,202,203,268,268,268,268,268,0,
+0,0,0,0,0,0,0,0,0,0,0,0,271,0,290,268,268,268,268,0,
+0,0,0,0,0,0,0,0,0,0,0,0,293,0,0,290,202,203,202,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,196,187,196,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,209,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup name="topObjects">
+  <object id="3" name="tile" x="0" y="0" width="32" height="32"/>
+  <object id="4" name="tile" x="288" y="0" width="32" height="32"/>
+  <object id="5" name="tile" x="272" y="144" width="48" height="96"/>
+  <object id="6" name="tile" x="240" y="176" width="32" height="64"/>
+  <object id="7" name="tile" x="16" y="208" width="224" height="32"/>
+  <object id="8" name="tile" x="0" y="32" width="16" height="208"/>
+  <object id="9" name="tile" x="16" y="128" width="80" height="32"/>
+  <object id="10" name="tile" x="96" y="128" width="32" height="48"/>
+  <object id="11" name="tile" x="32" y="0" width="256" height="16"/>
+  <object id="12" name="tile" x="304" y="32" width="16" height="112"/>
+  <object id="13" name="shopkeeper" x="256" y="160" width="16" height="16">
+   <properties>
+    <property name="menu" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="15" name="tile" x="176" y="16" width="112" height="48"/>
+  <object id="16" name="tile" x="288" y="32" width="16" height="80"/>
+  <object id="17" name="tile" x="240" y="64" width="48" height="48"/>
+  <object id="18" name="tile" x="224" y="64" width="16" height="32"/>
+  <object id="19" name="tile" x="192" y="64" width="32" height="16"/>
+  <object id="20" name="door" x="48" y="192" width="16" height="16">
+   <properties>
+    <property name="link" value="mountain_1-5;48;192;"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

@@ -1,56 +1,77 @@
-_EMULATEHOMEBREW = (love.system.getOS() ~= "Horizon")
+love.graphics.setDefaultFilter("nearest", "nearest")
+
+io.stdout:setvbuf("no")
+
+tiled = require 'libraries.tiled'
+class = require 'libraries.middleclass'
+util = require 'libraries.util'
+require 'libraries.physics'
+require 'libraries.event'
+json = require 'libraries.json'
+
+require 'libraries.gui'
+require 'states.test' -- out of sight
+
+require 'values'
+LOAD_EVENTS()
+
+saveManager = require 'libraries.savemanager'
+saveManager:init()
+
+require 'classes.entity'
+require 'classes.file'
+require 'classes.hud'
+require 'classes.inventory'
+require 'classes.dialog'
+require 'classes.shopmenu'
+require 'classes.item'
+
+require 'classes.entities.chest'
+require 'classes.entities.smoke'
+require 'classes.entities.crate'
+require 'classes.entities.barrier'
+require 'classes.entities.tile'
+require 'classes.entities.bird'
+require 'classes.entities.health'
+require 'classes.entities.coin'
+require 'classes.entities.turtle'
+require 'classes.entities.shopkeeper'
+require 'classes.entities.sign'
+require 'classes.entities.block'
+require 'classes.entities.container'
+
+require 'classes.enemies.ai'
+require 'classes.enemies.fish'
+require 'classes.enemies.phoenix'
+require 'classes.enemies.hermit'
+require 'classes.enemies.spider'
+require 'classes.enemies.bat'
+require 'classes.enemies.fireball'
+
+require 'classes.enemies.boss.batboss'
+require 'classes.enemies.boss.hermitboss'
+
+require 'classes.prefabs.cloud'
+require 'classes.prefabs.door'
+require 'classes.prefabs.clock'
+require 'classes.prefabs.bed'
+require 'classes.prefabs.palm'
+require 'classes.prefabs.trigger'
+require 'classes.prefabs.water'
+require 'classes.prefabs.home'
+require 'classes.prefabs.userectangle'
+require 'classes.prefabs.key'
+require 'classes.prefabs.bossdoor'
+require 'classes.prefabs.rock'
+
+require 'states.title'
+require 'states.game'
+require 'states.intro'
+require 'states.gameover'
+
+version = "1.0"
 
 function love.load()
-	love.graphics.setDefaultFilter("nearest", "nearest")
-	
-	require 'states.test' -- out of sight
-
-	tiled = require 'libraries.tiled'
-	class = require 'libraries.middleclass'
-	util = require 'libraries.util'
-
-	require 'values'
-	
-	require 'libraries.physics'
-	require 'libraries.event'
-
-	json = require 'libraries.json'
-	saveManager = require 'libraries.savemanager'
-	saveManager:init()
-	
-	require 'classes.entity'
-	require 'classes.file'
-	require 'classes.turtle'
-	require 'classes.tile'
-	require 'classes.hud'
-	require 'classes.pause'
-	require 'classes.dialog'
-	require 'classes.barrier'
-	require 'classes.smoke'
-	require 'classes.chest'
-	require 'classes.crate'
-	require 'classes.health'
-
-	require 'classes.enemies.ai'
-	require 'classes.enemies.fish'
-	require 'classes.enemies.phoenix'
-	require 'classes.enemies.hermit'
-	require 'classes.enemies.spider'
-	require 'classes.enemies.bat'
-
-	require 'classes.prefabs.cloud'
-	require 'classes.prefabs.door'
-	require 'classes.prefabs.clock'
-	require 'classes.prefabs.bed'
-	require 'classes.prefabs.palm'
-	require 'classes.prefabs.trigger'
-	require 'classes.prefabs.water'
-
-	require 'states.title'
-	require 'states.game'
-	require 'states.intro'
-	require 'states.gameover'
-	
 	backgroundColors = 
 	{
 		["midnight"] = {16, 51, 90},
@@ -72,19 +93,6 @@ function love.load()
 	end
 
 	titleImage = love.graphics.newImage("graphics/title.png")
-
-	selectionImage = love.graphics.newImage("graphics/select.png")
-	selectionQuadi = 1
-	selectionQuads = {}
-	for x = 1, 8 do
-		selectionQuads[x] = love.graphics.newQuad((x - 1) * 5, 0, 5, 10, selectionImage:getWidth(), selectionImage:getHeight())
-	end
-
-	selectionVerImage = love.graphics.newImage("graphics/selectver.png")
-	selectionVerQuads = {}
-	for y = 1, 8 do
-		selectionVerQuads[y] = love.graphics.newQuad(0, (y - 1) * 5, 10, 5, selectionVerImage:getWidth(), selectionVerImage:getHeight())
-	end
 
 	healthImage = love.graphics.newImage("graphics/hud/health.png")
 	healthQuads = {}
@@ -111,12 +119,6 @@ function love.load()
 	for i = 1, 3 do
 		clockQuads[i] = love.graphics.newQuad((i - 1) * 15, 0, 15, 32, clockImage:getWidth(), clockImage:getHeight())
 	end
-	
-	fireImage = love.graphics.newImage("graphics/game/enemies/fire.png")
-	fireQuads = {}
-	for i = 1, 5 do
-		fireQuads[i] = love.graphics.newQuad((i - 1) * 8, 0, 8, 8, fireImage:getWidth(), fireImage:getHeight())
-	end
 
 	bookImage = love.graphics.newImage("graphics/game/savegame.png")
 	bookQuads = {}
@@ -139,8 +141,6 @@ function love.load()
 		crateQuads[i] = love.graphics.newQuad((i - 1) * 16, 0, 16, 16, crateImage:getWidth(), crateImage:getHeight())
 	end
 
-	bookPrefabImage = love.graphics.newImage("graphics/game/book.png")
-
 	introImage = love.graphics.newImage("graphics/intro/intro.png")
 	siteImage = love.graphics.newImage("graphics/intro/site.png")
 
@@ -150,13 +150,26 @@ function love.load()
 		palmTreeQuads[i] = love.graphics.newQuad((i - 1) * 32, 0, 32, 32, palmTreeImage:getWidth(), palmTreeImage:getHeight())
 	end
 
+	selectionImage = love.graphics.newImage("graphics/select.png")
+	selectionQuadi = 1
+	selectionQuads = {}
+	for x = 1, 8 do
+		selectionQuads[x] = love.graphics.newQuad((x - 1) * 5, 0, 5, 10, selectionImage:getWidth(), selectionImage:getHeight())
+	end
+
+	selectionVerImage = love.graphics.newImage("graphics/selectver.png")
+	selectionVerQuads = {}
+	for y = 1, 8 do
+		selectionVerQuads[y] = love.graphics.newQuad(0, (y - 1) * 5, 10, 5, selectionVerImage:getWidth(), selectionVerImage:getHeight())
+	end
+
 	waterImage = love.graphics.newImage("graphics/game/prefabs/water.png")
 	waterQuads = {}
 	for i = 1, waterImage:getWidth() / 17 do
 		waterQuads[i] = love.graphics.newQuad((i - 1) * 17, 0, 16, 16, waterImage:getWidth(), waterImage:getHeight())
 	end
 
-	gameOverImage = { top = love.graphics.newImage("graphics/game/gameover.png"), bottom =  love.graphics.newImage("graphics/game/gameoverbottom.png") }
+	batteryImage = love.graphics.newImage("graphics/hud/battery.png")
 
 	backgroundImages = 
 	{
@@ -168,12 +181,23 @@ function love.load()
 		["sky"] = love.graphics.newImage("graphics/backgrounds/sky.png"),
 	}
 
+	lightBaseImage = love.graphics.newImage("graphics/gameover/light_base.png")
+	inventoryImage = love.graphics.newImage("graphics/hud/inventory.png")
+
+	inventoryIcons = love.graphics.newImage("graphics/hud/icons_new.png")
+	inventoryIconQuads = {}
+	for i = 1, 4 do
+		inventoryIconQuads[i] = love.graphics.newQuad((i - 1) * 16, 0, 16, 16, inventoryIcons:getWidth(), inventoryIcons:getHeight())
+	end
+
 	introSound = love.audio.newSource("audio/jingle.ogg")
 	
 	jumpSound = love.audio.newSource("audio/jump.ogg")
 	selectionSound = love.audio.newSource("audio/select.ogg")
 	dialogSound = love.audio.newSource("audio/dialog.ogg")
-	gameOverSound = love.audio.newSource("audio/gameover.ogg")
+	gameOverSound = {love.audio.newSource("audio/music/gameover_start.ogg"), love.audio.newSource("audio/music/gameover.ogg")}
+	gameOverSound[2]:setLooping(true)
+
 	duckSound = love.audio.newSource("audio/duck.ogg")
 	pitDeathSound = love.audio.newSource("audio/pit.ogg")
 	chargeSound = love.audio.newSource("audio/charge.ogg")
@@ -181,49 +205,33 @@ function love.load()
 	punchSound = love.audio.newSource("audio/punch.ogg")
 	batChaseSound = love.audio.newSource("audio/bat_distress.ogg")
 	batIdleSound = {love.audio.newSource("audio/bat_pitchup.ogg"), love.audio.newSource("audio/bat_pitchdown.ogg")}
+	healthPickup = love.audio.newSource("audio/eatup.ogg")
+	flyAwaySound = love.audio.newSource("audio/flyaway.ogg")
+	purchaseSound = love.audio.newSource("audio/purchase.ogg")
+	fanfareSound = love.audio.newSource("audio/itemget.ogg")
+	coinPickupSound = love.audio.newSource("audio/coin.ogg")
 
-	if _EMULATEHOMEBREW then
-		menuFont = love.graphics.newFont("graphics/Gohu.ttf", 14)
-		smallFont = love.graphics.newFont("graphics/Gohu.ttf", 14)
-	else
-		menuFont = love.graphics.newFont("graphics/Gohu.10")
-		smallFont = love.graphics.newFont("graphics/Gohu.10")
-	end
-	
+	loadFont()
+
 	math.randomseed(os.time())
 	math.random()
 	math.random()
 
-	scale = 1
-
 	objects = {}
 
 	tiled:cacheMaps()
-
-	controls =
-	{
-		["left"] = "left",
-		["right"] = "right",
-		["up"] = "up",
-		["down"] = "down",
-		["jump"] = "b",
-		["punch"] = "y"
-	}
 	
 	INTERFACE_DEPTH = 4
 	ENTITY_DEPTH = 2
 	NORMAL_DEPTH = 0
-	
+
+	gameClouds =
+	{
+		["indoors"] = false,
+		["shop_beach"] = false
+	}
+
 	love.graphics.set3D(true)
-	
-	cutscenes = {}
-	for i = 1, 3 do
-		cutscenes[i] = {require('scenes.' .. i), false}
-	end
-
-	debugInfo = false
-
-	--love.audio.setVolume(0)
 
 	util.changeState("intro")
 end
@@ -256,24 +264,17 @@ function love.draw()
 
 	if savingData then
 		love.graphics.setColor(255, 255, 255, 255 * bookFade)
-		love.graphics.draw(bookImage, bookQuads[bookQuadi], love.graphics.getWidth() - 40, love.graphics.getHeight() - 40)
+		love.graphics.draw(bookImage, bookQuads[bookQuadi], util.getWidth() - 40, util.getHeight() - 40)
 		love.graphics.setColor(255, 255, 255, 255)
 	end
 
-	love.graphics.setScreen("bottom")
-
-	love.graphics.setFont(smallFont)
-
+	--[[love.graphics.setScreen("bottom")
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.print(love.timer.getFPS(), 300, 0)
+	love.graphics.print(love.timer.getFPS(), love.graphics.getWidth() - gameFont:getWidth(love.timer.getFPS()), util.getHeight() - gameFont:getHeight())]]
 end
 
 function love.keypressed(key)
 	util.keyPressedState(key)
-
-	if key == "x" then
-		debugInfo = not debugInfo
-	end
 end
 
 function love.keyreleased(key)
@@ -284,6 +285,5 @@ function love.mousepressed(x, y, button)
 	util.mousePressedState(x, y, button)
 end
 
-if _EMULATEHOMEBREW then
-	require 'libraries.3ds'
-end
+require 'libraries.Horizon'
+require 'errhand'

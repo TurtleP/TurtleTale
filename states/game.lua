@@ -7,43 +7,95 @@ function gameInit(map)
 		collectgarbage()
 	end
 
-	gameOver = false
-
 	gameFade = 1
-
 	fadeValue = 1
-
-	otherFade = 1
-
 	gameFadeOut = false
-
-	dialogs = {}
-
-	eventSystem = eventsystem:new()
-	gameHUD = hud:new()
-	pause = pausemenu:new()
-
-	paused = false
-
 	shakeValue = 0
 
-	if map then
-		tiled:setMap(map)
-		gameCreateTables()
-	end
-	
+	dialogs = {}
+	paused = false
+
+	mapScroll = 0
+	cameraObjects = {}
+
+	bottomScreenFade = 1
 	local color = backgroundColors.sky
 	if map == "indoors" then
 		color = backgroundColors.indoors
 	end
 	love.graphics.setBackgroundColor(color)
-	
-	if cutscenes[currentScript] then
-		eventSystem:decrypt(cutscenes[currentScript][1])
+
+	if not objects["player"] then
+		objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
+	else
+		objects["player"][1]:reset(SPAWN_X, SPAWN_Y)
+
+		if objects["player"][1].dead then
+			objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
+		end
 	end
 
-	mapScroll = 0
-	cameraObjects = {}
+	if map then
+		tiled:setMap(map)
+		gameCreateTables()
+	end
+
+	eventSystem = eventsystem:new()
+	for i, v in pairs(cutscenes) do
+		if not v[1].manual and not v[2] then
+			eventSystem:decrypt(i, cutscenes[i][1]) --load each or something
+		end
+	end
+
+	if not gameHUD then
+		gameHUD = hud:new()
+	end
+	gameHUD:adjust()
+	
+	if HIDDEN_ITEMS[tiled:getMapName()] then
+		local data = HIDDEN_ITEMS[tiled:getMapName()]
+
+		for i = 1, #data do
+			if not data[i].used then
+				table.insert(prefabs, userectangle:new(data[i].x, data[i].y, 16, 16, data[i].func, true, true, data[i]))
+			end
+		end
+	end
+
+	if not MAP_DATA[tiled:getMapName()]  then
+		MAP_DATA[tiled:getMapName()] = {}
+	else
+		for k, v in pairs(objects) do
+			for j, w in pairs(v) do
+				gameCheckTable(w)
+			end
+		end
+
+		for k, v in ipairs(prefabs) do
+			for j, w in ipairs(v) do
+				gameCheckTable(w)
+			end
+		end
+	end
+
+	currentScissor = {tiled:getOffset(), 0, tiled:getWidth("top") * 16, 240}
+end
+
+function gameCheckTable(object)
+	for obj, data in pairs(MAP_DATA[tiled:getMapName()]) do
+		if object.x == data[1] and object.y == data[2] then
+			print(object)
+			if object.fix then
+				print(object)
+				object:fix()
+			else
+				if object:isInstanceOf(turtle) then
+					return
+				end
+				object.remove = true
+			end
+		end
+	end
 end
 
 function gameCreateTables()
@@ -53,18 +105,7 @@ function gameCreateTables()
 		["bottom"] = {0, 0}
 	}
 	
-	objects["tile"] = tiled:getTiles()
-
-	if not objects["player"] then
-		objects["player"] = {}
-		objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
-	else
-		objects["player"][1].x, objects["player"][1].y = SPAWN_X, SPAWN_Y
-
-		if objects["player"][1].dead then
-			objects["player"] = {turtle:new(SPAWN_X, SPAWN_Y)}
-		end
-	end
+	objects["tile"] = tiled:getObjects("tile")
 
 	objects["barrier"] = {}
 	
@@ -80,13 +121,20 @@ function gameCreateTables()
 	objects["hermit"] = tiled:getObjects("hermit")
 	objects["chest"] = tiled:getObjects("chest")
 	objects["crate"] = tiled:getObjects("crate")
+	objects["container"] = {}
 	objects["fish"] = {}
 	objects["health"] = {}
-	objects["spider"] = {}
+	objects["coin"] = {}
+	objects["spider"] = tiled:getObjects("spider")
+	objects["bat"] = tiled:getObjects("bat")
+	objects["fireball"] = {}
+	objects["shopkeeper"] = tiled:getObjects("shopkeeper")
+	objects["block"] = tiled:getObjects("block")
+	objects["boss"] = tiled:getObjects("hermitboss")
 
 	smokes = {}
 
-	prefabs = tiled:getObjects({"bed", "clock", "door", "palm", "trigger", "water"})
+	prefabs = tiled:getObjects({"bed", "clock", "door", "palm", "trigger", "water", "sign", "house", "bossdoor"})
 end
 
 function cameraScroll()
@@ -94,11 +142,11 @@ function cameraScroll()
 	local self = objects["player"][1]
 
 	if tiled:getWidth("top") > 25 then
-		if mapScroll >= 0 and mapScroll + love.graphics.getWidth() <= MAP_WIDTH * 16 then
-			if self.x > mapScroll + love.graphics.getWidth() * 1 / 2 then
-				mapScroll = self.x - love.graphics.getWidth() * 1 / 2
-			elseif self.x < mapScroll + love.graphics.getWidth() * 1 / 2 then
-				mapScroll = self.x - love.graphics.getWidth() * 1 / 2
+		if mapScroll >= 0 and mapScroll + util.getWidth() <= MAP_WIDTH * 16 then
+			if self.x > mapScroll + util.getWidth() * 1 / 2 then
+				mapScroll = self.x - util.getWidth() * 1 / 2
+			elseif self.x < mapScroll + util.getWidth() * 1 / 2 then
+				mapScroll = self.x - util.getWidth() * 1 / 2
 			end
 		end
 
@@ -111,26 +159,16 @@ function cameraScroll()
 end
 
 function gameUpdate(dt)
-	if paused and not gameOver then
+	if paused then
 		return
 	end
 
-	if eventSystem then
-		if not eventSystem:isRunning() then
-			tiled:playCurrentSong()
-		end
-	end
-
-	if gameOver then
-		if not pitDeathSound:isPlaying() then
-			if not gameFadeOut then
-				gameFadeOut = true
-			end
-		end
+	if not eventSystem:isRunning() then
+		tiled:playCurrentSong()
 	end
 
 	cameraScroll()
-	cameraObjects = checkCamera(mapScroll, 0, 432, 248)
+	cameraObjects = checkCamera(mapScroll, -32, 432, 280)
 
 	saveManager:tick(dt)
 
@@ -144,10 +182,6 @@ function gameUpdate(dt)
 		else
 			if fadeValue ~= 1 then
 				fadeValue = 1
-			end
-
-			if gameOver then
-				util.changeState("gameOver")
 			end
 
 			if skipScene then
@@ -179,6 +213,14 @@ function gameUpdate(dt)
 		for s = 1, #w do
 			w[s]:update(dt)
 		end
+
+		if w.update then
+			w:update(dt)
+		end
+
+		if w.remove then
+			table.remove(prefabs, j)
+		end
 	end
 
 	for k, v in ipairs(clouds) do
@@ -192,6 +234,7 @@ function gameUpdate(dt)
 			table.remove(dialogs, k)
 		end
 	end
+	objects["player"][1].inventory:update(dt)
 
 	gameHUD:update(dt)
 end
@@ -213,8 +256,10 @@ function gameDraw()
 
 	love.graphics.setDepth(ENTITY_DEPTH)
 
+	love.graphics.setScissor(unpack(currentScissor))
+
 	for k, v in ipairs(clouds) do
-		if tiled:getMapName() ~= "indoors" then
+		if gameClouds[tiled:getMapName()] then
 			v:draw()
 		end
 	end
@@ -227,6 +272,10 @@ function gameDraw()
 				w:draw()
 			end
 		end
+
+		if v.draw then
+			v:draw()
+		end
 	end
 
 	for i, v in ipairs(smokes) do
@@ -234,10 +283,35 @@ function gameDraw()
 	end
 
 	for i, v in ipairs(cameraObjects) do
-		if v[2].draw then
+		
+		if v[2].customScissor then
+			local scissor = v[2].customScissor
+
+			local off = tiled:getOffset()
+			if off == -mapScroll then
+				off = 0
+			end
+			love.graphics.setScissor(off + scissor[1] - mapScroll, scissor[2], scissor[3], scissor[4])
+		else
+			love.graphics.setScissor(unpack(currentScissor))
+		end
+
+		if v[1] ~= "player" and v[1] ~= "chest" then
+			if v[2].draw then
+				v[2]:draw()
+			end
+		end
+
+		if v[1] == "chest" then
 			v[2]:draw()
 		end
+
+		love.graphics.setScissor()
 	end
+
+	love.graphics.setColor(255, 255, 255, 255)
+
+	objects["player"][1]:draw()
 
 	love.graphics.setDepth(NORMAL_DEPTH)
 
@@ -245,14 +319,11 @@ function gameDraw()
 
 	love.graphics.setDepth(INTERFACE_DEPTH)
 
-	for k, v in pairs(dialogs) do
-		v:draw()
-	end
-
 	gameHUD:draw()
 
 	if paused then
-		pause:draw()
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.print("PAUSED", love.graphics.getWidth() / 2 - gameFont:getWidth("PAUSED") / 2, love.graphics.getHeight() / 2 - gameFont:getHeight() / 2)
 	end
 
 	love.graphics.setDepth(NORMAL_DEPTH)
@@ -260,11 +331,15 @@ function gameDraw()
 	love.graphics.setColor(0, 0, 0, 255 * gameFade)
 	love.graphics.rectangle("fill", 0, 0, util.getWidth(), util.getHeight())
 
-	love.graphics.setScreen("bottom")
-	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.rectangle("fill", 0, 0, util.getWidth(), util.getHeight())
+	for k, v in pairs(dialogs) do
+		v:draw()
+	end
 
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setScissor()
+
+	love.graphics.setScreen("bottom")
+
+	objects["player"][1].inventory:draw()
 end
 
 function gameKeyPressed(key)
@@ -273,33 +348,35 @@ function gameKeyPressed(key)
 	end
 
 	if paused then
-		pause:keypressed(key)
 		return
 	end
 
-	if eventSystem:isRunning() then
-		--[[if key == "a" then
-			skipScene = true
-			gameFadeOut = true
+	if #dialogs > 0 then
+		if dialogs[1].prompt then
+			dialogs[1].prompt:keypressed(key)
 			return
-		end]]
+		end
 	end
 
-	if (not objects["player"][1].render or objects["player"][1].frozen or objects["player"][1].dead) then
-		if not objects["player"][1].render then
-			if key == "up" then
-				objects["player"][1]:use(true)
-				return
-			end
-		end 
+	if SHOP_OPEN then
+		objects["shopkeeper"][1]:keypressed(key)
+	end
+
+	objects["player"][1].inventory:keypressed(key)
+
+	if objects["player"][1].frozen or objects["player"][1].dead then
 		return
 	end
 
-	if key == controls["right"] then
-		objects["player"][1]:moveRight(true)
-	elseif key == controls["left"] then
-		objects["player"][1]:moveLeft(true)
-	elseif key == controls["jump"] then
+	if not objects["player"][1]:isDucking() then
+		if key == controls["right"] then
+			objects["player"][1]:moveRight(true)
+		elseif key == controls["left"] then
+			objects["player"][1]:moveLeft(true)
+		end
+	end
+
+	if key == controls["jump"] then
 		objects["player"][1]:jump()
 	elseif key == controls["up"] then
 		objects["player"][1]:use(true)
@@ -311,6 +388,10 @@ function gameKeyPressed(key)
 end
 
 function gameKeyReleased(key)
+	if objects["player"][1].frozen then
+		return
+	end
+
 	if key == controls["right"] then
 		objects["player"][1]:moveRight(false)
 	elseif key == controls["left"] then
@@ -330,8 +411,11 @@ function gameMousePressed(x, y)
 
 end
 
-function gameNewDialog(speaker, text)
-	table.insert(dialogs, dialog:new(speaker, text))
+function gameNewDialog(speaker, text, continue, prompt)
+	if #dialogs > 0 then
+		table.remove(dialogs, 1)
+	end
+	table.insert(dialogs, dialog:new(speaker, text, continue, prompt))
 end
 
 function getScrollValue()

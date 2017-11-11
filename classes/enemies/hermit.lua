@@ -37,26 +37,53 @@ function hermit:init(x, y, properties)
 	self.scale = -1
 	self.offsets = {0, 14}
 
-	self.dialog = properties.speak
+	local evil = false
+	if properties then
+		self.dialog = properties.speak
+		self.use = userectangle:new(self.x - 16, self.y, 16, 16, function()
+			if #dialogs == 0 then
+				self:speak(self.dialog)
+			end
+		end, true)
+
+		evil = properties.evil
+		
+		if properties.checkGaps ~= nil then
+			if not properties.checkGaps then
+				self.checkGaps = function(self)
+					--cheat the system
+				end
+			end
+		end
+	end
+	
 	self.render = false
+	self.evil = evil
+
+	self.graphic = hermitImage
+	self.quad = hermitQuads
 end
 
 function hermit:update(dt)
 	if self.dialog then
-		local ret = checkrectangle(self.x + 4, self.y, self.width - 8, self.height, {"player"}, self)
+		self.use:update(dt)
 
-		self.render = #ret > 0
-
-		if not self.render then
-			return
-		else
-			if ret[1][2].useKey then
-				self:speak(self.dialog)
-			end
+		local x = self.x - 16
+		if self.scale == 1 then
+			x = self.x + self.width + 16
 		end
+		self.use:setPosition(x, self.y)
 	end
 
-	ai.passiveThink(self, dt)
+	if not self.speaking then
+		if #dialogs == 0 then
+			ai.passiveThink(self, dt)
+		end
+	else
+		self.speaking = false
+		self.speedx = 0
+		self.speedy = 0
+	end
 
 	self.timer = self.timer + 6 * dt
 	self.quadi = math.floor(self.timer % #hermitQuads[self.state]) + 1
@@ -65,15 +92,11 @@ end
 function hermit:draw()
 	love.graphics.draw(hermitImage, hermitQuads[self.state][self.quadi], self.x + self:getOffset(), self.y - 4, 0, self.scale, 1)
 
-	if not self.render then
-		return
-	end
+	self.use:draw()
+end
 
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.draw(selectionVerImage, selectionVerQuads[self.quadi], (self.x + (self.width / 2)) - 6, (self.y - 19) + math.sin(love.timer.getTime() * 4))
-
-	love.graphics.setColor(255, 0, 0)
-	love.graphics.draw(selectionVerImage, selectionVerQuads[self.quadi], (self.x + (self.width / 2)) - 5, (self.y - 18) + math.sin(love.timer.getTime() * 4))
-
-	love.graphics.setColor(255, 255, 255)
+function hermit:getPunched(dir)
+	ai.getPunched(self, dir)
+	
+	self:addLife(-1)
 end

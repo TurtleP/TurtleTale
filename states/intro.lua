@@ -26,13 +26,3 @@ function introDraw()
 
 	love.graphics.draw(siteImage, util.getWidth() - siteImage:getWidth(), util.getHeight() - siteImage:getHeight())
 end
-
-function skipIntro()
-	if introTimer > 0.5 then
-		util.changeState("title")
-	end
-end
-
-function introKeyPressed(key)
-	skipIntro()
-end

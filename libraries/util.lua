@@ -35,15 +35,38 @@ function util.changeState(toState, ...)
 	local arg = {...} or {}
 
 	if _G[toState .. "Init"] then
-		_G[toState .. "Init"](unpack(arg))
-		
 		state = toState
+		_G[toState .. "Init"](unpack(arg))
 	end
 
 end
 
 function util.lerp(a, b, t) 
 	return (1 - t) * a + t * b 
+end
+
+function util.print_r(t, indent) --Not by me
+	local indent = indent or ''
+	for key, value in pairs(t) do
+		io.write(indent, '[', tostring(key), ']') 
+		if type(value) == "table" then 
+			io.write(':\n') 
+			print_r(value, indent .. '\t')
+		else 
+			io.write(' = ', tostring(value), '\n') 
+		end
+	end
+end
+
+function util.convertTime(seconds)
+	local floor = math.floor
+	
+	local minutes = floor(seconds / 60)
+	minutes = floor(minutes % 60)
+	
+	local hours = floor(minutes / 60)
+
+	return string.format("%02d:%02d", hours, minutes)
 end
 
 function util.updateState(dt)
@@ -132,10 +155,6 @@ function util.clamp(val, min, max)
 	return math.max(min, math.min(val, max))
 end
 
-function util.checkOrientation() --yep, mobile!
-
-end
-
 function util.colorFade(currenttime, maxtime, c1, c2) --Color function
 	local tp = currenttime/maxtime
 	local ret = {} --return color
@@ -150,11 +169,16 @@ function util.colorFade(currenttime, maxtime, c1, c2) --Color function
 end
 
 function util.getWidth()
-	return love.graphics.getWidth()
+	if _EMULATEHOMEBREW then
+		if love.graphics.getScreen() == "bottom" then
+			return 320
+		end
+	end
+	return 400
 end
 
 function util.getHeight()
-	return love.graphics.getHeight()
+	return 240
 end
 
 function string:split(delimiter) --Not by me

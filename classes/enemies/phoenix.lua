@@ -9,7 +9,7 @@ function phoenix:init(x, y)
 
 	self.animations =
 	{
-		["flight"] = {rate = 8, anim = {1, 2, 3}},
+		["flight"] = {rate = 8, anim = {1, 2, 3, 2}},
 		["glide"] = {rate = 2, anim = {4, 5}}
 	}
 
@@ -54,7 +54,7 @@ function phoenix:update(dt)
 			if self.fireTimer > 0 then
 				self.fireTimer = self.fireTimer - dt
 			else
-				table.insert(objects["phoenix"], fire:new(self.x + 12, self.y + 12 + self.offset, {-200, 200}))
+				table.insert(objects["fireball"], fireball:new(self.x + 12, self.y + 12 + self.offset, {-200, 200}))
 				self.fireTimer = 0.05
 			end
 			self.fireDuration = self.fireDuration - dt
@@ -69,15 +69,7 @@ function phoenix:flamethrower(dir)
 end
 
 function phoenix:draw()
-	if self.showBook then
-		love.graphics.draw(bookPrefabImage, self.x + 24, (self.y + self.height) - 18)
-	end
-
-	love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x + self.offsetX, self.y + self.offset, 0, self.scale, scale)
-end
-
-function phoenix:enableBook()
-	self.showBook = true
+	love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x + self.offsetX, self.y + self.offset, 0, self.scale, self.scale)
 end
 
 function phoenix:setScale(scale)
@@ -95,53 +87,5 @@ function phoenix:setState(state)
 		self.timer = 0
 		self.quadi = 1
 		self.state = state
-	end
-end
-
-fire = class("fire")
-
-function fire:init(x, y, speed)
-	self.x = x
-	self.y = y
-
-	self.width = 8
-	self.height = 8
-
-	local ang = math.atan2(y - objects["player"][1].y, x - objects["player"][1].x)
-
-	self.speedx = math.cos(ang) * speed[1] or 0
-	self.speedy = -math.sin(ang) * speed[2] or 0
-
-	self.active = true
-
-	self.gravity = 0
-
-	self.mask = 
-	{
-		true
-	}
-
-	self.category = 4
-
-	self.quadi = 1
-	self.timer = 0
-end
-
-function fire:update(dt)
-	self.timer = self.timer + 4 * dt
-	self.quadi = math.floor(self.timer % 5) + 1
-end
-
-function fire:draw()
-	love.graphics.draw(fireImage, fireQuads[self.quadi], self.x, self.y)
-end
-
-function fire:passiveCollide(name, data)
-	
-end
-
-function fire:downCollide(name, data)
-	if name == "tile" then
-		self.remove = true
 	end
 end

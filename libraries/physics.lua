@@ -33,10 +33,12 @@ function physicsupdate(dt)
 			if objData.mask and not objData.passive then
 				for cameraOtherIndex, cameraOtherValue in ipairs(cameraObjects) do
 					local checkCategory, versusCategory = cameraValue[2].category, cameraOtherValue[2].category
-
+					local obj2Name, obj2Data = cameraOtherValue[1], cameraOtherValue[2]
+					
 					if objData ~= cameraOtherValue[2] and objData.mask[versusCategory] then
-						local obj2Name, obj2Data = cameraOtherValue[1], cameraOtherValue[2]
 						hor, ver = checkCollision(objData, objName, obj2Data, obj2Name, dt)
+					elseif not objData.mask[versusCategory] then
+						checkPassive(objData, objName, obj2Data, obj2Name, dt)
 					end
 				end
 			end
@@ -71,8 +73,6 @@ end
 function checkCollision(objData, objName, obj2Data, obj2Name, dt)
 	local hor, ver = false, false
 
-	--local time = love.timer.getTime()
-
 	local horX, y = objData.x + objData.speedx * dt, objData.y
 	local x, verY = objData.x, objData.y + objData.speedy * dt
 	local width, height = objData.width, objData.height
@@ -87,8 +87,6 @@ function checkCollision(objData, objName, obj2Data, obj2Name, dt)
 	else
 		checkPassive(objData, objName, obj2Data, obj2Name, dt)
 	end
-
-	--print(string.format("Calculation {" .. objName .. " vs " .. obj2Name .. "} done in: %.3f ms.", (love.timer.getTime() - time) * 1000))
 
 	return hor, ver
 end
@@ -109,7 +107,7 @@ end
 
 function checkrectangle(x, y, width, height, check, callback, allow)
 	local ret = {}
-	local checkObjects = "list"
+	local checkObjects = check or {}
 	local exclude
 	
 	if type(check) == "table" and check[1] == "exclude" then
@@ -129,19 +127,17 @@ function checkrectangle(x, y, width, height, check, callback, allow)
 
 		if checkObjects == "all" or hasObject then
 			for j, v in ipairs(t) do
-				if allow or checkObjects ~= "all" then
-					local skip = false
-					if exclude then
-						if v.x == exclude.x and v.y == exclude.y then
-							skip = true
-						end
+				local skip = false
+				if exclude then
+					if v.x == exclude.x and v.y == exclude.y then
+						skip = true
 					end
+				end
 
-					if not skip then
-						if v.active then
-							if aabb(x, y, width, height, v.x, v.y, v.width, v.height) then
-								table.insert(ret, {j, v})
-							end
+				if not skip then
+					if v.active then
+						if aabb(x, y, width, height, v.x, v.y, v.width, v.height) then
+							table.insert(ret, {j, v})
 						end
 					end
 				end
@@ -279,6 +275,6 @@ function verticalCollide(objName, objData, obj2Name, obj2Data)
 	return false
 end
 
-function aabb(v1x, v1y, v1width, v1height, v2x, v2y, v2width, v2height)
-	return v1x + v1width > v2x and v1x < v2x + v2width and v1y + v1height > v2y and v1y < v2y + v2height
+function aabb(x, y, width, height, otherX, otherY, otherWidth, otherHeight)
+	return x + width > otherX and x < otherX + otherWidth and y + height > otherY and y < otherY + otherHeight
 end

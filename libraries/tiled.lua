@@ -7,6 +7,7 @@ function tiled:init()
 	self.objects = {}
 	self.background = nil
 	self.tiles = nil
+	self.offset = 0
 end
 
 function tiled:loadMap(path)
@@ -23,22 +24,13 @@ function tiled:cacheMaps()
 
 	self.maps = {}
 	
-	local files = 
-	{
-		"home",
-		"indoors",
-		"beach",
-		"beach2",
-		"cliff",
-		"throne",
-		"pathway",
-		"pathway2",
-		"cave",
-		"test"
-	}
+	local items = love.filesystem.getDirectoryItems("data/maps")
 
-	for k = 1, #files do
-		self.maps[files[k]] = require("maps/" .. files[k])
+	for k, v in ipairs(items) do
+		if v:sub(-4) == ".lua" then
+			local name = v:gsub(".lua", "")
+			self.maps[name] = require("data.maps." .. name)
+		end
 	end
 end
 
@@ -53,11 +45,13 @@ function tiled:setMap(map)
 
 	if self.map.properties.song then
 		if self.songName and self.songName ~= self.map.properties.song then
-			self.song:stop()
-			self.song = nil
+			if self.song then
+				self.song:stop()
+				self.song = nil
 
-			collectgarbage()
-			collectgarbage()
+				collectgarbage()
+				collectgarbage()
+			end
 		end
 
 		if not self.song then
@@ -79,6 +73,13 @@ function tiled:setMap(map)
 		background = love.graphics.newImage("graphics/backgrounds/sky.png")
 	end
 	self.background = background
+
+	self.offset = self.map.properties.offset or 0
+	mapScroll = -self.offset
+
+	if self.offset ~= 0 then
+		love.graphics.setBackgroundColor(0, 0, 0)
+	end
 end
 
 function tiled:loadData(screen)
@@ -90,17 +91,18 @@ function tiled:loadData(screen)
 		collectgarbage()
 		collectgarbage()
 
-		if love.filesystem.isFile("maps/" .. self.currentMap .. ".png") then
-			self.tiles = love.graphics.newImage("maps/" .. self.currentMap .. ".png")
+		if love.filesystem.isFile("data/maps/" .. self.currentMap .. ".png") then
+			self.tiles = love.graphics.newImage("data/maps/" .. self.currentMap .. ".png")
 		end
 	end
+
+	self.mapWidth[screen] = self.map.width
 
 	for k, v in ipairs(mapData) do
 		if v.type == "tilelayer" then
 			if v.name == screen .. "Tiles" then
 				mapData = self.map.layers[k].data
 
-				self.mapWidth[screen] = self.map.width
 				self.mapHeight = self.map.layers[k].properties.height
 			end
 		elseif v.type == "objectgroup" then
@@ -117,7 +119,7 @@ function tiled:loadData(screen)
 
 		if _G[v.name] then
 			if v.name == "tile" then
-				table.insert(self.objects["tile"], tile:new(v.x, v.y, v.width, v.height))
+				table.insert(self.objects["tile"], tile:new(v.x, v.y, v.width, v.height, v.properties))
 			else
 				if v.name == "trigger" then
 					table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.width, v.height, v.properties, screen))
@@ -125,6 +127,8 @@ function tiled:loadData(screen)
 					table.insert(self.objects[v.name], _G[v.name]:new(v.x, v.y, v.properties, screen))
 				end
 			end
+		else
+			error("Failed to load " .. v.name .. "! Did you forget to require its file?")
 		end
 	end
 end
@@ -137,6 +141,10 @@ function tiled:playCurrentSong()
 	end
 end
 
+function tiled:getCurrentSong()
+	return self.song
+end
+
 function tiled:clearCache()
 	self:init()
 
@@ -147,6 +155,10 @@ function tiled:clearCache()
 	
 	collectgarbage()
 	collectgarbage()
+end
+
+function tiled:getOffset()
+	return self.offset
 end
 
 function tiled:getNextMap(dir)
@@ -195,7 +207,7 @@ function tiled:changeSong(screen)
 end
 
 function tiled:getWidth(screen)
-	return self.mapWidth[screen]
+	return self.mapWidth["top"]
 end
 
 function tiled:getTiles()
@@ -213,8 +225,9 @@ function tiled:getObjects(name)
 		end
 
 		return ret
+	else
+		return self.objects[name] or {}
 	end
-	return self.objects[name]
 end
 
 function tiled:getMapName()
