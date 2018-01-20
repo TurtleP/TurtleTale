@@ -33,12 +33,24 @@ function state:hasMethod(method)
 	end
 end
 
+function state:get(var)
+	if self:hasState() then
+		return self.currentState[var]
+	end
+end
+
 function state:load(...)
 	if not self:hasState() then
 		return
 	end
 
 	local args = {...}
+
+	if type(args[1]) == "function" then
+		args[1]()
+		table.remove(args, 1)
+	end
+
 	if self.currentState.load then
 		self.currentState:load(unpack(args))
 	end
@@ -78,6 +90,14 @@ function state:draw()
 	end
 
 	self.currentState:draw()
+end
+
+function state:keypressed(key)
+	if not self:hasMethod("keypressed") then
+		return
+	end
+
+	self.currentState:keypressed(key)
 end
 
 return state:new()

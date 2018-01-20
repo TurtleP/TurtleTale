@@ -4,10 +4,13 @@ require 'vars'
 require 'libraries.functions'
 
 class = require 'libraries.middleclass'
-state = require 'libraries.state'
+json = require 'libraries.json'
 save = require 'libraries.save'
 
-require 'classes.file'
+require 'classes.game.entity'
+require 'classes.game.player'
+
+state = require 'libraries.state'
 
 love.graphics.setDefaultFilter("nearest", "nearest")
 
@@ -30,7 +33,7 @@ function love.draw()
 end
 
 function love.keypressed(key)
-
+	state:keypressed(key)
 end
 
 function love.keyreleased(key)

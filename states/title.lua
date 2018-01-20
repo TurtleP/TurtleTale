@@ -21,13 +21,10 @@ function title:load()
 	self.music:play()
 
 	self.timer = 0
-	self.showFiles = false
+	self.showFiles = true
 
-	self.files = {}
-	local y = (SCREEN_HEIGHT - 160) / 2
-	for i = 1, 3 do
-		self.files[i] = file:new(y + (i - 1) * 56, {})
-	end
+	self.files = save:getFiles()
+	self.selection = 1
 end
 
 function title:update(dt)
@@ -69,10 +66,26 @@ function title:draw()
 	end
 end
 
+function title:keypressed(key)
+	if key == "down" then
+		self.selection = math.min(self.selection + 1, #self.files)
+	elseif key == "up" then
+		self.selection = math.max(self.selection - 1, 1)
+	end
+
+	for j, w in ipairs(self.files) do
+		if self.selection == w.ID then
+			w:keypressed(key)
+		end
+	end
+end
+
 function title:destroy()
 	self.topImage = nil
 	self.backgroundImage = nil
 	self.stars = nil
+
+	self.music:stop()
 	self.music = nil
 end
 
