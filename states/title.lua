@@ -25,6 +25,15 @@ function title:load()
 
 	self.files = save:getFiles()
 	self.selection = 1
+
+	self.files[self.selection].selected = true
+
+	self.gui =
+	{
+		imagebutton:new(buttonImage, "x", "Delete File", 0, SCREEN_HEIGHT * 0.85, 192, 12, {offset = vector(BOTSCREEN_WIDTH / 2, 0), padding = 2, center = true, func = function()
+			self.files[self.selection]:delete()
+		end})
+	}
 end
 
 function title:update(dt)
@@ -60,23 +69,35 @@ function title:draw()
 		
 		love.graphics.print("TOUCH TO BEGIN", (BOTSCREEN_WIDTH - gameFont:getWidth("TOUCH TO BEGIN")) / 2, (SCREEN_HEIGHT - gameFont:getHeight()) / 2)
 	else
-		for j, w in ipairs(self.files) do
+		for j, w in pairs(self.files) do
 			w:draw()
+		end
+
+		for k, v in ipairs(self.gui) do
+			v:draw()
 		end
 	end
 end
 
 function title:keypressed(key)
+	self.files[self.selection].selected = false
+
 	if key == "down" then
 		self.selection = math.min(self.selection + 1, #self.files)
 	elseif key == "up" then
 		self.selection = math.max(self.selection - 1, 1)
 	end
 
+	self.files[self.selection].selected = true
+
 	for j, w in ipairs(self.files) do
 		if self.selection == w.ID then
 			w:keypressed(key)
 		end
+	end
+
+	for i, v in ipairs(self.gui) do
+		v:keypressed(key)
 	end
 end
 

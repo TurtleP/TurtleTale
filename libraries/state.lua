@@ -100,4 +100,12 @@ function state:keypressed(key)
 	self.currentState:keypressed(key)
 end
 
+function state:keyreleased(key)
+	if not self:hasMethod("keyreleased") then
+		return
+	end
+	
+	self.currentState:keyreleased(key)
+end
+
 return state:new()

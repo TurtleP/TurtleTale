@@ -32,6 +32,7 @@ function love.graphics.newFont(path)
 			xadvance = v.xadvance, 
 			xoffset = v.xoffset, 
 			yoffset = v.yoffset,
+			width = v.width
 		}
 	end
 
@@ -42,7 +43,8 @@ function love.graphics.newFont(path)
 
 		for i = 1, #text do
 			if font.chars[text:sub(i, i)] then
-				width = width + font.chars[text:sub(i, i)].xadvance
+				local v = font.chars[text:sub(i, i)]
+				width = width + (v.xadvance + v.xoffset)
 			end
 		end
 
@@ -50,7 +52,7 @@ function love.graphics.newFont(path)
 	end
 
 	function font:getHeight()
-		return font.glyphs.common.lineHeight
+		return font.size
 	end
 
 	return font

@@ -9,20 +9,20 @@ function save:initialize()
 	self.currentSave = 1
 
 	if self:hasData() then
-		local data = love.filesystem.read("save.txt")
-
-		if type(data) == "string" then
-			self.data = json:decode(data)
-		end
+		self:loadData()
 	else
 		self:generateDefaultData()
 	end
 
-	self:loadData()
+	self:loadFiles()
 end
 
 function save:hasData()
 	return love.filesystem.isFile("save.txt") and true
+end
+
+function save:getData(i)
+	return self.data[i]
 end
 
 function save:getActiveData()
@@ -51,7 +51,7 @@ function save:encode(i) --on save
 
 	local values = 
 	{
-		"money", "health", "maxhealth", 
+		"money", "health", "maxHealth", 
 		"x", "y", "scale", "abilities",
 	}
 
@@ -99,8 +99,21 @@ function save:import()
 end
 
 function save:loadData()
+	local data = love.filesystem.read("save.txt")
+
+	if type(data) == "string" then
+		self.data = json:decode(data)
+	end
+end
+
+function save:loadFiles(fileIndex)
+	if fileIndex then
+		self.files[fileIndex] = file:new(self.data[fileIndex], fileIndex)
+		return self.files[fileIndex]
+	end
+
 	for i = 1, 3 do
-		self.files[i] = file:new(self.data[i])
+		self.files[i] = file:new(self.data[i], i)
 	end
 end
 

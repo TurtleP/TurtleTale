@@ -1,6 +1,6 @@
 entity = class("entity")
 
-function entity:initialize(world, x, y, width, height)
+function entity:initialize(layer, x, y, width, height)
 	self.x = x
 	self.y = y
 
@@ -11,10 +11,33 @@ function entity:initialize(world, x, y, width, height)
 
 	self.category = 0
 	self.mask = { false }
+	self.active = true
 
-	table.insert(world, self)
+	self.gravity = 0
+	self.speed = vector(0, 0)
+
+	if layer then
+		table.insert(layer, self)
+	end
 end
 
 function entity:speak()
 	
+end
+
+function entity:update(dt)
+
+end
+
+function entity:draw()
+
+end
+
+function entity:getXOffset()
+	local offset = 0
+	if self.scale < 0 then
+		offset = self.width
+	end
+	
+	return offset
 end

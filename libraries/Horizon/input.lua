@@ -10,8 +10,8 @@ function love.keypressed(key)
 		if key == w then
 			if oldKeyPressed then
 				oldKeyPressed(j)
+				break
 			end
-			break
 		end
 	end
 end
@@ -22,8 +22,8 @@ function love.keyreleased(key)
 		if key == w then
 			if oldKeyReleased then
 				oldKeyReleased(j)
+				break
 			end
-			break
 		end
 	end
 end

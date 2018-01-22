@@ -17,26 +17,26 @@ CONFIG.KEYS =
 	start = "return",
 	select = "rshift",
 
-	lbutton = "w",
-	rbutton = "e",
+	l = "w",
+	r = "e",
 
-	lzbutton = "q",
-	rzbutton = "r",
+	lz = "q",
+	rz = "r",
 
 	cstickup = "i",
 	cstickleft = "j",
 	cstickdown = "k",
 	cstickright = "l",
 
-	cpadup = "up",
+	--[[cpadup = "up",
 	cpadleft = "left",
 	cpadright = "right",
-	cpaddown = "down",
+	cpaddown = "down",]]
 
-	up = "t",
-	left = "f",
-	down = "g",
-	right = "h"
+	up = "up",
+	left = "left",
+	down = "down",
+	right = "right"
 }
 
 return CONFIG
