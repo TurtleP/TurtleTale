@@ -2,6 +2,12 @@ local save = class("save")
 
 local file = require 'classes.file'
 
+local bookImage = love.graphics.newImage("graphics/game/savegame.png")
+local bookQuads = {}
+for i = 1, 10 do
+	bookQuads[i] = love.graphics.newQuad((i - 1) * 32, 0, 32, 32, bookImage:getWidth(), bookImage:getHeight())
+end
+
 function save:initialize()
 	self.data = {}
 	self.files = {}
@@ -18,7 +24,7 @@ function save:initialize()
 end
 
 function save:hasData()
-	return love.filesystem.isFile("save.txt") and true
+	return love.filesystem.isFile("save.txt")
 end
 
 function save:getData(i)
@@ -51,20 +57,35 @@ function save:encode(i) --on save
 
 	local values = 
 	{
-		"money", "health", "maxHealth", 
-		"x", "y", "scale", "abilities",
+		{"money", 0}, {"health", 3}, {"maxHealth", 3},
+		{"x", 0}, {"y", 0}, {"scale", 1}, {"abilities", {}}
 	}
 
-	local data = { ["player"] = {}, ["achievements"] = {}, ["mapdata"] = {} }
+	local map = "indoors"
+	if state:get("map") then
+		map = state:get("map").name
+	end
+
+	local data = { ["cutscenes"] = {}, ["player"] = {}, ["achievements"] = {}, ["mapdata"] = MAP_DATA, ["map"] = map }
 
 	local player = state:get("player")
 
-	for k, v in pairs(player) do
-		for j, w in ipairs(values) do
-			if k == w then
-				data["player"][k] = v
+	if player then
+		for k, v in pairs(player) do
+			for j, w in ipairs(values) do
+				if k == w[1] then
+					data["player"][k] = v
+				end
 			end
 		end
+	else
+		for j, w in ipairs(values) do
+			data["player"][w[1]] = w[2]
+		end
+	end
+
+	for k, v in pairs(CUTSCENES) do
+		data["cutscenes"][k] = v[2]
 	end
 
 	local date = os.date("%m.%d.%Y")
@@ -75,6 +96,36 @@ function save:encode(i) --on save
 	data.time = math.floor(self:getActiveFile().time)
 
 	self:writeData(i, data)
+
+	self.fade = 1
+	self.timer = 0
+	self.quadi = 1
+	self.saving = true
+end
+
+function save:update(dt)
+	if self.saving then
+		self.timer = self.timer + 10 * dt
+		if self.quadi < #bookQuads then
+			self.quadi = math.floor(self.timer % #bookQuads) + 1
+		else
+			self.fade = math.max(self.fade - dt, 0)
+
+			if self.fade == 0 then
+				self.saving = false
+			end
+		end
+	end
+end
+
+function save:draw()
+	if not self.saving then
+		return
+	end
+
+	love.graphics.setColor(255, 255, 255, 255 * self.fade)
+	love.graphics.draw(bookImage, bookQuads[self.quadi], TOPSCREEN_WIDTH - 34, SCREEN_HEIGHT - 34)
+	love.graphics.setColor(255, 255, 255, 255)
 end
 
 function save:writeData(file, data)
@@ -91,10 +142,18 @@ function save:writeData(file, data)
 	love.filesystem.write("save.txt", json:encode_pretty(self.data))
 end
 
-function save:import()
-	local player = state:get("player")
-	for k, v in pairs(self:getActiveData()["player"]) do
-		player[k] = v
+function save:import(t)
+	if t == "player" then
+		local player = state:get("player")
+		for k, v in pairs(self:getActiveData()["player"]) do
+			player[k] = v
+		end
+	else
+		for j, w in pairs(self:getActiveData()["cutscenes"]) do
+			CUTSCENES[j][2] = w
+		end
+
+		MAP_DATA = self:getActiveData()["mapdata"]
 	end
 end
 

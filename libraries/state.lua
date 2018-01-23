@@ -27,6 +27,15 @@ function state:hasState(name)
 	return self.currentState ~= nil
 end
 
+function state:call(name, ...)
+	local args = {...}
+	if self:hasState() then
+		if self:hasMethod(name) then
+			self.currentState[name](self.currentState, unpack(args))
+		end
+	end
+end
+
 function state:hasMethod(method)
 	if self:hasState() then
 		return self.currentState[method] ~= nil

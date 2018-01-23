@@ -16,7 +16,10 @@ function hud:update(dt)
 	self.timer = self.timer + 6.5 * dt
 end
 
-function hud:draw()
+function hud:draw(offset)
+	love.graphics.push()
+	love.graphics.translate((offset or 0), 0)
+
 	love.graphics.draw(inventoryBackImage, self.x, self.y)
 	
 	love.graphics.setColor(0, 0, 0)
@@ -39,4 +42,6 @@ function hud:draw()
 
 		love.graphics.draw(healthImage, healthQuads[quadi], self.x + 18 + (i - 1) * 9, self.y + add)
 	end
+
+	love.graphics.pop()
 end

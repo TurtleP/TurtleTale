@@ -1,7 +1,7 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "1.0.3",
+  tiledversion = "1.1.1",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 50,
@@ -9,7 +9,10 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextobjectid = 33,
-  properties = {},
+  properties = {
+    ["next"] = "pathway2;16;192;",
+    ["prev"] = "home;378;192;"
+  },
   tilesets = {
     {
       name = "base",
@@ -90,36 +93,6 @@ return {
           rotation = 0,
           visible = true,
           properties = {}
-        },
-        {
-          id = 5,
-          name = "trigger",
-          type = "",
-          shape = "rectangle",
-          x = 800,
-          y = 160,
-          width = 0,
-          height = 48,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["map"] = "pathway2;16;192;"
-          }
-        },
-        {
-          id = 6,
-          name = "trigger",
-          type = "",
-          shape = "rectangle",
-          x = 0,
-          y = 96,
-          width = 0,
-          height = 112,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["map"] = "home;378;192;"
-          }
         },
         {
           id = 9,

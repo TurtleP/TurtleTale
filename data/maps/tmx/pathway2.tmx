@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="45" height="15" tilewidth="16" tileheight="16" nextobjectid="38">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="45" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="38">
+ <properties>
+  <property name="next" value="tobeach;-8;96;"/>
+  <property name="prev" value="pathway;778;192;"/>
+ </properties>
  <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
  <layer name="topTiles" width="45" height="15">
   <data encoding="csv">
@@ -22,7 +26,7 @@
 23,24,24,24,24,24,25,69,69,69,23,24,24,25,69,69,69,69,23,24,24,25,69,69,69,69,69,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,25
 </data>
  </layer>
- <objectgroup name="topObjects">
+ <objectgroup name="topObjects" visible="0">
   <object id="3" name="tile" x="0" y="0" width="128" height="80">
    <properties>
     <property name="song" value="cliffs"/>
@@ -61,16 +65,6 @@
    <properties>
     <property name="fish" type="bool" value="false"/>
     <property name="width" type="int" value="80"/>
-   </properties>
-  </object>
-  <object id="36" name="trigger" x="0" y="96" height="112">
-   <properties>
-    <property name="map" value="pathway;778;192;"/>
-   </properties>
-  </object>
-  <object id="37" name="trigger" x="720" y="80" height="32">
-   <properties>
-    <property name="map" value="tobeach;16;96;"/>
    </properties>
   </object>
  </objectgroup>

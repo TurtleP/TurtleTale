@@ -1,7 +1,7 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "1.0.3",
+  tiledversion = "1.1.1",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 25,
@@ -10,8 +10,7 @@ return {
   tileheight = 16,
   nextobjectid = 12,
   properties = {
-    ["next"] = "home;-4;192;",
-    ["song"] = "cliffs"
+    ["next"] = "home;-4;192;"
   },
   tilesets = {
     {

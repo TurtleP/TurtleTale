@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="16" tileheight="16" nextobjectid="33">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="33">
+ <properties>
+  <property name="next" value="pathway2;16;192;"/>
+  <property name="prev" value="home;378;192;"/>
+ </properties>
  <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
   <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
@@ -24,16 +28,6 @@
  </layer>
  <objectgroup name="topObjects">
   <object id="1" name="water" x="336" y="192" width="48" height="48"/>
-  <object id="5" name="trigger" x="800" y="160" height="48">
-   <properties>
-    <property name="map" value="pathway2;16;192;"/>
-   </properties>
-  </object>
-  <object id="6" name="trigger" x="0" y="96" height="112">
-   <properties>
-    <property name="map" value="home;378;192;"/>
-   </properties>
-  </object>
   <object id="9" name="tile" x="0" y="0" width="112" height="96"/>
   <object id="10" name="tile" x="112" y="0" width="16" height="80"/>
   <object id="11" name="tile" x="0" y="208" width="208" height="32"/>

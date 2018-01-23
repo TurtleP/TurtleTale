@@ -9,11 +9,30 @@ function file:initialize(data, i)
 
 	self.isNew = (data.date == nil)
 
-	self.time = 0
+	self.time = data.time or 0
 	self.ID = i
 
 	self.data = data
 	self.selected = false
+end
+
+function file:select()
+	local room, speed = nil, 1
+
+	if self.isNew then
+		save:encode(self.ID)
+	else
+		room = save:getData(self.ID).map
+	end
+
+	if room == "indoors" then
+		speed = 0.15
+		love.graphics.setBackgroundColor(BACKGROUNDCOLORS.indoors)
+	end
+
+	save:import()
+	state:change("game", room, 1, speed)
+	save:import("player")
 end
 
 function file:delete()
@@ -23,6 +42,7 @@ function file:delete()
 
 	save:writeData(self.ID, {})
 	save:loadData()
+
 	self.data = save:getData(self.ID)
 	self.isNew = true
 end
@@ -44,7 +64,7 @@ function file:draw()
 	love.graphics.setColor(color)
 
 	if self.isNew then
-		love.graphics.print("NEW FILE", self.x + (self.width - gameFont:getWidth("NEW FILE") - 1) / 2, self.y + (self.height - gameFont:getHeight()) / 2)
+		love.graphics.print("NEW FILE", self.x + (self.width - gameFont:getWidth("NEW FILE")) / 2, self.y + (self.height - gameFont:getHeight()) / 2)
 	else
 		--date
 		love.graphics.draw(calendarImage, self.x, self.y + 1)
@@ -78,16 +98,6 @@ function file:draw()
 	end
 
 	love.graphics.setColor(255, 255, 255)
-end
-
-function file:select()
-	state:change("game")
-	
-	if self.isNew then
-		save:encode(self.ID)
-	else
-		save:import()
-	end
 end
 
 function file:keypressed(key)

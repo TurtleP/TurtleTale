@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" nextobjectid="12">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="12">
  <properties>
   <property name="next" value="home;-4;192;"/>
-  <property name="song" value="cliffs"/>
  </properties>
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
   <image source="../../../graphics/game/tiles.png" width="374" height="255"/>

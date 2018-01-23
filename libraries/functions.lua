@@ -39,3 +39,7 @@ function string:split(delimiter) --Not by me
 	table.insert( result, string.sub( self, from  ) )
 	return result
 end
+
+function string:hasExtension(extension)
+	return self:sub(-4) == extension
+end

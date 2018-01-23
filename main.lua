@@ -1,12 +1,13 @@
 io.stdout:setvbuf("no")
 
-require 'vars'
 require 'libraries.functions'
+require 'vars'
 
 class = require 'libraries.middleclass'
 json = require 'libraries.json'
 save = require 'libraries.save'
 vector = require 'libraries.vector'
+event = require 'libraries.event'
 
 require 'libraries.physics'
 
@@ -16,11 +17,22 @@ love.graphics.setDefaultFilter("nearest", "nearest")
 require 'classes.game.entity'
 require 'classes.game.level'
 
-require 'classes.game.particle'
+require 'classes.game.prefabs.userectangle'
+require 'classes.game.prefabs.barrier'
+require 'classes.game.prefabs.particle'
+require 'classes.game.prefabs.water'
+require 'classes.game.prefabs.house'
+require 'classes.game.prefabs.clock'
+require 'classes.game.prefabs.bed'
+require 'classes.game.prefabs.door'
+
+require 'classes.game.enemies.fire'
+require 'classes.game.enemies.phoenix'
+
 require 'classes.game.player'
 require 'classes.game.tile'
 require 'classes.game.hud'
-require 'classes.game.water'
+require 'classes.game.dialog'
 
 state = require 'libraries.state'
 
@@ -46,11 +58,18 @@ function love.load()
 	buttonImage = love.graphics.newImage("graphics/hud/button.png")
 	calendarImage = love.graphics.newImage("graphics/title/calendar.png")
 
+	selectVerticalImage = love.graphics.newImage("graphics/game/select_vertical.png")
+	selectVerticalQuads = {}
+	for i = 1, 8 do
+		selectVerticalQuads[i] = love.graphics.newQuad(0, (i - 1) * 5, 10, 5, selectVerticalImage:getWidth(), selectVerticalImage:getHeight())
+	end
+
 	math.randomseed(os.time())
 
 	gameFont = love.graphics.newFont("graphics/Gohu.10.ttf")
+	love.graphics.setFont(gameFont)
 	
-	love.audio.setVolume(0)
+	--love.audio.setVolume(0)
 
 	state:change("title")
 end

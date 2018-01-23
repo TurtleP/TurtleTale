@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" nextobjectid="9">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="9">
  <properties>
   <property name="background" value="home_day"/>
   <property name="next" value="pathway;16;192;"/>
@@ -7,7 +7,7 @@
   <property name="song" value="cliffs"/>
  </properties>
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
   <tile id="22">
    <properties>
     <property name="right" value="home"/>

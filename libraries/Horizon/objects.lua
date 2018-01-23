@@ -44,7 +44,7 @@ function love.graphics.newFont(path)
 		for i = 1, #text do
 			if font.chars[text:sub(i, i)] then
 				local v = font.chars[text:sub(i, i)]
-				width = width + (v.xadvance + v.xoffset)
+				width = width + v.xadvance
 			end
 		end
 

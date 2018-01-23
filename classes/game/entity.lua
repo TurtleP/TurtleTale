@@ -16,13 +16,21 @@ function entity:initialize(layer, x, y, width, height)
 	self.gravity = 0
 	self.speed = vector(0, 0)
 
+	self.entity = tostring(self):gsub("instance of class ", "")
+
 	if layer then
 		table.insert(layer, self)
 	end
 end
 
-function entity:speak()
-	
+function entity:speak(text, autoscroll)
+	local dialogs = state:get("dialogs")
+	table.insert(dialogs, dialog:new(self.entity, text, autoscroll))
+end
+
+function entity:setSpeed(x, y)
+	local speed = vector(x, y)
+	self.speed = speed
 end
 
 function entity:update(dt)
@@ -31,6 +39,10 @@ end
 
 function entity:draw()
 
+end
+
+function entity:setScale(scale)
+	self.scale = scale
 end
 
 function entity:getXOffset()

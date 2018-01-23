@@ -16,6 +16,9 @@ function water:initialize(layer, x, y, width, height)
 	self.timer = 0
 	self.quadi = 1
 
+	self.active = true
+	self.static = true
+
 	table.insert(layer, self)
 	self.layer = layer
 

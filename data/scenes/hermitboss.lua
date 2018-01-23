@@ -1,0 +1,23 @@
+return
+{
+	{"levelequals", "mountain_1-boss"},
+	{"playerx",{ ">", 144}},
+	{"dofunction", {"block", 1, "unlock", false}},
+	{"freezeplayer"},
+	{"sleep", 1},
+	{"dialog", {"turtle", "Eh? What's this place?"}},
+	{"sleep", 1},
+	{"shake", 2},
+	{"dialog", {"turtle", "Uh-oh.."}},
+	{"shake", 4},
+	{"sleep", 1},
+	{"spawn", {"boss", "hermitboss", 304, -32}},
+	{"dialog", {"hermit", "ROOOOAR!"}},
+	{"sleep", 1},
+	{"unfreezeplayer"},
+	{"playmusic", "tackle"},
+	--{"enemycount", {"boss", 0}},
+	{"dofunction", {"tile", 464, 160, "setVisible", {false, true}}},
+	{"dofunction", {"tile", 464, 176, "setVisible", {false, true}}},
+	{"dofunction", {464, 176, "setActive", {true}}},
+}

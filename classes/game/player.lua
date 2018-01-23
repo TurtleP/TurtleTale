@@ -14,7 +14,7 @@ end
 function player:initialize(x, y)
 	entity.initialize(self, nil, x, y, 12, 14)
 
-	self.category = 2
+	self.category = 3
 	self.gravity = 360
 
 	self.mask = { true }
@@ -36,8 +36,9 @@ function player:initialize(x, y)
 	self.jumping = false
 	self.rightkey = false
 	self.leftkey = false
-	self.ducking = false
+	self.useKey = false
 
+	self.ducking = false
 	self.punching = false
 
 	self.scale = 1
@@ -186,6 +187,14 @@ function player:duck(move)
 	else
 		self:changeState("unduck")
 	end
+end
+
+function player:use(move)
+	if self.ducking then
+		return
+	end
+
+	self.useKey = move
 end
 
 function player:setPosition(x, y)

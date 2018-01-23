@@ -108,7 +108,7 @@ function checkrectangle(x, y, width, height, check, callback, allow)
 			if check and checkObjects ~= "all" then
 				for j = 1, #check do
 					if name == check[j] then --matching numerical indecies
-						hasObject = true
+						hasObject = name
 					end
 				end
 			end
@@ -120,10 +120,14 @@ function checkrectangle(x, y, width, height, check, callback, allow)
 						if v.x == exclude.x and v.y == exclude.y then
 							skip = true
 						end
+					elseif hasObject then
+						if tostring(v):gsub("instance of class ", "") ~= hasObject then
+							skip = true
+						end
 					end
 
 					if not skip then
-						if v.active then
+						if v.active or not v.static then
 							if aabb(x, y, width, height, v.x, v.y, v.width, v.height) then
 								table.insert(ret, {j, v})
 							end
