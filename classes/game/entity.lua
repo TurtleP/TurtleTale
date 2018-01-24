@@ -23,9 +23,11 @@ function entity:initialize(layer, x, y, width, height)
 	end
 end
 
-function entity:speak(text, autoscroll)
+function entity:talk(text, autoscroll)
 	local dialogs = state:get("dialogs")
-	table.insert(dialogs, dialog:new(self.entity, text, autoscroll))
+	
+	self.dialog = dialog:new(self.entity, text, autoscroll)
+	table.insert(dialogs, self.dialog)
 end
 
 function entity:setSpeed(x, y)

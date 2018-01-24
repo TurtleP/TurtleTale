@@ -6,6 +6,8 @@ for i = 1, 4 do
 	dialogQuads[i] = love.graphics.newQuad((i - 1) * 18, 0, 18, 14, dialogImage:getWidth(), dialogImage:getHeight())
 end
 
+local dialogSound = love.audio.newSource("audio/dialog.ogg", "static")
+
 function dialog:initialize(speaker, text, autoTimeout)
 	self.timer = 0
 	self.line = 1
@@ -49,6 +51,10 @@ function dialog:update(dt)
 				self.i = math.min(self.i + 1, #self.text)
 				
 				self.timer = 0
+
+				if self.i % 2 == 0 then
+					dialogSound:play()
+				end
 			else
 				if self.pause then
 					self.pauseTimer = self.pauseTimer + 8 * dt
@@ -86,7 +92,7 @@ function dialog:draw(offset)
 	self:print(self.printedText, self.x + self.offset, self.y)
 
 	if self.pause and self.renderNext then
-		love.graphics.draw(selectVerticalImage, selectVerticalQuads[self.quadi], self.x + (self.width - (offset * 2) - 10), self.y + (self.height - 5) + math.sin(love.timer.getTime() * 4) * 2)
+		love.graphics.draw(selectVerticalImage, selectVerticalQuads[self.quadi], self.x + (self.width - (offset * 2) - 10), self.y + (self.height - 5) + math.sin(love.timer.getTime() * 4))
 	end
 
 	love.graphics.pop()

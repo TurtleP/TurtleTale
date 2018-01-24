@@ -1,10 +1,11 @@
 io.stdout:setvbuf("no")
 
+class = require 'libraries.middleclass'
+json = require 'libraries.json'
+
 require 'libraries.functions'
 require 'vars'
 
-class = require 'libraries.middleclass'
-json = require 'libraries.json'
 save = require 'libraries.save'
 vector = require 'libraries.vector'
 event = require 'libraries.event'
@@ -12,7 +13,6 @@ event = require 'libraries.event'
 require 'libraries.physics'
 
 love.graphics.setDefaultFilter("nearest", "nearest")
-
 
 require 'classes.game.entity'
 require 'classes.game.level'
@@ -25,20 +25,35 @@ require 'classes.game.prefabs.house'
 require 'classes.game.prefabs.clock'
 require 'classes.game.prefabs.bed'
 require 'classes.game.prefabs.door'
+require 'classes.game.prefabs.sign'
+require 'classes.game.prefabs.palm'
 
 require 'classes.game.enemies.fire'
 require 'classes.game.enemies.phoenix'
+require 'classes.game.enemies.hermit'
 
 require 'classes.game.player'
 require 'classes.game.tile'
 require 'classes.game.hud'
 require 'classes.game.dialog'
 
+require 'classes.game.shop.item'
+shop = require 'classes.game.shop.shop'
+
 state = require 'libraries.state'
+achievments = require 'libraries.achievement'
 
 require 'classes.gui'
 
 function love.load()
+	gameTilesImage = love.graphics.newImage("graphics/game/tiles.png")
+	gameTilesQuads = {}
+	for y = 1, gameTilesImage:getHeight() / 17 do
+		for x = 1, gameTilesImage:getWidth() / 17 do
+			table.insert(gameTilesQuads, love.graphics.newQuad((x - 1) * 17, (y - 1) * 17, 16, 16, gameTilesImage:getWidth(), gameTilesImage:getHeight()))
+		end
+	end
+
 	bottomScreenImage = love.graphics.newImage("graphics/hud/shell.png")
 
 	healthImage = love.graphics.newImage("graphics/hud/health.png")
@@ -64,6 +79,15 @@ function love.load()
 		selectVerticalQuads[i] = love.graphics.newQuad(0, (i - 1) * 5, 10, 5, selectVerticalImage:getWidth(), selectVerticalImage:getHeight())
 	end
 
+	selectHorizontalImage = love.graphics.newImage("graphics/game/select_horizontal.png")
+	selectHorizontalQuads = {}
+	for i = 1, 8 do
+		selectHorizontalQuads[i] = love.graphics.newQuad((i - 1) * 5, 0, 5, 10, selectHorizontalImage:getWidth(), selectHorizontalImage:getHeight())
+	end
+
+	fanfareSound = love.audio.newSource("audio/fanfare.ogg")
+	flyAwaySound = love.audio.newSource("audio/flyAway.ogg")
+
 	math.randomseed(os.time())
 
 	gameFont = love.graphics.newFont("graphics/Gohu.10.ttf")
@@ -75,11 +99,15 @@ function love.load()
 end
 
 function love.update(dt)
+	achievments:update(dt)
+
 	state:update(dt)
 end
 
 function love.draw()
 	state:draw()
+
+	achievments:draw()
 end
 
 function love.keypressed(key)

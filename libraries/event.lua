@@ -8,6 +8,7 @@ function event:initialize()
 	self.running = false
 
 	self.shakeLoop = false
+	self.shakeTimer = 0
 end
 
 function event:load(name, data)
@@ -19,15 +20,17 @@ function event:load(name, data)
 			if state:get("map").name == args then
 				pass = true
 			end
+		elseif data.manual then
+			pass = true
 		end
-
+	
 		if pass then
-			table.insert(self.eventData, {command = command, args = args})
-			
-			self.autoScroll = data.autoScroll or false
+			self.autoScroll = data.autoscroll or false
 			self.name = name
 			self.save = data.save or false
 			self.running = true
+
+			table.insert(self.eventData, {command = command, args = args})
 		end
 	end
 
@@ -66,8 +69,10 @@ function event:update(dt)
 		elseif script.command == "dialog" then
 			local object = self:findObject(script.args[1])
 
-			if object and object.speak then
-				object:speak(script.args[2], self.autoScroll)
+			if object and object.talk then
+				object:talk(script.args[2], self.autoScroll)
+			else
+				state:call("addDialog", script.args[1], script.args[2])
 			end
 			--table.insert(dialogs, dialog:new(script.args[1], ))
 		elseif script.command == "shake" then
@@ -114,6 +119,10 @@ function event:update(dt)
 			map.changeMap = true
 		elseif script.command == "fadein" then
 			map.changeMap = false
+		elseif script.command == "playsound" then
+			if _G[script.args] then
+				_G[script.args]:play()
+			end
 		end
 
 		if self.current < #self.eventData then
@@ -124,6 +133,17 @@ function event:update(dt)
 
 			if self.save then
 				save:encode()
+			end
+		end
+	end
+
+	if self.shakeLoop then
+		if state:get("shakeValue") == 0 then
+			self.shakeTimer = self.shakeTimer + dt
+
+			if self.shakeTimer > 1 then
+				state:call("shake", math.random(0.5, 6))
+				self.shakeTimer = math.random(0.5, 1)
 			end
 		end
 	end
@@ -145,6 +165,8 @@ function event:findObject(name)
 			end
 		end
 	end
+
+	return nil
 end
 
 return event:new()

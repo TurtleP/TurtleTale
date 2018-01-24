@@ -25,7 +25,7 @@ function level:initialize(layers, name, fade, fadeSpeed)
 
 	if self.data.properties.song then
 		if level.SONGNAME ~= self.data.properties.song then
-			print(level.SONGNAME, self.data.properties.song)
+			print("music: " .. tostring(level.SONGNAME))
 			self.music = love.audio.newSource("audio/music/" .. self.data.properties.song .. ".ogg")
 		end
 	end
@@ -49,9 +49,12 @@ function level:initialize(layers, name, fade, fadeSpeed)
 	self.offset = (self.data.properties.offset or 0)
 	state:get("camera").x = -self.offset
 
-	if self.data.properties.bgcolor then
-		local color = self.data.properties.bgcolor:split(";")
-		love.graphics.setBackgroundColor(color)
+	shop:loadData(self.name)
+
+	if self.offset ~= 0 then
+		love.graphics.setBackgroundColor(0, 0, 0)
+	else
+		love.graphics.setBackgroundColor(BACKGROUNDCOLORS.sky)
 	end
 end
 
@@ -59,7 +62,7 @@ function level:createEntities(layers, objects)
 	for k, v in pairs(objects) do
 		if _G[v.name] then
 			if v.name == "tile" then
-				tile:new(layers[3], v.x, v.y, v.width, v.height)
+				tile:new(layers[2], v.x, v.y, v.width, v.height, v.properties)
 			elseif v.name == "house" then
 				house:new(layers[2], v.x, v.y)
 			elseif v.name == "clock" then
@@ -70,6 +73,14 @@ function level:createEntities(layers, objects)
 				water:new(layers[4], v.x, v.y, v.width, v.height)
 			elseif v.name == "door" then
 				door:new(layers[0], v.x, v.y, v.properties)
+			elseif v.name == "sign" then
+				sign:new(layers[2], v.x, v.y, v.properties)
+			elseif v.name == "palm" then
+				palm:new(layers[2], v.x, v.y)
+			elseif v.name == "hermit" then
+				hermit:new(layers[2], v.x, v.y, v.properties)
+			elseif v.name == "userectangle" then
+				table.insert(layers[0], userectangle:new(v.x, v.y, v.width, v.height, require(v.properties.func), false))
 			end
 		else
 			print(v.name .. " does not exist.")
@@ -105,10 +116,10 @@ end
 
 function level:changeLevel(game, link)
 	game.player.freeze = true
-
+	
 	if self.data.properties[link] then
 		self.newLevel = self.data.properties[link]:split(";")
-
+		
 		local x = 2
 		if link == "prev" then
 			x = (MAPS[self.newLevel[1]].width * 16) - 2
@@ -120,24 +131,23 @@ function level:changeLevel(game, link)
 		else
 			game.player:moveRight(true)
 		end
+		
 
-
-		local song = MAPS[self.newLevel[1]].properties.song
-
-		if level.SONGNAME ~= nil then
-			if (song and song ~= level.SONGNAME) then
-				level.SONGNAME = song
-			end
-		end
 	else
 		if self.fadeSpeed ~= 1 then
 			self.fadeSpeed = 1
 		end
-
+		
 		self.newLevel = link:split(";")
 		PLAYERSPAWN = {tonumber(self.newLevel[2]), tonumber(self.newLevel[3])}
 	end
-
+	
+	local song = MAPS[self.newLevel[1]].properties.song
+	if (song ~= nil and song ~= level.SONGNAME) then
+		print(song, level.SONGNAME)
+		level.SONGNAME = song
+	end
+	
 	self.changeMap = true
 end
 
@@ -157,9 +167,9 @@ function level:update(dt)
 		local player = state:get("player")
 
 		if self.fade > 0.3 then
-			if player.leftkey and player.x < self.width - 32 then
+			if player.leftkey and player.x < self.width - 16 then
 				player:moveLeft(false)
-			elseif player.rightkey and player.x > 32 then
+			elseif player.rightkey and player.x > 16 then
 				player:moveRight(false)
 			end
 

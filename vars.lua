@@ -37,6 +37,8 @@ for i = 1, #items do
 	end
 end
 
+print()
+
 CUTSCENES = {}
 local items = love.filesystem.getDirectoryItems("data/scenes")
 for i = 1, #items do
@@ -48,4 +50,32 @@ for i = 1, #items do
 	end
 end
 
+print()
+
 MAP_DATA = {}
+
+SHOP_DATA = {}
+local items = love.filesystem.getDirectoryItems("data/shop")
+for i = 1, #items do
+	if items[i]:hasExtension(".json") then
+		local value = items[i]:gsub(".json", "")
+		
+		SHOP_DATA[value] = json:decode(love.filesystem.read("data/shop/" .. items[i]))
+		print("Cached Shop data: " .. value)
+	end
+end
+
+print()
+
+SHOP_ITEMS = {}
+local items = love.filesystem.getDirectoryItems("data/shop/items")
+for i = 1, #items do
+	if items[i]:hasExtension(".lua") then
+		local value = items[i]:gsub(".lua", "")
+		
+		SHOP_ITEMS[value] = require("data.shop.items." .. value)
+		print("Cached Shop item: " .. value)
+	end
+end
+
+SHOP_OPEN = false

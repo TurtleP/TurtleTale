@@ -10,7 +10,9 @@ function door:initialize(layer, x, y, properties)
 
 	self.useRectangle = userectangle:new(self.x, self.y, 16, 16, function(player)
 		local map = state:get("map")
-		map:changeLevel(state.states["game"], properties.link) 
+		map:changeLevel(state.states["game"], properties.link)
+		player.speed = vector(0, 0)
+		player.freeze = true
 	end, false, true)
 
 	table.insert(layer, self)

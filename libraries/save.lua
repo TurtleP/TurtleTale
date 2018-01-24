@@ -66,7 +66,15 @@ function save:encode(i) --on save
 		map = state:get("map").name
 	end
 
-	local data = { ["cutscenes"] = {}, ["player"] = {}, ["achievements"] = {}, ["mapdata"] = MAP_DATA, ["map"] = map }
+	local data = 
+	{ 
+		["cutscenes"] = {},
+		["player"] = {},
+		["achievements"] = {},
+		["mapdata"] = MAP_DATA,
+		["map"] = map,
+		["shopdata"] = SHOP_DATA
+	}
 
 	local player = state:get("player")
 
@@ -74,6 +82,10 @@ function save:encode(i) --on save
 		for k, v in pairs(player) do
 			for j, w in ipairs(values) do
 				if k == w[1] then
+					if type(v) == "number" then
+						v = math.floor(v)
+					end
+
 					data["player"][k] = v
 				end
 			end
@@ -85,7 +97,9 @@ function save:encode(i) --on save
 	end
 
 	for k, v in pairs(CUTSCENES) do
-		data["cutscenes"][k] = v[2]
+		if not v[1].manual then
+			data["cutscenes"][k] = v[2]
+		end
 	end
 
 	local date = os.date("%m.%d.%Y")
@@ -153,7 +167,13 @@ function save:import(t)
 			CUTSCENES[j][2] = w
 		end
 
-		MAP_DATA = self:getActiveData()["mapdata"]
+		if self:getActiveData()["shopdata"] then
+			SHOP_DATA = self:getActiveData()["shopdata"]
+		end
+
+		if self:getActiveData()["mapdata"] then
+			MAP_DATA = self:getActiveData()["mapdata"]
+		end
 	end
 end
 

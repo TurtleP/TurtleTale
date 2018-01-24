@@ -11,6 +11,9 @@ for y = 1, #turtleAnimations do
 	end
 end
 
+local jumpSound = love.audio.newSource("audio/jump.ogg", "static")
+local duckSound = love.audio.newSource("audio/duck.ogg", "static")
+
 function player:initialize(x, y)
 	entity.initialize(self, nil, x, y, 12, 14)
 
@@ -25,7 +28,7 @@ function player:initialize(x, y)
 
 	self.abilities = 
 	{
-		["punch"] = true
+		["punch"] = false
 	}
 
 	self.quadi = 1
@@ -37,10 +40,12 @@ function player:initialize(x, y)
 	self.rightkey = false
 	self.leftkey = false
 	self.useKey = false
+	self.downKey = false
 
 	self.ducking = false
 	self.punching = false
 
+	self.freeze = false
 	self.scale = 1
 
 	self.animationRules =
@@ -56,7 +61,9 @@ function player:initialize(x, y)
 			self.height = 14 
 			self.ducking = false
 		end},
-		climb = {rate = 6, stop = false},
+		climb = {rate = 6, stop = false, condition = function()
+			return self.speed.y ~= 0
+		end},
 		punch = {rate = 14, stop = false}
 	}
 end
@@ -68,6 +75,10 @@ function player:animate(dt)
 			self.animationRules[self.state].func()
 		end
 		return
+	elseif self.animationRules[self.state].condition then
+		if not self.animationRules[self.state].condition() then
+			return
+		end
 	end
 	self.quadi = math.floor(self.timer % #turtleQuads[self.state]) + 1
 end
@@ -90,9 +101,29 @@ function player:update(dt)
 
 	self.speed.x = speed
 
-	if not self.punching then
+	if not self.punching and not self.onLadder then
 		if self.speed.y > 0 then
 			self:changeState("jump")
+		end
+	end
+
+	local ret = checkrectangle(self.x + self.speed.x * dt, self.y, self.width, self.height, {"tile"})
+
+	if #ret == 0 then
+		self:dropLadder()
+	else
+		if ret[1].ladder then
+			self:checkLadder(ret[1])
+		end
+	end
+
+	if self.onLadder then
+		if self.useKey then
+			self.speed.y = -80
+		elseif self.downKey then
+			self.speed.y = 80
+		elseif not self.useKey and not self.downKey then
+			self.speed.y = 0
 		end
 	end
 end
@@ -101,12 +132,91 @@ function player:draw()
 	love.graphics.draw(turtleImage, turtleQuads[self.state][self.quadi], self.x + self:getXOffset(), self.y - self:getYOffset(), 0, self.scale, 1)
 end
 
+function player:upCollide(name, data)
+	if name == "tile" then
+		if data.ladder then
+			return false
+		end
+	end
+end
+
 function player:downCollide(name, data)
 	if name == "tile" then
+		if data.ladder then
+			if self.y < data.y then
+				if self.downKey or self.onLadder then
+					return false
+				end
+			else
+				if not self.onLadder then
+					return false
+				end
+			end
+		else
+			if self.onLadder then
+				self:dropLadder()
+			end
+		end
+
 		if self.jumping or self.state == "jump" then
 			self.jumping = false
 			self:move()
 		end
+	end
+end
+
+function player:rightCollide(name, data)
+	if name == "tile" then
+		if data.ladder then
+			return false
+		end
+	end
+end
+
+function player:leftCollide(name, data)
+	if name == "tile" then
+		if data.ladder then
+			return false
+		end
+	end
+end
+
+function player:checkLadder(data)
+	if not data then
+		local ret = checkrectangle(self.x, self.y, self.width, self.height + 1, {"tile"})
+
+		if #ret == 0 then
+			return false
+		end
+		
+		return ret[1].ladder and self.downKey
+	end
+
+	if not self.onLadder then
+		if (self.y + self.height > data.y) or (self.y < data.y) then
+			if self.useKey or self.downKey then
+				self.onLadder = true
+				self.gravity = 0
+				self.x = (data.x + data.width / 2) - self.width / 2
+				self:changeState("climb")
+
+				data.passive = true
+				self.lastLadder = data
+			end
+		end
+	end
+end
+
+function player:dropLadder(data)
+	if self.onLadder then
+		self.gravity = 360
+		self.speed.y = 0
+
+		if self.lastLadder then
+			self.lastLadder.passive = false
+		end
+		self.lastLadder = nil
+		self.onLadder = false
 	end
 end
 
@@ -140,6 +250,10 @@ function player:moveLeft(move)
 	self:move()
 end
 
+function player:moveDown(move)
+	self.downKey = move
+end
+
 function player:move()
 	if self.jumping or self.punching then
 		return
@@ -161,7 +275,7 @@ function player:punch(move)
 		return
 	end
 
-	if self.ducking then
+	if self.ducking or self.onLadder then
 		return
 	end
 
@@ -183,6 +297,7 @@ function player:duck(move)
 		self:changeState("duck")
 		self.height = 8
 		self.y = self.y + 6
+		duckSound:play()
 		self.ducking = true
 	else
 		self:changeState("unduck")
@@ -203,12 +318,19 @@ function player:setPosition(x, y)
 end
 
 function player:jump()
-	if not self.jumping then
+	if not self.jumping and not self.onLadder then
 		if not self.ducking and not self.punching then
 			self:changeState("jump")
 		end
 		self.speed.y = -JUMPFORCE - (math.abs(self.speed.x) / 80) * JUMPFORCEADD * 0.5
+		jumpSound:play()
 		self.jumping = true
+	end
+end
+
+function player:getAbility(name)
+	if not self.abilities[name] then
+		self.abilities[name] = true
 	end
 end
 

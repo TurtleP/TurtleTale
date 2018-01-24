@@ -49,6 +49,8 @@ function house:update(dt)
 		if self.burn then
 			self.fade = math.max(self.fade - 0.15 * dt, 0)
 		end
+	else
+		self.door.remove = true
 	end
 end
 

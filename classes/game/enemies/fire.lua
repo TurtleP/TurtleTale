@@ -13,7 +13,7 @@ function fire:initialize(layer, x, y, speed)
 	self.timer = 0
 	self.quadi = 1
 
-	self.speed = speed
+	self.speed = speed or vector(0, 0)
 
 	self.rate = math.random(4, 6)
 end

@@ -15,17 +15,12 @@ return
 	{"sleep", 2},
 	{"shake", 6},
 	{"sleep", 1},
-	{"dialog", {"player", "I don't wanna wake up. Just five more minut--"}},
+	{"dialog", {"player", "I don't wanna wake up. Just five more minutes.."}},
 	{"sleep", 0.2},
 	{"stopmusic"},
 	{"playmusic", "danger"},
-	{"shake", 8},
 	{"sleep", 0.5},
-	{"function", {"player", "use", {true}}},
-	{"sleep", 0.1},
-	{"function", {"player", "use", {false}}},
 	{"shake", -1},
-	{"dialog", {"player", "Ow! What the heck is going on?"}},
 	{"freeze", false},
 	autoscroll = true
 }

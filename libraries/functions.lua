@@ -41,5 +41,5 @@ function string:split(delimiter) --Not by me
 end
 
 function string:hasExtension(extension)
-	return self:sub(-4) == extension
+	return self:sub(-#extension) == extension
 end

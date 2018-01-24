@@ -13,24 +13,34 @@ function userectangle:initialize(x, y, width, height, ...)
 	self.render = false
 
 	local args = {...}
-	self.func = args[1] or function() end
+	self.func = args[1] or function() 
+		print("default func")
+	end
+	
 	self.invisible = args[2] or false
 	self.once = args[3] or false
-	self.funcArgs = args[4]
+	self.funcArgs = args[4] or {}
+	
+	self.condition = args[5] or function() 
+		print("default cond") 
+		return true 
+	end
 end
 
 function userectangle:update(dt)
-	local ret = checkrectangle(self.x + 4, self.y, self.width - 8, self.height, {"player"}, self)
+	local ret = checkrectangle(self.x, self.y, self.width, self.height, {"player"})
 
 	self.render = #ret > 0
 
 	if self.render then
-		local player = ret[1][2]
+		local player = ret[1]
 
 		if self.func then
 			if player.useKey then
-				self.func(player, self.funcArgs)
-				self.remove = self.once
+				if self.condition(player) then
+					self.func(player, self.funcArgs)
+					self.remove = self.once
+				end
 			end
 		end
 	end

@@ -18,9 +18,17 @@ local abs = math.abs
 	7. Health
 --]]
 
-local physWorld
+local physWorld, cache = {}, {}
 function physics_load(world)
 	physWorld = world
+
+	for k, v in ipairs(world) do
+		for j, w in ipairs(v) do
+			local name = tostring(w):gsub("instance of class ", "")
+
+			table.insert(cache, {name, w})
+		end
+	end
 end
 
 function physicsupdate(dt)
@@ -32,11 +40,13 @@ function physicsupdate(dt)
 				objData.speed.y = math.min(objData.speed.y + objData.gravity * dt, 15 * 60) --add gravity to objects
 
 				if objData.mask and not objData.passive then
-					for _, obj2Data in pairs(tableValue) do
-						local obj2Name = tostring(obj2Data):gsub("instance of class ", "")
+					for _, tableValueOther in pairs(physWorld) do
+						for _, obj2Data in pairs(tableValueOther) do
+							local obj2Name = tostring(obj2Data):gsub("instance of class ", "")
 
-						if objData ~= obj2Data and objData.mask[obj2Data.category] then
-							hor, ver = checkCollision(objData, objName, obj2Data, obj2Name, dt)
+							if objData ~= obj2Data and objData.mask[obj2Data.category] then
+								hor, ver = checkCollision(objData, objName, obj2Data, obj2Name, dt)
+							end
 						end
 					end
 				end
@@ -62,7 +72,7 @@ function physicsupdate(dt)
 end
 
 function checkPassive(objData, objName, obj2Data, obj2Name, dt)
-	if aabb(objData.x + objData.speedx * dt, objData.y + objData.speedy * dt, objData.width, objData.height, obj2Data.x, obj2Data.y, obj2Data.width, obj2Data.height) then
+	if aabb(objData.x + objData.speed.x * dt, objData.y + objData.speed.y * dt, objData.width, objData.height, obj2Data.x, obj2Data.y, obj2Data.width, obj2Data.height) then
 		if objData.passiveCollide then
 			objData:passiveCollide(obj2Name, obj2Data)
 		end
@@ -100,41 +110,18 @@ function checkrectangle(x, y, width, height, check, callback, allow)
 		exclude = check[2]
 	end
 
-	for j, w in ipairs(physWorld) do
-		for i, t in ipairs(w) do
-			local name = tostring(t):gsub("instance of class ", "")
-
-			local hasObject = false
-			if check and checkObjects ~= "all" then
-				for j = 1, #check do
-					if name == check[j] then --matching numerical indecies
-						hasObject = name
-					end
-				end
+	local obj = false
+	for i, v in pairs(cache) do
+		for j = 1, #check do
+			if v[1] == check[j] then
+				obj = v[2]
 			end
+		end
+	end
 
-			if checkObjects == "all" or hasObject then
-				for _, v in ipairs(w) do
-					local skip = false
-					if exclude then
-						if v.x == exclude.x and v.y == exclude.y then
-							skip = true
-						end
-					elseif hasObject then
-						if tostring(v):gsub("instance of class ", "") ~= hasObject then
-							skip = true
-						end
-					end
-
-					if not skip then
-						if v.active or not v.static then
-							if aabb(x, y, width, height, v.x, v.y, v.width, v.height) then
-								table.insert(ret, {j, v})
-							end
-						end
-					end
-				end
-			end
+	if obj then
+		if aabb(x, y, width, height, obj.x, obj.y, obj.width, obj.height) then
+			table.insert(ret, obj)
 		end
 	end
 

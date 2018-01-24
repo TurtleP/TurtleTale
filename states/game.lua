@@ -35,7 +35,7 @@ function game:load(map, fade, fadeSpeed)
 	end
 
 	if self.map:hasMusic() then
-		if self.music then
+		if self.music and self.map.music then
 			self.music:stop()
 			self.music = nil
 		end
@@ -72,6 +72,13 @@ function game:addFixData(object, isSaved)
 	end
 
 	table.insert(MAP_DATA[self.map.name], {x, y, isSaved})
+end
+
+function game:addDialog(speaker, text)
+	if #self.dialogs == 1 then
+		return
+	end
+	table.insert(self.dialogs, dialog:new(speaker, text))
 end
 
 function game:shake(value)
@@ -116,12 +123,14 @@ function game:update(dt)
 	end
 
 	if self.shakeValue > 0 then
-		self.shakeValue = math.max(self.shakeValue - 10 * dt, 0)
+		self.shakeValue = math.max(self.shakeValue - dt / 0.3, 0)
 	end
 
 	event:update(dt)
 
 	save:update(dt)
+
+	shop:update(dt)
 
 	physicsupdate(dt)
 end
@@ -158,7 +167,10 @@ function game:draw()
 	save:draw()
 
 	love.graphics.setScreen("bottom")
+	
 	love.graphics.draw(bottomScreenImage)
+
+	shop:draw()
 end
 
 function game:keypressed(key)
@@ -166,6 +178,14 @@ function game:keypressed(key)
 		if key == CONTROLS["use"] then
 			self.player:use(true)
 		end
+	end
+
+	if key =="start" then
+		save:encode()
+	end
+
+	if SHOP_OPEN then
+		shop:keypressed(key)
 	end
 
 	for k, v in ipairs(self.dialogs) do
@@ -183,7 +203,10 @@ function game:keypressed(key)
 	elseif key == CONTROLS["left"] then
 		self.player:moveLeft(true)
 	elseif key == CONTROLS["duck"] then
-		self.player:duck(true)
+		self.player:moveDown(true)
+		if not self.player:checkLadder() then
+			self.player:duck(true)
+		end
 	elseif key == CONTROLS["punch"] then
 		self.player:punch(true)
 	end
@@ -203,7 +226,10 @@ function game:keyreleased(key)
 	elseif key == CONTROLS["left"] then
 		self.player:moveLeft(false)
 	elseif key == CONTROLS["duck"] then
-		self.player:duck(false)
+		self.player:moveDown(false)
+		if not self.player.onLadder then
+			self.player:duck(false)
+		end
 	elseif key == CONTROLS["punch"] then
 		self.player:punch(false)
 	end
