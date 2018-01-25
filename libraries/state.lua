@@ -15,6 +15,7 @@ function state:registerState(name)
 	assert(type(name) == "string",
 	"invalid name: expected string.")
 
+	print(name)
 	local reg = require("states." .. name)
 	self.states[name] = reg:new()
 end

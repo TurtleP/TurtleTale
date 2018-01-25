@@ -41,7 +41,7 @@ require 'classes.game.shop.item'
 shop = require 'classes.game.shop.shop'
 
 state = require 'libraries.state'
-achievments = require 'libraries.achievement'
+achievements = require 'libraries.achievement'
 
 require 'classes.gui'
 
@@ -85,6 +85,13 @@ function love.load()
 		selectHorizontalQuads[i] = love.graphics.newQuad((i - 1) * 5, 0, 5, 10, selectHorizontalImage:getWidth(), selectHorizontalImage:getHeight())
 	end
 
+	cloudImages = {}
+	for i = 1, 4 do
+		cloudImages[i] = love.graphics.newImage("graphics/title/cloud" .. i .. ".png")
+	end
+
+	bannerImage = love.graphics.newImage("graphics/title/title.png")
+
 	fanfareSound = love.audio.newSource("audio/fanfare.ogg")
 	flyAwaySound = love.audio.newSource("audio/flyAway.ogg")
 
@@ -99,7 +106,7 @@ function love.load()
 end
 
 function love.update(dt)
-	achievments:update(dt)
+	achievements:update(dt)
 
 	state:update(dt)
 end
@@ -107,7 +114,7 @@ end
 function love.draw()
 	state:draw()
 
-	achievments:draw()
+	achievements:draw()
 end
 
 function love.keypressed(key)

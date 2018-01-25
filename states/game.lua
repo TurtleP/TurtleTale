@@ -182,6 +182,8 @@ function game:keypressed(key)
 
 	if key =="start" then
 		save:encode()
+	elseif key == "select" then
+		state:change("gameover")
 	end
 
 	if SHOP_OPEN then

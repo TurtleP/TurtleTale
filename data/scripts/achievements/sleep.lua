@@ -4,20 +4,20 @@ local isAlive = true
 
 return
 {
-	name = "Lazy Dev",
+	name = "Lazy Turtle",
 	alive = true,
-
+	quadi = 1,
+	
 	update = function(dt)
-		local map = state:get("map")		
+		local map = state:get("map")
 		local player = state.states["game"].player
 
 		if map and map.name == "indoors" then
 			if not event:isRunning() then
 				if player then
-					print("!")
 					if not player.active then
 						time = time + dt
-						if time > 15 then
+						if time > 5 then
 							map.changeMap = true
 							if map.fade == 1 then
 								--game over lol
@@ -32,6 +32,6 @@ return
 			end
 		end
 
-		return isAlive--{ alive = isAlive, unlocked = CAN_UNLOCK }
+		return { alive = isAlive, unlocked = CAN_UNLOCK }
 	end
 }

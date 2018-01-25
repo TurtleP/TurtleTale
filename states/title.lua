@@ -30,7 +30,7 @@ function title:load()
 
 	self.gui =
 	{
-		imagebutton:new(buttonImage, "x", "Delete File", 0, SCREEN_HEIGHT * 0.85, 192, 12, {offset = vector(BOTSCREEN_WIDTH / 2, 0), padding = 2, center = true, func = function()
+		imagebutton:new(buttonImage, "x", "Delete File", 0, SCREEN_HEIGHT * 0.85, 192, 12, {offset = vector(BOTSCREEN_WIDTH, 0), padding = 2, center = true, func = function()
 			self.files[self.selection]:delete()
 		end})
 	}

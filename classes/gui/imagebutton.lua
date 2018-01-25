@@ -7,6 +7,10 @@ function imagebutton:initialize(image, button, text, x, y, width, height, flags)
 	self.button = button
 	self.text = text
 
+	if not self.padding then
+		self.padding = 0
+	end
+
 	self.width = (self.image:getWidth() + self.padding + gameFont:getWidth(text))
 end
 
@@ -14,7 +18,7 @@ function imagebutton:draw()
 	love.graphics.push()
 
 	if self.center then
-		love.graphics.translate(self.offset.x - self.width / 2, 0)
+		love.graphics.translate((self.offset.x - self.width) / 2, 0)
 	end
 
 	love.graphics.draw(self.image, self.x, self.y)
@@ -25,7 +29,7 @@ function imagebutton:draw()
 end
 
 function imagebutton:keypressed(key)
-	if key == self.button then
+	if key == self.button:lower() then
 		self.func()
 	end
 end

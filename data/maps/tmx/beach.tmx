@@ -28,7 +28,7 @@
 466,467,466,467,466,467,466,467,466,467,466,467,466,467,466,467,466,467,0,0,0,0,0,0,466,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,90,24,24
 </data>
  </layer>
- <objectgroup name="topObjects">
+ <objectgroup name="topObjects" visible="0">
   <object id="1" name="palm" x="416" y="128" width="16" height="16"/>
   <object id="2" name="palm" x="144" y="160" width="16" height="16"/>
   <object id="3" name="palm" x="752" y="80" width="16" height="16"/>

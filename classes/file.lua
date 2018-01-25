@@ -20,7 +20,9 @@ function file:select()
 	local room, speed = nil, 1
 
 	if self.isNew then
+		reloadData()
 		save:encode(self.ID)
+		room = "indoors"
 	else
 		room = save:getData(self.ID).map
 	end

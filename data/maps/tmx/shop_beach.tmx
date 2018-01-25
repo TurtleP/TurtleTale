@@ -46,7 +46,7 @@
 0,0,0,178,0,0,0,0,0,0,0,0,0,0,0,0,0,0,179,0
 </data>
  </layer>
- <objectgroup name="topObjects">
+ <objectgroup name="topObjects" visible="0">
   <object id="2" name="door" x="64" y="192" width="16" height="16">
    <properties>
     <property name="link" value="beach;464;144;"/>

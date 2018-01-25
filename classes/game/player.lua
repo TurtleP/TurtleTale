@@ -101,6 +101,10 @@ function player:update(dt)
 
 	self.speed.x = speed
 
+	if self.static then
+		self.x = self.x + self.speed.x * dt
+	end
+	
 	if not self.punching and not self.onLadder then
 		if self.speed.y > 0 then
 			self:changeState("jump")

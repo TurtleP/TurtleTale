@@ -96,6 +96,10 @@ function save:encode(i) --on save
 		end
 	end
 
+	for k, v in pairs(achievements["achievements"]) do
+		data["achievements"][k] = v.unlocked
+	end
+
 	for k, v in pairs(CUTSCENES) do
 		if not v[1].manual then
 			data["cutscenes"][k] = v[2]
