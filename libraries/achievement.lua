@@ -47,15 +47,15 @@ end
 
 function achievement:update(dt)
 	for k, v in pairs(self.achievements) do
-		if not v.unlocked and v.alive and v.update then
+		if v.alive and v.update then
 			local ret = v.update(dt)
-
+			
 			if ret then
 				v.alive = ret.alive
-
-				if ret.unlocked then
-					self:unlock(k)
-				end
+			end
+		elseif not v.alive then
+			if not v.unlocked then
+				self:unlock(k)
 			end
 		end
 	end
@@ -88,13 +88,18 @@ end
 function achievement:unlock(name, loaded)
 	local v = self.achievements[name]
 	
-	v.open = true
 	v.unlocked = true
-	v.y = SCREEN_HEIGHT
-	v.timer = 0
 
-	self.offset = self.offset + self.height
-	v.maxHeight = self.maxHeight - self.offset
+	if not loaded then
+		v.open = true
+		v.y = SCREEN_HEIGHT
+		v.timer = 0
+
+		self.offset = self.offset + self.height
+		v.maxHeight = self.maxHeight - self.offset
+
+		save:encode(nil, "achievements")
+	end
 end
 
 function achievement:draw() --draw the thing

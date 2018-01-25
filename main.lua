@@ -43,6 +43,8 @@ shop = require 'classes.game.shop.shop'
 state = require 'libraries.state'
 achievements = require 'libraries.achievement'
 
+reloadData()
+
 require 'classes.gui'
 
 function love.load()

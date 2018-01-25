@@ -50,9 +50,17 @@ function save:generateDefaultData()
 	self:writeData("all")
 end
 
-function save:encode(i) --on save
+function save:encode(i, t) --on save
 	if not i then
 		i = self.currentSave
+	end
+
+	if t == "achievements" and self.data[i]["achievements"] then --already in-game so ..
+		for k, v in pairs(achievements["achievements"]) do
+			self.data[i]["achievements"][k] = v.unlocked
+		end
+		self:writeData(i, self.data[i])
+		return
 	end
 
 	local values = 
@@ -94,10 +102,6 @@ function save:encode(i) --on save
 		for j, w in ipairs(values) do
 			data["player"][w[1]] = w[2]
 		end
-	end
-
-	for k, v in pairs(achievements["achievements"]) do
-		data["achievements"][k] = v.unlocked
 	end
 
 	for k, v in pairs(CUTSCENES) do
@@ -177,6 +181,12 @@ function save:import(t)
 
 		if self:getActiveData()["mapdata"] then
 			MAP_DATA = self:getActiveData()["mapdata"]
+		end
+
+		if self:getActiveData()["achievements"] then
+			for k, v in pairs(self:getActiveData()["achievements"]) do
+				achievements:unlock(k, true)
+			end
 		end
 	end
 end

@@ -20,7 +20,7 @@ return
 						if time > 5 then
 							map.changeMap = true
 							if map.fade == 1 then
-								--game over lol
+								state:change("gameover")
 								isAlive = false
 							end
 						end

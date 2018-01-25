@@ -1,6 +1,8 @@
 local gameover = class("gameover")
 
 function gameover:load()
+	love.audio.stop()
+
 	self.start = love.audio.newSource("audio/music/gameover_start.ogg", "static")
 	self.loop = love.audio.newSource("audio/music/gameover.ogg", "static")
 	
@@ -9,6 +11,7 @@ function gameover:load()
 	self.player = state.states["game"].player
 
 	self.player.freeze = true
+	self.player.speed.y = 0
 	self.player:setPosition((TOPSCREEN_WIDTH - self.player.width) / 2, SCREEN_HEIGHT * 0.75)
 	self.player:changeState("dead")
 
@@ -92,6 +95,10 @@ function gameover:draw()
 
 	love.graphics.setScreen("bottom")
 
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.rectangle("fill", 0, 0, BOTSCREEN_WIDTH, SCREEN_HEIGHT)
+
+	love.graphics.setColor(255, 255, 255)
 	for k, v in ipairs(self.gui) do
 		v:draw()
 	end
