@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="43">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="45">
  <properties>
   <property name="bgcolor" value="0;0;0"/>
   <property name="offset" type="int" value="40"/>
@@ -49,10 +49,11 @@
 0,136,137,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="topObjects" visible="0">
-  <object id="3" name="shopkeeper" x="272" y="160" width="16" height="16">
+ <objectgroup name="topObjects">
+  <object id="3" name="hermit" x="272" y="160" width="16" height="16">
    <properties>
-    <property name="menu" type="bool" value="false"/>
+    <property name="freeze" type="bool" value="true"/>
+    <property name="scale" type="int" value="-1"/>
    </properties>
   </object>
   <object id="4" name="tile" x="0" y="208" width="320" height="32"/>
@@ -83,5 +84,11 @@
   <object id="40" name="tile" x="80" y="16" width="32" height="64"/>
   <object id="41" name="tile" x="192" y="16" width="16" height="144"/>
   <object id="42" name="tile" x="128" y="112" width="16" height="48"/>
+  <object id="43" name="userectangle" x="224" y="192" width="16" height="16">
+   <properties>
+    <property name="func" value="data.scripts.heal"/>
+   </properties>
+  </object>
+  <object id="44" name="barrier" x="256" y="144" height="32"/>
  </objectgroup>
 </map>

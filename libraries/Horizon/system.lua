@@ -21,3 +21,13 @@ end
 function love.system.getUsername()
 	return CONFIG.USERNAME
 end
+
+local oldPowerInfo = love.system.getPowerInfo
+function love.system.getPowerInfo()
+	local state, battery, seconds = oldPowerInfo()
+
+	if battery ~= nil then
+		return state, battery, nil
+	end
+	return "charging", 100, nil
+end

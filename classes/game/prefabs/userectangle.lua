@@ -41,6 +41,7 @@ function userectangle:update(dt)
 					self.func(player, self.funcArgs)
 					self.remove = self.once
 				end
+				player:use(false)
 			end
 		end
 	end

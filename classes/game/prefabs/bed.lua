@@ -1,4 +1,4 @@
-bed = class("bed")
+bed = class("bed", object)
 
 local bedImage = love.graphics.newImage("graphics/game/prefabs/bed.png")
 local bedQuads = {}
@@ -7,11 +7,7 @@ for i = 1, 5 do
 end
 
 function bed:initialize(layer, x, y, properties)
-	self.x = x
-	self.y = y
-
-	self.width = 32
-	self.height = 17
+	object.initialize(self, x, y, 32, 17)
 
 	local scale = 1
 	if properties.scale then

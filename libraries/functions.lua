@@ -43,3 +43,17 @@ end
 function string:hasExtension(extension)
 	return self:sub(-#extension) == extension
 end
+
+function distance(x1, y1, x2, y2) 
+	return ((x2 - x1) ^ 2 + (y2 - y1) ^ 2) ^ 0.5 
+end
+
+function findInTable(t, find)
+	local found = false
+	for k, v in pairs(t) do
+		if v == find then
+			found = true
+		end
+	end
+	return found
+end

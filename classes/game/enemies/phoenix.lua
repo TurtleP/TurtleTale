@@ -63,11 +63,3 @@ function phoenix:fireball(direction)
 	self.fireballDirection = direction
 	self.fireballThrow = true
 end
-
-function phoenix:setState(state)
-	if self.state ~= state then
-		self.timer = 0
-		self.quadi = 1
-		self.state = state
-	end
-end

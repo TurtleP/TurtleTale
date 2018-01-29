@@ -61,26 +61,28 @@ function achievement:update(dt)
 	end
 
 	for k, v in pairs(self.achievements) do
-		if not v.loaded and v.unlocked then
-			if v.open then
-				v.y = math.max(v.y - 96 * dt, v.maxHeight)
-			elseif v.open == false then
-				v.y = math.min(v.y + 96 * dt, SCREEN_HEIGHT)
+		if v.show then
+			if not v.loaded and v.unlocked then
+				if v.open then
+					v.y = math.max(v.y - 96 * dt, v.maxHeight)
+				elseif v.open == false then
+					v.y = math.min(v.y + 96 * dt, SCREEN_HEIGHT)
 
-				if v.y == SCREEN_HEIGHT then
-					v.loaded = true --stop rendering/updating
-					self.offset = math.max(self.offset - self.height, 0)
+					if v.y == SCREEN_HEIGHT then
+						v.loaded = true --stop rendering/updating
+						self.offset = math.max(self.offset - self.height, 0)
+					end
 				end
-			end
 
-			if v.y == v.maxHeight then
-				v.timer = v.timer + dt
-				if v.timer > 2 then
-					v.open = false
+				if v.y == v.maxHeight then
+					v.timer = v.timer + dt
+					if v.timer > 2 then
+						v.open = false
+					end
 				end
+			elseif v.loaded then
+				self.offset = math.max(self.offset - self.height, 0)
 			end
-		elseif v.loaded then
-			self.offset = math.max(self.offset - self.height, 0)
 		end
 	end
 end
@@ -89,6 +91,7 @@ function achievement:unlock(name, loaded)
 	local v = self.achievements[name]
 	
 	v.unlocked = true
+	v.show = not loaded
 
 	if not loaded then
 		v.open = true
@@ -107,14 +110,16 @@ function achievement:draw() --draw the thing
 
 	local x = TOPSCREEN_WIDTH - self.width
 	for k, v in pairs(self.achievements) do
-		if v.unlocked and not v.loaded then
-			love.graphics.setColor(40, 40, 40, 128)
-			love.graphics.rectangle("fill", x, v.y, self.width, self.height)
+		if v.show then
+			if v.unlocked and not v.loaded then
+				love.graphics.setColor(40, 40, 40, 128)
+				love.graphics.rectangle("fill", x, v.y, self.width, self.height)
 
-			love.graphics.setColor(255, 255, 255)
-			love.graphics.print(v.name, x + 21, v.y + (self.height - gameFont:getHeight()) / 2)
+				love.graphics.setColor(255, 255, 255)
+				love.graphics.print(v.name, x + 21, v.y + (self.height - gameFont:getHeight()) / 2)
 
-			love.graphics.draw(achievementsImage, achievementsQuads[v.quadi], x + 1, v.y + 1)
+				love.graphics.draw(achievementsImage, achievementsQuads[v.quadi], x + 1, v.y + 1)
+			end
 		end
 	end
 end

@@ -29,6 +29,10 @@ function shop:loadData(map)
 end
 
 function shop:update(dt)
+	if not self.rawData then
+		return
+	end
+
 	if SHOP_OPEN then
 		self.fade = 1
 	else

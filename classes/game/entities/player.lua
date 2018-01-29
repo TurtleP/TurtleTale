@@ -13,14 +13,21 @@ end
 
 local jumpSound = love.audio.newSource("audio/jump.ogg", "static")
 local duckSound = love.audio.newSource("audio/duck.ogg", "static")
+local healthSound = love.audio.newSource("audio/health.ogg", "static")
 
 function player:initialize(x, y)
 	entity.initialize(self, nil, x, y, 12, 14)
 
-	self.category = 3
+	self.category = 2
 	self.gravity = 360
 
-	self.mask = { true }
+	self.mask = 
+	{ 
+		true, false, true,
+		false, true, true,
+		true, true
+	}
+	
 	self.money = 0
 	
 	self.maxHealth = 3
@@ -28,7 +35,7 @@ function player:initialize(x, y)
 
 	self.abilities = 
 	{
-		["punch"] = false
+		punch = false
 	}
 
 	self.quadi = 1
@@ -56,16 +63,22 @@ function player:initialize(x, y)
 		dead = {rate = 8, stop = true},
 		duck = {rate = 8, stop = true},
 		unduck = {rate = 8, stop = true, func = function() 
-			self:changeState("idle") 
+			self:setState("idle") 
 			self.y = self.y - 6
 			self.height = 14 
 			self.ducking = false
 		end},
-		climb = {rate = 6, stop = false, condition = function()
+		climb = {rate = 10, stop = false, condition = function()
 			return self.speed.y ~= 0
 		end},
 		punch = {rate = 14, stop = false}
 	}
+
+	self.invincible = false
+	self.invincibleTimer = 0
+
+	self.bashTimer = 0.75
+	self.deathDelay = 1
 end
 
 function player:animate(dt)
@@ -86,6 +99,23 @@ end
 function player:update(dt)
 	self:animate(dt)
 
+	self:checkDeath(dt)
+
+	if self.state == "dead" then
+		self.deathDelay = self.deathDelay - dt
+		
+		local map = state:get("map")
+		local position = table.concat(PLAYERSPAWN, ";")
+		
+		if self.deathDelay < 0 then
+			map:changeLevel(state.states["game"], map.name .. ";" .. position)
+			self:addHealth(-1)
+			self.deathDelay = 1
+		end
+
+		return
+	end
+
 	local speed = 0
 	if not self.punching then
 		if not self.ducking then
@@ -104,10 +134,18 @@ function player:update(dt)
 	if self.static then
 		self.x = self.x + self.speed.x * dt
 	end
+
+	if self.punching then
+		self.bashTimer = math.max(self.bashTimer - dt, 0)
+		if self.bashTimer == 0 then
+			self:punch(false, true)
+			self.bashTimer = 0.75
+		end
+	end
 	
 	if not self.punching and not self.onLadder then
 		if self.speed.y > 0 then
-			self:changeState("jump")
+			self:setState("jump")
 		end
 	end
 
@@ -130,10 +168,28 @@ function player:update(dt)
 			self.speed.y = 0
 		end
 	end
+
+	if self.invincible then
+		self.invincibleTimer = self.invincibleTimer + 10 * dt
+
+		if self.invincibleTimer > 15 then
+			self.invincible = false
+			self.invincibleTimer = 0
+		end
+	end
 end
 
 function player:draw()
+	if self.invincible and math.floor(self.invincibleTimer) % 2 == 0 then
+		return
+	end
 	love.graphics.draw(turtleImage, turtleQuads[self.state][self.quadi], self.x + self:getXOffset(), self.y - self:getYOffset(), 0, self.scale, 1)
+end
+
+function player:passiveCollide(name, data)
+	if name == "health" or name == "shell" then
+		data:collect(self)
+	end
 end
 
 function player:upCollide(name, data)
@@ -142,10 +198,24 @@ function player:upCollide(name, data)
 			return false
 		end
 	end
+
+	if name == "spider" then
+		self:addHealth(-1)
+		return false
+	end
+
+	if name == "hermit" or name == "bat" then
+		return false
+	end
 end
 
 function player:downCollide(name, data)
 	if name == "tile" then
+		if data.spikes then
+			self:die()
+			return false
+		end
+
 		if data.ladder then
 			if self.y < data.y then
 				if self.downKey or self.onLadder then
@@ -158,7 +228,7 @@ function player:downCollide(name, data)
 			end
 		else
 			if self.onLadder then
-				self:dropLadder()
+				--self:dropLadder()
 			end
 		end
 
@@ -166,6 +236,16 @@ function player:downCollide(name, data)
 			self.jumping = false
 			self:move()
 		end
+	end
+
+	if name == "spider" then
+		self:jump(true)
+		data:die()
+		return false
+	end
+
+	if name == "hermit" or name == "bat" then
+		return false
 	end
 end
 
@@ -175,6 +255,24 @@ function player:rightCollide(name, data)
 			return false
 		end
 	end
+
+	if name == "spider" then
+		self:addHealth(-1)
+		return false
+	end
+
+	if name == "button" then
+		if self.punching then
+			data:use(self)
+		end
+	end
+
+	if name == "hermit" or name == "bat" then
+		if self.punching then
+			data:punch(self.scale)
+		end
+		return false
+	end
 end
 
 function player:leftCollide(name, data)
@@ -182,6 +280,25 @@ function player:leftCollide(name, data)
 		if data.ladder then
 			return false
 		end
+	end
+
+	if name == "button" then
+		if self.punching then
+			data:use(self)
+			return false
+		end
+	end
+
+	if name == "spider" then
+		self:addHealth(-1)
+		return false
+	end
+	
+	if name == "hermit" or name == "bat" then
+		if self.punching then
+			data:punch(self.scale)
+		end
+		return false
 	end
 end
 
@@ -202,7 +319,7 @@ function player:checkLadder(data)
 				self.onLadder = true
 				self.gravity = 0
 				self.x = (data.x + data.width / 2) - self.width / 2
-				self:changeState("climb")
+				self:setState("climb")
 
 				data.passive = true
 				self.lastLadder = data
@@ -264,9 +381,9 @@ function player:move()
 	end
 
 	if self.leftkey or self.rightkey then
-		self:changeState("walk")
+		self:setState("walk")
 	else
-		self:changeState("idle")
+		self:setState("idle")
 	end
 end
 
@@ -274,7 +391,7 @@ function player:isMoving()
 	return (self.leftkey or self.rightkey)
 end
 
-function player:punch(move)
+function player:punch(move, force)
 	if not self.abilities["punch"] then
 		return
 	end
@@ -286,25 +403,26 @@ function player:punch(move)
 	self.punching = move
 
 	if move then
-		self:changeState("punch")
+		self:setState("punch")
 	else
-		self:changeState("idle")
+		self:move()
+		self.bashTimer = 0.75
 	end
 end
 
 function player:duck(move)
-	if self:isMoving() or self.jumping or self.punching then
+	if self:isMoving() or self.jumping or self.punching or self.onLadder then
 		return
 	end
 
 	if move and self.height ~= 8 then
-		self:changeState("duck")
+		self:setState("duck")
 		self.height = 8
 		self.y = self.y + 6
 		duckSound:play()
 		self.ducking = true
 	else
-		self:changeState("unduck")
+		self:setState("unduck")
 	end
 end
 
@@ -317,14 +435,60 @@ function player:use(move)
 end
 
 function player:setPosition(x, y)
+	if type(x) == "string" then
+		local object = state:call("findObject", x)
+		x, y = object.x, object.y
+	end
+
 	self.x = x
 	self.y = y
 end
 
-function player:jump()
-	if not self.jumping and not self.onLadder then
+function player:die(reason)
+	entity.die(self, reason)
+
+	self:setState("dead")
+	self.freeze = true
+	self.active = false
+end
+
+function player:unlock()
+	entity.unlock(self)
+
+	self:setState("idle")
+end
+
+function player:addHealth(value)
+	if value < 0 then
+		if not self.invincible then
+			self.invincible = true
+		else
+			return
+		end
+	else
+		healthSound:play()
+	end
+
+	self.health = math.max(0, math.min(self.health + value, self.maxHealth))
+
+	if self.health == 0 then
+		self.freeze = true
+		self.active = true
+		self.invincible = false
+		self.invincibleTimer = 0
+		
+		state:change("gameover")
+	end
+end
+
+function player:addMoney(value)
+	self.money = math.max(0, math.min(self.money + value, 99)) --some stupid limit
+end
+
+function player:jump(force)
+	if (not self.jumping and not self.onLadder) or force then
 		if not self.ducking and not self.punching then
-			self:changeState("jump")
+			self:setState("jump")
 		end
 		self.speed.y = -JUMPFORCE - (math.abs(self.speed.x) / 80) * JUMPFORCEADD * 0.5
 		jumpSound:play()
@@ -335,14 +499,6 @@ end
 function player:getAbility(name)
 	if not self.abilities[name] then
 		self.abilities[name] = true
-	end
-end
-
-function player:changeState(state)
-	if self.state ~= state then
-		self.quadi = 1
-		self.timer = 0
-		self.state = state
 	end
 end
 

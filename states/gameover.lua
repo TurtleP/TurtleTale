@@ -10,10 +10,8 @@ function gameover:load()
 
 	self.player = state.states["game"].player
 
-	self.player.freeze = true
-	self.player.speed.y = 0
 	self.player:setPosition((TOPSCREEN_WIDTH - self.player.width) / 2, SCREEN_HEIGHT * 0.75)
-	self.player:changeState("dead")
+	self.player:setState("dead")
 
 	self.start:play()
 
@@ -60,18 +58,15 @@ function gameover:update(dt)
 		end
 	end
 
-	if self.intro then
-		self.ghostFade = math.min(self.ghostFade + dt, 1)
-		self.ghostPosition.y = math.max(self.ghostPosition.y - 48 * dt, self.player.y - 24)
-		
-		self.ghostTimer = self.ghostTimer + 6 * dt
-		self.ghostQuadi = math.floor(self.ghostTimer % 4) + 1
-	end
+	self.ghostFade = math.min(self.ghostFade + dt, 1)
+	self.ghostPosition.y = math.max(self.ghostPosition.y - 48 * dt, self.player.y - 24)
+	
+	self.ghostTimer = self.ghostTimer + 6 * dt
+	self.ghostQuadi = math.floor(self.ghostTimer % 4) + 1
 end
 
 function gameover:draw()
 	love.graphics.setScreen("top")
-
 	
 	love.graphics.push()
 	
@@ -79,19 +74,15 @@ function gameover:draw()
 	
 	state.states["game"].map:draw()
 	
-	state.states["game"].map:drawTransition()
-	
 	love.graphics.pop()
+	
+	state.states["game"].map:drawTransition()
 	
 	love.graphics.print("GAME OVER", (TOPSCREEN_WIDTH - gameFont:getWidth("GAME OVER")) / 2, SCREEN_HEIGHT * 0.25)
 	love.graphics.print("YOU HAVE DIED.", (TOPSCREEN_WIDTH - gameFont:getWidth("YOU HAVE DIED")) / 2, SCREEN_HEIGHT * 0.35)
 	
 	love.graphics.setColor(255, 255, 255, 255 * self.ghostFade)
 	love.graphics.draw(self.ghostImage, self.ghostQuads[self.ghostQuadi], self.ghostPosition.x, self.ghostPosition.y)
-
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.draw(self.light, self.player.x + (self.player.width - self.light:getWidth()) / 2, self.player.y + self.player.height)
-	self.player:draw()
 
 	love.graphics.setScreen("bottom")
 
@@ -115,7 +106,7 @@ function gameover:destroy()
 	self.loop:stop()
 	self.loop = nil
 
-	self.player:changeState("idle")
+	self.player:setState("idle")
 	self.player.freeze = false
 end
 

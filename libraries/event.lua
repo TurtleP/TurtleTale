@@ -58,23 +58,22 @@ function event:update(dt)
 			if script.args[1] == "player" then
 				player[script.args[2]](player, unpack(script.args[3]))
 			else
-				local foundObject = self:findObject(script.args[1])
+				local object = state:call("findObject", script.args[1])
 
-				if foundObject then
-					foundObject[script.args[2]](foundObject, unpack(script.args[3]))
+				if object then
+					object[script.args[2]](object, unpack(script.args[3]))
 				end
 			end
 		elseif script.command == "sleep" then
 			self.sleep = script.args
 		elseif script.command == "dialog" then
-			local object = self:findObject(script.args[1])
+			local object = state:call("findObject", script.args[1])
 
 			if object and object.talk then
 				object:talk(script.args[2], self.autoScroll)
 			else
 				state:call("addDialog", script.args[1], script.args[2])
 			end
-			--table.insert(dialogs, dialog:new(script.args[1], ))
 		elseif script.command == "shake" then
 			if script.args > 0 then
 				state:call("shake", script.args)
@@ -151,22 +150,6 @@ end
 
 function event:isRunning()
 	return self.running
-end
-
-function event:findObject(name)
-	local objects = state:get("layers")
-
-	for k, v in pairs(objects) do
-		for j, w in pairs(v) do
-			local check = tostring(w):gsub("instance of class ", "")
-
-			if check == name then
-				return w
-			end
-		end
-	end
-
-	return nil
 end
 
 return event:new()

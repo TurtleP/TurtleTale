@@ -1,8 +1,7 @@
 local credits = class("credits")
 
 function credits:load()
-	self.y = SCREEN_HEIGHT
-	self.speed = vector(0, 24)
+	self.speed = vector(30, 24)
 	
 	love.graphics.setBackgroundColor(22, 78, 122)
 
@@ -13,15 +12,9 @@ function credits:load()
 	self.background = love.graphics.newImage("graphics/backgrounds/sky.png")
 	self.ground = love.graphics.newImage("data/maps/credits.png")
 
-	self.treesImage = love.graphics.newImage("graphics/game/prefabs/tree.png")
-	self.treesQuads = {}
-	for i = 1, 2 do
-		self.treesQuads[i] = love.graphics.newQuad((i - 1) * 31, 0, 31, 42, self.treesImage:getWidth(), self.treesImage:getHeight())
-	end
-
 	self.player = state.states["game"].player
 
-	self.player:setPosition(40, SCREEN_HEIGHT - 30)
+	self.player:setPosition(20, SCREEN_HEIGHT - 46)
 	self.player:changeState("walk")
 	self.player.static = true
 
@@ -29,13 +22,11 @@ function credits:load()
 	self.cloudTimer = 0
 	self.cloudDelay = 0.5
 
-	self.trees = {}
-	self.treeTimer = 0
-	self.treeDelay = 1
-
 	self.textFade = 0
 	self.finishDelay = 1
 	self.complete = false
+
+	self.mapPosition = 0
 end
 
 function credits:update(dt)
@@ -51,24 +42,11 @@ function credits:update(dt)
 		self.cloudDelay = math.random(1, 2)
 		self.cloudTimer = 0
 	end
-
-	self.treeTimer = self.treeTimer + dt
-	if self.treeTimer > 10 then
-		table.insert(self.trees, {index = math.random(2), speed = 20, x = 320, y = SCREEN_HEIGHT - 16 - 42})
-		self.treeTimer = self.treeTimer - 10
-	end
 	
 	for i, v in ipairs(self.clouds) do
 		v.x = v.x - v.speed * dt
 		if v.x < -cloudImages[v.index]:getWidth() then
 			table.remove(self.clouds, i)
-		end
-	end
-
-	for i, v in ipairs(self.trees) do
-		v.x = v.x - v.speed * dt
-		if v.x < -31 then
-			table.remove(self.trees, i)
 		end
 	end
 
@@ -82,6 +60,8 @@ function credits:update(dt)
 		if self.finishDelay < 0 and self.player.x > BOTSCREEN_WIDTH then
 			self.textFade = math.min(self.textFade + dt, 1)
 		end
+	else
+		self.mapPosition = self.mapPosition - self.speed.x * dt
 	end
 end
 
@@ -91,10 +71,6 @@ function credits:draw()
 
 	love.graphics.setScreen("bottom")
 	love.graphics.draw(self.background)
-
-	for i, v in ipairs(self.trees) do
-		love.graphics.draw(self.treesImage, self.treesQuads[v.index], v.x, v.y)
-	end
 
 	for i = 1, #CREDITS do
 		if CREDITS[i][3] + (i - 1) * 20 < -gameFont:getHeight() and CREDITS[i][2] == "bottom" then
@@ -120,8 +96,11 @@ function credits:draw()
 		love.graphics.draw(cloudImages[v.index], v.x, v.y)
 	end
 
+	for i = 1, math.ceil(self.ground:getWidth() / 320) do
+		love.graphics.draw(self.ground, self.mapPosition + (i - 1) * self.ground:getWidth())
+	end
+	
 	self.player:draw()
-	love.graphics.draw(self.ground, 0, SCREEN_HEIGHT - 16)
 end
 
 function credits:destroy()
@@ -129,8 +108,6 @@ function credits:destroy()
 	self.background = nil
 	self.ground = nil
 	self.player.static = false
-	self.treesQuads = nil
-	self.treesImage = nil
 end
 
 return credits

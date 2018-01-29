@@ -5,6 +5,7 @@ level.SONGNAME = nil
 function level:initialize(layers, name, fade, fadeSpeed)
 	self.data = MAPS[name]
 	self.name = name
+	self.layers = layers
 
 	self.width = self.data.width * 16
 	self.height = self.data.height * 16
@@ -33,13 +34,13 @@ function level:initialize(layers, name, fade, fadeSpeed)
 	if self:hasLink("next") then
 		self.nextMap = self.data.properties.next:split(";")[1]
 	else
-		barrier:new(layers[3], self.width, 0, 1, SCREEN_HEIGHT)
+		barrier:new(layers[0], self.width, 0, 1, SCREEN_HEIGHT)
 	end
 	
 	if self:hasLink("prev") then
 		self.previousMap = self.data.properties.prev:split(";")[1]
 	else
-		barrier:new(layers[3], -1, 0, 1, SCREEN_HEIGHT)
+		barrier:new(layers[0], -1, 0, 1, SCREEN_HEIGHT)
 	end
 
 	self.changeMap = false
@@ -47,7 +48,10 @@ function level:initialize(layers, name, fade, fadeSpeed)
 	self.fadeSpeed = fadeSpeed or 0.5
 
 	self.offset = (self.data.properties.offset or 0)
-	state:get("camera").x = -self.offset
+	local camera = state:get("camera")
+	if camera then
+		camera.x = -self.offset
+	end
 
 	shop:loadData(self.name)
 
@@ -56,6 +60,16 @@ function level:initialize(layers, name, fade, fadeSpeed)
 	else
 		love.graphics.setBackgroundColor(BACKGROUNDCOLORS.sky)
 	end
+end
+
+function level:getOffset()
+	return self.offset
+end
+
+function level:createEntity(name, x, y, properties)
+	local data = { { name = name, x = x, y = y, properties = properties or {} } }
+
+	self:createEntities(self.layers, data)
 end
 
 function level:createEntities(layers, objects)
@@ -74,13 +88,27 @@ function level:createEntities(layers, objects)
 			elseif v.name == "door" then
 				door:new(layers[0], v.x, v.y, v.properties)
 			elseif v.name == "sign" then
-				sign:new(layers[2], v.x, v.y, v.properties)
+				sign:new(layers[1], v.x, v.y, v.properties)
 			elseif v.name == "palm" then
 				palm:new(layers[2], v.x, v.y)
 			elseif v.name == "hermit" then
 				hermit:new(layers[2], v.x, v.y, v.properties)
+			elseif v.name == "bat" then
+				bat:new(layers[2], v.x, v.y)
+			elseif v.name == "spider" then
+				spider:new(layers[2], v.x, v.y)
 			elseif v.name == "userectangle" then
 				table.insert(layers[0], userectangle:new(v.x, v.y, v.width, v.height, require(v.properties.func), false))
+			elseif v.name == "block" then
+				block:new(layers[2], v.x, v.y, v.width, v.height, v.properties)
+			elseif v.name == "button" then
+				button:new(layers[2], v.x, v.y, v.properties)
+			elseif v.name == "chest" then
+				chest:new(layers[1], v.x, v.y, v.properties)
+			elseif v.name == "health" then
+				health:new(v.x, v.y)
+			elseif v.name == "barrier" then
+				barrier:new(layers[0], v.x, v.y, v.width, v.height)
 			end
 		else
 			print(v.name .. " does not exist.")
@@ -131,8 +159,6 @@ function level:changeLevel(game, link)
 		else
 			game.player:moveRight(true)
 		end
-		
-
 	else
 		if self.fadeSpeed ~= 1 then
 			self.fadeSpeed = 1
@@ -144,7 +170,6 @@ function level:changeLevel(game, link)
 	
 	local song = MAPS[self.newLevel[1]].properties.song
 	if (song ~= nil and song ~= level.SONGNAME) then
-		print(song, level.SONGNAME)
 		level.SONGNAME = song
 	end
 	
@@ -182,19 +207,11 @@ function level:update(dt)
 end
 
 function level:draw()
-	if self.width < TOPSCREEN_WIDTH then
-		love.graphics.setScissor(self.offset, 0, self.width, self.height)
-	end
-
 	for x = 1, math.ceil(self.width / self.background:getWidth()) do
 		love.graphics.draw(self.background, (x - 1) * TOPSCREEN_WIDTH, 0)
 	end
 
 	love.graphics.draw(self.tiles)
-
-	if self.width < TOPSCREEN_WIDTH then
-		love.graphics.setScissor()
-	end
 end
 
 function level:drawTransition()

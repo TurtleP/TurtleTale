@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" nextobjectid="21">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="22">
  <properties>
   <property name="background" value="cave"/>
   <property name="offset" type="int" value="40"/>
   <property name="song" value="shop"/>
  </properties>
  <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
  <layer name="topTiles" width="20" height="15">
   <data encoding="csv">
@@ -57,9 +57,10 @@
   <object id="10" name="tile" x="96" y="128" width="32" height="48"/>
   <object id="11" name="tile" x="32" y="0" width="256" height="16"/>
   <object id="12" name="tile" x="304" y="32" width="16" height="112"/>
-  <object id="13" name="shopkeeper" x="256" y="160" width="16" height="16">
+  <object id="13" name="hermit" x="256" y="160" width="16" height="16">
    <properties>
-    <property name="menu" type="bool" value="true"/>
+    <property name="freeze" type="bool" value="true"/>
+    <property name="scale" type="int" value="-1"/>
    </properties>
   </object>
   <object id="15" name="tile" x="176" y="16" width="112" height="48"/>
@@ -72,5 +73,6 @@
     <property name="link" value="mountain_1-5;48;192;"/>
    </properties>
   </object>
+  <object id="21" name="barrier" x="240" y="160" height="16"/>
  </objectgroup>
 </map>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" nextobjectid="21">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="23">
  <properties>
   <property name="background" value="cave"/>
   <property name="bgcolor" value="0;0;0"/>
@@ -7,7 +7,7 @@
   <property name="song" value="shop"/>
  </properties>
  <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
  <layer name="topTiles" width="20" height="15">
   <data encoding="csv">
@@ -29,7 +29,12 @@
 </data>
  </layer>
  <objectgroup name="topObjects">
-  <object id="1" name="shopkeeper" x="288" y="160" width="16" height="16"/>
+  <object id="1" name="hermit" x="288" y="160" width="16" height="16">
+   <properties>
+    <property name="freeze" type="bool" value="true"/>
+    <property name="scale" type="int" value="-1"/>
+   </properties>
+  </object>
   <object id="3" name="bed" x="176" y="80" width="16" height="16">
    <properties>
     <property name="scale" type="int" value="-1"/>
@@ -55,5 +60,11 @@
     <property name="link" value="mountain_1-1;640;160;"/>
    </properties>
   </object>
+  <object id="21" name="userectangle" x="240" y="192" width="16" height="16">
+   <properties>
+    <property name="func" value="data.scripts.heal"/>
+   </properties>
+  </object>
+  <object id="22" name="barrier" x="272" y="144" height="32"/>
  </objectgroup>
 </map>

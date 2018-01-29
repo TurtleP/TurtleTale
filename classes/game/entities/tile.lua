@@ -1,11 +1,7 @@
-tile = class("tile")
+tile = class("tile", object)
 
 function tile:initialize(layer, x, y, width, height, properties)
-	self.x = x
-	self.y = y
-
-	self.width = width
-	self.height = height
+	object.initialize(self, x, y, width, height)
 
 	self.category = 1
 
@@ -22,7 +18,6 @@ function tile:initialize(layer, x, y, width, height, properties)
 
 	if self.breakable then
 		self.active = true
-		self.passive = true
 	elseif self.ladder then
 		self.static = false
 	end

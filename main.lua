@@ -14,12 +14,12 @@ require 'libraries.physics'
 
 love.graphics.setDefaultFilter("nearest", "nearest")
 
+require 'classes.game.object'
 require 'classes.game.entity'
 require 'classes.game.level'
 
 require 'classes.game.prefabs.userectangle'
 require 'classes.game.prefabs.barrier'
-require 'classes.game.prefabs.particle'
 require 'classes.game.prefabs.water'
 require 'classes.game.prefabs.house'
 require 'classes.game.prefabs.clock'
@@ -28,12 +28,25 @@ require 'classes.game.prefabs.door'
 require 'classes.game.prefabs.sign'
 require 'classes.game.prefabs.palm'
 
+require 'classes.game.effects.particle'
+require 'classes.game.effects.smoke'
+require 'classes.game.effects.hitbox'
+
 require 'classes.game.enemies.fire'
 require 'classes.game.enemies.phoenix'
 require 'classes.game.enemies.hermit'
+require 'classes.game.enemies.bat'
+require 'classes.game.enemies.spider'
 
-require 'classes.game.player'
-require 'classes.game.tile'
+require 'classes.game.entities.player'
+require 'classes.game.entities.tile'
+require 'classes.game.entities.health'
+require 'classes.game.entities.shell'
+require 'classes.game.entities.block'
+require 'classes.game.entities.chest'
+require 'classes.game.entities.key'
+require 'classes.game.entities.button'
+
 require 'classes.game.hud'
 require 'classes.game.dialog'
 
@@ -56,9 +69,9 @@ function love.load()
 		end
 	end
 
-	bottomScreenImage = love.graphics.newImage("graphics/hud/shell.png")
+	bottomScreenImage = love.graphics.newImage("graphics/game/hud/shell.png")
 
-	healthImage = love.graphics.newImage("graphics/hud/health.png")
+	healthImage = love.graphics.newImage("graphics/game/hud/health.png")
 	healthQuads = {}
 	for x = 1, 4 do
 		healthQuads[x] = love.graphics.newQuad((x - 1) * 8, 0, 8, 8, healthImage:getWidth(), healthImage:getHeight())
@@ -72,7 +85,7 @@ function love.load()
 	table.insert(moneyQuads, love.graphics.newQuad(0, 6, 15, 10, moneyImage:getWidth(), moneyImage:getHeight()))
 
 	clockImage = love.graphics.newImage("graphics/title/clock.png")
-	buttonImage = love.graphics.newImage("graphics/hud/button.png")
+	buttonImage = love.graphics.newImage("graphics/game/hud/button.png")
 	calendarImage = love.graphics.newImage("graphics/title/calendar.png")
 
 	selectVerticalImage = love.graphics.newImage("graphics/game/select_vertical.png")
@@ -92,19 +105,23 @@ function love.load()
 		cloudImages[i] = love.graphics.newImage("graphics/title/cloud" .. i .. ".png")
 	end
 
+	batteryImage = love.graphics.newImage("graphics/game/hud/battery.png")
+	
 	bannerImage = love.graphics.newImage("graphics/title/title.png")
 
-	fanfareSound = love.audio.newSource("audio/fanfare.ogg")
-	flyAwaySound = love.audio.newSource("audio/flyAway.ogg")
+	fanfareSound = love.audio.newSource("audio/fanfare.ogg", "static")
+	flyAwaySound = love.audio.newSource("audio/flyaway.ogg", "static")
 
 	math.randomseed(os.time())
 
 	gameFont = love.graphics.newFont("graphics/Gohu.10.ttf")
 	love.graphics.setFont(gameFont)
 	
-	--love.audio.setVolume(0)
+	love.audio.setVolume(0)
 
-	state:change("title")
+	state:change("intro")
+
+	love.graphics.setBackgroundColor(0, 0, 0)
 end
 
 function love.update(dt)
@@ -122,12 +139,23 @@ end
 function love.keypressed(key)
 	if key == "lz" then
 		love.event.quit()
+	elseif key == "rz" then
+		state:change("test")
 	end
+
 	state:keypressed(key)
 end
 
 function love.keyreleased(key)
 	state:keyreleased(key)
+end
+
+function love.mousepressed(x, y, button)
+	state:mousepressed(x, y, button)
+end
+
+function love.wheelmoved(x, y)
+	state:wheelmoved(x, y)
 end
 
 require 'libraries.Horizon'

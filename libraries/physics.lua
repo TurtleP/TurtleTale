@@ -10,12 +10,14 @@ local floor = math.floor
 local abs = math.abs
 
 --[[
-	1. Tile
+	1. Tile/Barrier
 	2. Player
-	4. Phoenix/Door? Wat
-	5. Crate
-	6. AI
-	7. Health
+	3. Hermit
+	4. Health/Money
+	5. Bat
+	6. Spider
+	7. Block (door)
+	8. Button
 --]]
 
 local physWorld, cache = {}, {}
@@ -24,7 +26,7 @@ function physics_load(world)
 
 	for k, v in ipairs(world) do
 		for j, w in ipairs(v) do
-			local name = tostring(w):gsub("instance of class ", "")
+			local name = tostring(w)
 
 			table.insert(cache, {name, w})
 		end
@@ -35,17 +37,21 @@ function physicsupdate(dt)
 	for layer, tableValue in pairs(physWorld) do
 		for layerIndex, objData in pairs(tableValue) do
 			if objData.active and not objData.static then
-				local hor, ver, objName = false, false, tostring(objData):gsub("instance of class ", "")
+				local hor, ver, objName = false, false, tostring(objData)
 
 				objData.speed.y = math.min(objData.speed.y + objData.gravity * dt, 15 * 60) --add gravity to objects
 
 				if objData.mask and not objData.passive then
 					for _, tableValueOther in pairs(physWorld) do
 						for _, obj2Data in pairs(tableValueOther) do
-							local obj2Name = tostring(obj2Data):gsub("instance of class ", "")
+							local obj2Name = tostring(obj2Data)
 
-							if objData ~= obj2Data and objData.mask[obj2Data.category] then
-								hor, ver = checkCollision(objData, objName, obj2Data, obj2Name, dt)
+							if objData ~= obj2Data and obj2Data.category then
+								if objData.mask[obj2Data.category] then
+									hor, ver = checkCollision(objData, objName, obj2Data, obj2Name, dt)
+								else
+									checkPassive(objData, objName, obj2Data, obj2Name, dt)
+								end
 							end
 						end
 					end
@@ -100,8 +106,8 @@ function checkCollision(objData, objName, obj2Data, obj2Name, dt)
 	return hor, ver
 end
 
-function checkrectangle(x, y, width, height, check, callback, allow)
-	local ret = {}
+function checkrectangle(x, y, width, height, check, self)
+	local returnData = {}
 	local checkObjects = check or {}
 	local exclude
 	
@@ -110,22 +116,22 @@ function checkrectangle(x, y, width, height, check, callback, allow)
 		exclude = check[2]
 	end
 
-	local obj = false
+	local object = false
 	for i, v in pairs(cache) do
-		for j = 1, #check do
-			if v[1] == check[j] then
-				obj = v[2]
+		for j = 1, #checkObjects do
+			if tostring(v[2]) == checkObjects[j] then
+				object = v[2]
+			end
+		end
+
+		if object or checkObjects == "all" then
+			if not findInTable(returnData, object) and aabb(x, y, width, height, object.x, object.y, object.width, object.height) then
+				table.insert(returnData, object)
 			end
 		end
 	end
 
-	if obj then
-		if aabb(x, y, width, height, obj.x, obj.y, obj.width, obj.height) then
-			table.insert(ret, obj)
-		end
-	end
-
-	return ret
+	return returnData
 end
 
 function horizontalCollide(objName, objData, obj2Name, obj2Data)

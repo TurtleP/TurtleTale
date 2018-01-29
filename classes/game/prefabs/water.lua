@@ -1,4 +1,4 @@
-water = class("water")
+water = class("water", object)
 
 local waterImage = love.graphics.newImage("graphics/game/water.png")
 local waterQuads = {}
@@ -7,36 +7,52 @@ for i = 1, 7 do
 end
 
 function water:initialize(layer, x, y, width, height)
-	self.x = x
-	self.y = y
-
-	self.width = width
-	self.height = height
+	object.initialize(self, x, y, width, height)
 
 	self.timer = 0
 	self.quadi = 1
 
-	self.active = true
 	self.static = true
 
-	table.insert(layer, self)
 	self.layer = layer
+	
+	--drown these
+	self.filter =
+	{
+		"player",
+		"hermit",
+		"bat",
+		"spider",
+		"health",
+		"money"
+	}
+	
+	self.fire = false
 
-	self.splash = false
+	table.insert(layer, self)
 end
 
 function water:update(dt)
 	self.timer = self.timer + 6 * dt
 	self.quadi = math.floor(self.timer % 6) + 1
+end
 
-	local ret = checkrectangle(self.x, self.y, self.width, 1, {"player"})
+function water:splash(object)
+	if object.y + object.height / 2 > self.y and object.speed.y > 0 and not self.fire then
+		local pass = false
+		for i = 1, #self.filter do
+			if tostring(object) ~= self.filter[i] then
+				pass = true
+			end
+		end
 
-	if #ret > 0 and not self.splash then
-		particle:new(self.layer, ret[1][2].x, self.y, vector(-40, -64), {58, 94, 101})
-		particle:new(self.layer, ret[1][2].x, self.y, vector(40, -64), {58, 94, 101})
-		self.splash = true
+		if pass then
+			particle:new(self.layer, object.x, self.y, vector(-40, -64), {58, 94, 101})
+			particle:new(self.layer, object.x, self.y, vector(40, -64), {58, 94, 101})
+			self.fire = true
+		end
 	else
-		self.splash = false
+		self.fire = false
 	end
 end
 

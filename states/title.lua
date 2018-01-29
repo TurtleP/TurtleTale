@@ -57,6 +57,8 @@ function title:draw()
 
 	love.graphics.draw(self.topImage)
 
+	love.graphics.draw(bannerImage, (TOPSCREEN_WIDTH - bannerImage:getWidth()) / 2, SCREEN_HEIGHT * 0.15)
+
 	love.graphics.setScreen("bottom")
 
 	love.graphics.setColor(200, 200, 200)

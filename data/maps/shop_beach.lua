@@ -1,14 +1,14 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "1.0.3",
+  tiledversion = "1.1.1",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 20,
   height = 15,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 21,
+  nextobjectid = 19,
   properties = {
     ["bgcolor"] = "0;0;0",
     ["offset"] = 40,
@@ -22,7 +22,7 @@ return {
       tileheight = 16,
       spacing = 1,
       margin = 0,
-      image = "../../graphics/game/tiles.png",
+      image = "../../../../Homebrew/3DS/TurtleTale/romfs/graphics/tiles.png",
       imagewidth = 374,
       imageheight = 255,
       tileoffset = {
@@ -145,7 +145,7 @@ return {
         },
         {
           id = 4,
-          name = "hermit",
+          name = "shopkeeper",
           type = "",
           shape = "rectangle",
           x = 256,
@@ -155,9 +155,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["freeze"] = true,
-            ["menu"] = true,
-            ["scale"] = -1
+            ["menu"] = true
           }
         },
         {
@@ -265,19 +263,17 @@ return {
           properties = {}
         },
         {
-          id = 19,
-          name = "userectangle",
+          id = 18,
+          name = "barrier",
           type = "",
           shape = "rectangle",
-          x = 208,
-          y = 192,
-          width = 16,
+          x = 240,
+          y = 160,
+          width = 0,
           height = 16,
           rotation = 0,
           visible = true,
-          properties = {
-            ["func"] = "data.scripts.shoptoggle"
-          }
+          properties = {}
         }
       }
     }

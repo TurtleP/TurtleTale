@@ -22,10 +22,11 @@ function particle:update(dt)
 		self.remove = true
 	end
 
-	--[[local ret = checkrectangle(self.x, self.y, 2, 2, {"tile"})
+	local ret = checkrectangle(self.x, self.y, 2, 2, {"tile"})
 	if #ret > 0 then
+		print(ret[1], "!")
 		self.remove = true
-	end]]
+	end
 end
 
 function particle:draw()

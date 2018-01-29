@@ -19,6 +19,7 @@ function game:load(map, fade, fadeSpeed)
 
 	self.dialogs = {}
 
+	self.player:unlock()
 	self.player:setPosition(unpack(PLAYERSPAWN))
 	table.insert(self.layers[3], self.player)
 	
@@ -136,6 +137,8 @@ function game:update(dt)
 end
 
 function game:draw()
+	love.graphics.rectangle("line", self.map.offset, 0, self.map.width, self.map.height)
+
 	love.graphics.setScreen("top")
 
 	love.graphics.push()
@@ -143,6 +146,10 @@ function game:draw()
 	love.graphics.translate(self.shakeValue * math.random(-0.5, 0.5), 0)
 
 	love.graphics.translate(-math.floor(self.camera.x), self.camera.y)
+
+	if self.map.width < TOPSCREEN_WIDTH then
+		love.graphics.setScissor(self.map.offset, 0, self.map.width, self.map.height)
+	end
 
 	self.map:draw()
 
@@ -165,10 +172,21 @@ function game:draw()
 	end
 
 	save:draw()
+	
+	if self.map.width < TOPSCREEN_WIDTH then
+		love.graphics.setScissor()
+	end
 
 	love.graphics.setScreen("bottom")
 	
 	love.graphics.draw(bottomScreenImage)
+
+	local _, battery = love.system.getPowerInfo()
+	love.graphics.draw(batteryImage, 2, 2)
+	love.graphics.rectangle("fill", 4, 4, (battery / 100) * 13, 5)
+
+	love.graphics.draw(moneyImage, moneyQuads[3], BOTSCREEN_WIDTH - gameFont:getWidth(self.player.money) - 17, 4)
+	love.graphics.print(self.player.money, BOTSCREEN_WIDTH - gameFont:getWidth(self.player.money) - 2, 2)
 
 	shop:draw()
 end
@@ -183,7 +201,7 @@ function game:keypressed(key)
 	if key =="start" then
 		save:encode()
 	elseif key == "select" then
-		state:change("gameover")
+		self.display:addToInventory("water")
 	end
 
 	if SHOP_OPEN then
@@ -197,6 +215,8 @@ function game:keypressed(key)
 	if self.player.freeze then
 		return
 	end
+
+	self.display:keypressed(key)
 
 	if key == CONTROLS["jump"] then
 		self.player:jump()
@@ -237,12 +257,42 @@ function game:keyreleased(key)
 	end
 end
 
+function game:mousepressed(x, y, button)
+	if button == 1 then
+		self.player:setPosition((x + self.camera.x) - self.player.width / 2, y - self.player.height / 2)
+	end
+end
+
 function game:destroy()
 	if self.music then
 		if not self.music:isPlaying() then
 			self.music = nil
 		end
 	end
+end
+
+function game:findObject(name, x, y)
+	local objects = self.layers
+
+	for k, v in pairs(objects) do
+		for j, w in pairs(v) do
+			local check, pass = tostring(w), false
+
+			if x and y and w.origin then
+				if w.origin.x == x and w.origin.y == y then
+					if check == name then
+						return w
+					end
+				end
+			end
+
+			if check == name then
+				return w
+			end
+		end
+	end
+
+	return nil
 end
 
 return game

@@ -73,8 +73,8 @@ function love.mouse.getX()
 	return x
 end
 
-local oldMouseGetX = love.mouse.getY
-function love.mouse.getX()
+local oldMouseGetY = love.mouse.getY
+function love.mouse.getY()
 	local y = oldMouseGetY()
 
 	y = clamp(0, y - 240, 240)

@@ -1,7 +1,7 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "1.0.3",
+  tiledversion = "1.1.1",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 50,
@@ -10,6 +10,8 @@ return {
   tileheight = 16,
   nextobjectid = 29,
   properties = {
+    ["next"] = "mountain;16;112;",
+    ["prev"] = "tobeach;784;144;",
     ["song"] = "beach"
   },
   tilesets = {
@@ -20,7 +22,7 @@ return {
       tileheight = 16,
       spacing = 1,
       margin = 0,
-      image = "../../graphics/game/tiles.png",
+      image = "../../../../Homebrew/3DS/TurtleTale/romfs/graphics/tiles.png",
       imagewidth = 374,
       imageheight = 255,
       tileoffset = {
@@ -44,7 +46,7 @@ return {
       tileheight = 16,
       spacing = 1,
       margin = 0,
-      image = "../../graphics/game/tiles.png",
+      image = "../../../../Homebrew/3DS/TurtleTale/romfs/graphics/tiles.png",
       imagewidth = 374,
       imageheight = 255,
       tileoffset = {
@@ -342,37 +344,6 @@ return {
           visible = true,
           properties = {
             ["speak"] = "I have the high ground, boys. Richest crab on the beach!"
-          }
-        },
-        {
-          id = 20,
-          name = "trigger",
-          type = "",
-          shape = "rectangle",
-          x = 0,
-          y = 0,
-          width = 0,
-          height = 160,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["map"] = "tobeach;784;144;"
-          }
-        },
-        {
-          id = 23,
-          name = "trigger",
-          type = "",
-          shape = "rectangle",
-          x = 800,
-          y = 0,
-          width = 0,
-          height = 112,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["map"] = "mountain;16;112;",
-            ["song"] = "beach"
           }
         },
         {

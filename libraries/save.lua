@@ -43,6 +43,12 @@ function save:getFiles()
 	return self.files
 end
 
+function save:get(var)
+	if self.data[self.currentSave][var] then
+		return self.data[self.currentSave][var]
+	end
+end
+
 function save:generateDefaultData()
 	for i = 1, 3 do
 		self.data[i] = {}
@@ -81,7 +87,8 @@ function save:encode(i, t) --on save
 		["achievements"] = {},
 		["mapdata"] = MAP_DATA,
 		["map"] = map,
-		["shopdata"] = SHOP_DATA
+		["shopdata"] = SHOP_DATA,
+		["inventory"] = state:get("display").inventory
 	}
 
 	local player = state:get("player")
@@ -170,6 +177,11 @@ function save:import(t)
 		for k, v in pairs(self:getActiveData()["player"]) do
 			player[k] = v
 		end
+
+		local display = state:get("display")
+		display.inventory = self:getActiveData()["inventory"]
+
+		PLAYERSPAWN = {player.x, player.y}
 	else
 		for j, w in pairs(self:getActiveData()["cutscenes"]) do
 			CUTSCENES[j][2] = w

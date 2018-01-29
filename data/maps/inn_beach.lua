@@ -8,7 +8,7 @@ return {
   height = 15,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 43,
+  nextobjectid = 45,
   properties = {
     ["bgcolor"] = "0;0;0",
     ["offset"] = 40,
@@ -139,7 +139,7 @@ return {
       objects = {
         {
           id = 3,
-          name = "shopkeeper",
+          name = "hermit",
           type = "",
           shape = "rectangle",
           x = 272,
@@ -149,7 +149,8 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["menu"] = false
+            ["freeze"] = true,
+            ["scale"] = -1
           }
         },
         {
@@ -412,6 +413,34 @@ return {
           y = 112,
           width = 16,
           height = 48,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 43,
+          name = "userectangle",
+          type = "",
+          shape = "rectangle",
+          x = 224,
+          y = 192,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["func"] = "data.scripts.heal"
+          }
+        },
+        {
+          id = 44,
+          name = "barrier",
+          type = "",
+          shape = "rectangle",
+          x = 256,
+          y = 144,
+          width = 0,
+          height = 32,
           rotation = 0,
           visible = true,
           properties = {}

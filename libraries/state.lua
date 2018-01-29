@@ -32,7 +32,7 @@ function state:call(name, ...)
 	local args = {...}
 	if self:hasState() then
 		if self:hasMethod(name) then
-			self.currentState[name](self.currentState, unpack(args))
+			return self.currentState[name](self.currentState, unpack(args))
 		end
 	end
 end
@@ -116,6 +116,22 @@ function state:keyreleased(key)
 	end
 	
 	self.currentState:keyreleased(key)
+end
+
+function state:mousepressed(x, y, button)
+	if not self:hasMethod("mousepressed") then
+		return
+	end
+
+	self.currentState:mousepressed(x, y, button)
+end
+
+function state:wheelmoved(x, y)
+	if not self:hasMethod("wheelmoved") then
+		return
+	end
+
+	self.currentState:wheelmoved(x, y)
 end
 
 return state:new()

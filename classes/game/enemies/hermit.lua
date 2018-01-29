@@ -15,7 +15,12 @@ function hermit:initialize(layer, x, y, properties)
 
 	self.category = 3
 
-	self.mask = { true, false, false }
+	self.mask = 
+	{
+		true, false, false,
+		false, false, false,
+		true
+	}
 
 	self.timer = 0
 	self.quadi = 1
@@ -47,23 +52,35 @@ function hermit:initialize(layer, x, y, properties)
 				self:talk(self.speak)
 			end
 		end
-	end, true, false, nil, function(player)
-		return not player.freeze
-	end)
+	end, true, false)
 
-	
-
-	self.graphic = hermitImage
-	self.quads = hermitQuads
+	self.animationRules =
+	{
+		attack = {stop = true, func = function()
+			hitbox:new(self.x + 1, self.y, self.width - 2, self.height, {"player"}, "addHealth", {-1})
+			self:setState("idle")
+		end}
+	}
 end
 
 function hermit:animate(dt)
+	if self.animationRules[self.state] then
+		local rule = self.animationRules[self.state]
+		if rule.stop and self.quadi == #hermitQuads[self.state] then
+			if rule.func then
+				rule.func()
+			end
+			return
+		end
+	end
 	self.timer = self.timer + 6 * dt
 	self.quadi = math.floor(self.timer % #hermitQuads[self.state]) + 1
 end
 
 function hermit:update(dt)
 	self:animate(dt)
+
+	self:checkDeath()
 
 	if self.freeze then
 		if self.dialog then
@@ -81,8 +98,22 @@ function hermit:update(dt)
 		self.useRectangle:update(dt)
 	end
 
+	if self.evil then
+		if #checkrectangle(self.x, self.y, self.width, self.height, {"player"}) > 0 then
+			self:setState("attack")
+			self.speed.x = 0
+			return
+		end
+	end
+
 	if self.walkTime > 0 then
 		self.walkTime = self.walkTime - dt
+
+		local check = checkrectangle(self.x + (self.width * self.scale) + self.speed.x * dt, self.y + self.height, self.width, self.height, {"tile"})
+		if #check == 0 then
+			self:setScale(-self.scale)
+		end
+
 		self.speed.x = 32 * self.scale
 	else
 		self.speed.x = 0
@@ -101,16 +132,17 @@ function hermit:update(dt)
 	end
 end
 
-function hermit:draw()
-	love.graphics.draw(hermitImage, hermitQuads[self.state][self.quadi], self.x, self.y, 0, self.scale, 1, self:getXOffset())
+function hermit:punch(dir)
+	if self.evil then
+		if not self.freeze then
+			self.speed = vector(75 * dir, -80)
+			self.freeze = true
+		end
+	end
 end
 
-function hermit:setState(state)
-	if state ~= self.state then
-		self.quadi = 1
-		self.timer = 0
-		self.state = state
-	end
+function hermit:draw()
+	love.graphics.draw(hermitImage, hermitQuads[self.state][self.quadi], self.x, self.y, 0, self.scale, 1, self:getXOffset())
 end
 
 function hermit:rightCollide(name, data)
@@ -118,11 +150,37 @@ function hermit:rightCollide(name, data)
 		self.speed.x = -self.speed.x
 		self:setScale(-self.scale)
 	end
+
+	if name == "player" then
+		return false
+	end
 end
 
 function hermit:leftCollide(name, data)
 	if name == "tile" or name == "barrier" then
 		self.speed.x = -self.speed.x
 		self:setScale(-self.scale)
+	end
+
+	if name == "player" then
+		return false
+	end
+end
+
+function hermit:downCollide(name, data)
+	if self.evil then
+		if self.freeze then
+			self:die()
+		end
+	end
+
+	if name == "player" then
+		return false
+	end
+end
+
+function hermit:upCollide(name, data)
+	if name == "player" then
+		return false
 	end
 end
