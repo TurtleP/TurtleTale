@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" nextobjectid="31">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="31">
+ <properties>
+  <property name="next" value="mountain_1-10;544;80"/>
+ </properties>
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
  <layer name="Tile Layer 1" width="25" height="15">
   <data encoding="csv">
@@ -41,12 +44,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="topObjects">
-  <object id="3" name="trigger" x="400" y="48" height="64">
-   <properties>
-    <property name="map" value="mountain_1-10;544;80"/>
-   </properties>
-  </object>
+ <objectgroup name="topObjects" visible="0">
   <object id="4" name="spider" x="304" y="96" width="16" height="16"/>
   <object id="5" name="tile" x="336" y="0" width="64" height="16"/>
   <object id="6" name="tile" x="352" y="16" width="48" height="16"/>

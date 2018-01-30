@@ -42,6 +42,8 @@ function object:checkDeath(dt)
 	if self.y > SCREEN_HEIGHT then
 		if tostring(self) ~= "player" then
 			self:die("pit")
+		else
+			self:setState("dead")
 		end
 	end
 end

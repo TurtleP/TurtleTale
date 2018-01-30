@@ -1,0 +1,293 @@
+return {
+  version = "1.1",
+  luaversion = "5.1",
+  tiledversion = "1.1.1",
+  orientation = "orthogonal",
+  renderorder = "right-down",
+  width = 25,
+  height = 15,
+  tilewidth = 16,
+  tileheight = 16,
+  nextobjectid = 47,
+  properties = {
+    ["background"] = "cave",
+    ["bgcolor"] = "55;80;102"
+  },
+  tilesets = {
+    {
+      name = "base",
+      firstgid = 1,
+      tilewidth = 16,
+      tileheight = 16,
+      spacing = 1,
+      margin = 0,
+      image = "../../graphics/game/tiles.png",
+      imagewidth = 374,
+      imageheight = 255,
+      tileoffset = {
+        x = 0,
+        y = 0
+      },
+      grid = {
+        orientation = "orthogonal",
+        width = 16,
+        height = 16
+      },
+      properties = {},
+      terrains = {},
+      tilecount = 330,
+      tiles = {}
+    }
+  },
+  layers = {
+    {
+      type = "tilelayer",
+      name = "topTiles",
+      x = 0,
+      y = 0,
+      width = 25,
+      height = 15,
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      properties = {},
+      encoding = "lua",
+      data = {
+        268, 268, 268, 268, 268, 268, 268, 268, 268, 268, 223, 224, 224, 224, 226, 268, 268, 268, 268, 268, 268, 268, 268, 268, 268,
+        201, 203, 202, 203, 202, 203, 202, 204, 268, 268, 223, 224, 224, 224, 226, 268, 268, 201, 202, 203, 202, 203, 202, 203, 204,
+        223, 169, 169, 169, 169, 169, 169, 169, 169, 169, 169, 0, 0, 0, 169, 169, 169, 169, 169, 169, 169, 169, 169, 169, 226,
+        223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226,
+        223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226,
+        223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226,
+        223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226,
+        223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226,
+        224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226,
+        224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 267, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226,
+        309, 311, 0, 0, 0, 0, 0, 0, 0, 312, 247, 246, 247, 246, 247, 311, 0, 0, 0, 0, 0, 0, 270, 0, 226,
+        268, 223, 221, 0, 0, 0, 0, 0, 5, 226, 268, 268, 268, 268, 268, 223, 5, 0, 0, 0, 0, 0, 292, 0, 226,
+        268, 268, 246, 247, 311, 168, 0, 0, 0, 290, 203, 202, 203, 202, 203, 289, 0, 0, 0, 170, 312, 247, 246, 247, 248,
+        268, 268, 268, 268, 223, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 170, 226, 268, 268, 268, 223,
+        268, 268, 268, 268, 245, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 248, 268, 268, 268, 245
+      }
+    },
+    {
+      type = "tilelayer",
+      name = "Tile Layer 2",
+      x = 0,
+      y = 0,
+      width = 25,
+      height = 15,
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      properties = {},
+      encoding = "lua",
+      data = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 273, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "topObjects",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {},
+      objects = {
+        {
+          id = 1,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 192,
+          width = 80,
+          height = 48,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 2,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 320,
+          y = 192,
+          width = 80,
+          height = 48,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 5,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 0,
+          width = 176,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 6,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 32,
+          width = 16,
+          height = 96,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 7,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 384,
+          y = 32,
+          width = 16,
+          height = 160,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 16,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 224,
+          y = 0,
+          width = 176,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 24,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 160,
+          width = 32,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 25,
+          name = "block",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 128,
+          width = 16,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["open"] = true,
+            ["passive"] = true
+          }
+        },
+        {
+          id = 33,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 128,
+          y = 176,
+          width = 16,
+          height = 3,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 40,
+          name = "door",
+          type = "",
+          shape = "rectangle",
+          x = 352,
+          y = 176,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["active"] = false,
+            ["link"] = "mountain_1-10;0;128"
+          }
+        },
+        {
+          id = 41,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 144,
+          y = 160,
+          width = 112,
+          height = 48,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 42,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 256,
+          y = 176,
+          width = 16,
+          height = 3,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 45,
+          name = "water",
+          type = "",
+          shape = "rectangle",
+          x = 80,
+          y = 224,
+          width = 240,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        }
+      }
+    }
+  }
+}

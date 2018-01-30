@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="35" height="15" tilewidth="16" tileheight="16" nextobjectid="50">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="35" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="52">
+ <properties>
+  <property name="next" value="mountain_1-11;384;96"/>
+ </properties>
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
  <layer name="Tile Layer 1" width="35" height="15">
   <data encoding="csv">
@@ -41,7 +44,7 @@
 0,0,0,0,0,0,0,0,0,259,0,0,0,0,0,0,0,0,306,322,322,322,0,0,0,0,0,322,322,322,322,323,323,323,259
 </data>
  </layer>
- <objectgroup name="topObjects">
+ <objectgroup name="topObjects" visible="0">
   <object id="1" name="tile" x="0" y="0" width="96" height="64"/>
   <object id="2" name="tile" x="0" y="64" width="80" height="16"/>
   <object id="3" name="tile" x="0" y="80" width="64" height="16"/>
@@ -78,22 +81,23 @@
     <property name="passive" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="35" name="trigger" x="0" y="96" height="48">
-   <properties>
-    <property name="map" value="mountain_1-boss;464;176"/>
-   </properties>
-  </object>
   <object id="42" name="tile" x="208" y="176" width="16" height="8"/>
   <object id="43" name="tile" x="176" y="208" width="16" height="8"/>
-  <object id="44" name="shopkeeper" x="336" y="112" width="16" height="16">
+  <object id="44" name="hermit" x="336" y="112" width="16" height="16">
    <properties>
-    <property name="noshop" type="bool" value="true"/>
+    <property name="freeze" type="bool" value="true"/>
+    <property name="scale" type="int" value="-1"/>
    </properties>
   </object>
   <object id="45" name="tile" x="544" y="0" width="16" height="48"/>
   <object id="47" name="trigger" x="560" y="48" height="48">
    <properties>
     <property name="map" value="mountain_1-11;384;96"/>
+   </properties>
+  </object>
+  <object id="51" name="userectangle" x="320" y="112" width="16" height="16">
+   <properties>
+    <property name="func" value="data.scripts.shop"/>
    </properties>
   </object>
  </objectgroup>

@@ -96,3 +96,11 @@ function entity:setState(state)
 		self.state = state
 	end
 end
+
+function entity:setMask(id, value)
+	self.mask[id] = value
+end
+
+function entity:setGravity(gravity)
+	self.gravity = gravity
+end

@@ -2,7 +2,7 @@ local save = class("save")
 
 local file = require 'classes.file'
 
-local bookImage = love.graphics.newImage("graphics/game/savegame.png")
+local bookImage = love.graphics.newImage("graphics/game/hud/savegame.png")
 local bookQuads = {}
 for i = 1, 10 do
 	bookQuads[i] = love.graphics.newQuad((i - 1) * 32, 0, 32, 32, bookImage:getWidth(), bookImage:getHeight())

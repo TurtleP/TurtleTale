@@ -1,12 +1,20 @@
 block = class("block", object)
 
-function block:initialize(layer, x, y, width, height)
+function block:initialize(layer, x, y, width, height, properties)
 	object.initialize(self, x, y, width, height)
 
 	self.category = 7
 	self.open = false
 
-	self.originY = y
+	for k, v in pairs(properties) do
+		if type(k) == "string" then
+			self[k] = v
+		end
+	end
+
+	if self.open then
+		self.y = self.y - self.height
+	end
 
 	table.insert(layer, self)
 end
@@ -27,7 +35,7 @@ function block:draw()
 		offset = 0
 	end
 
-	love.graphics.setScissor(self.x - (offset + camera), self.originY, self.width, self.height)
+	love.graphics.setScissor(self.x - (offset + camera), self.origin.y, self.width, self.height)
 	
 	for y = 1, 2 do
 		love.graphics.draw(gameTilesImage, gameTilesQuads[225], self.x, self.y + (y - 1) * 16)
@@ -37,11 +45,11 @@ function block:draw()
 end
 
 function block:use(t)
-	print(t)
 	if t == "on" then
 		self.open = true
 	elseif t == "off" then
 		self.open = false
+		self.passive = false
 	end
 	self.power = t
 end

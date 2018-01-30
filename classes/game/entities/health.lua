@@ -1,6 +1,6 @@
 health = class("health", object)
 
-local healthImage = love.graphics.newImage("graphics/game/health.png")
+local healthImage = love.graphics.newImage("graphics/game/objects/health.png")
 local healthQuads = {}
 for i = 1, 8 do
 	healthQuads[i] = love.graphics.newQuad((i - 1) * 13, 0, 13, 8, healthImage:getWidth(), healthImage:getHeight())

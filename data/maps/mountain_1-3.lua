@@ -1,7 +1,7 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "1.0.3",
+  tiledversion = "1.1.1",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 25,
@@ -23,7 +23,7 @@ return {
       tileheight = 16,
       spacing = 1,
       margin = 0,
-      image = "../../../../Homebrew/3DS/TurtleTale/romfs/graphics/tiles.png",
+      image = "../../graphics/game/tiles.png",
       imagewidth = 374,
       imageheight = 255,
       tileoffset = {

@@ -1,6 +1,6 @@
 water = class("water", object)
 
-local waterImage = love.graphics.newImage("graphics/game/water.png")
+local waterImage = love.graphics.newImage("graphics/game/objects/water.png")
 local waterQuads = {}
 for i = 1, 7 do
 	waterQuads[i] = love.graphics.newQuad((i - 1) * 17, 0, 16, 16, waterImage:getWidth(), waterImage:getHeight())

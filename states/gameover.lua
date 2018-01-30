@@ -51,7 +51,7 @@ function gameover:update(dt)
 
 	self.player:update(dt)
 
-	if not self.start:isPlaying() then
+	if self.start and not self.start:isPlaying() then
 		if not self.intro then
 			self.loop:play()
 			self.intro = true

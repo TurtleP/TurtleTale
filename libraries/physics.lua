@@ -18,6 +18,7 @@ local abs = math.abs
 	6. Spider
 	7. Block (door)
 	8. Button
+	9. Tardigrade
 --]]
 
 local physWorld, cache = {}, {}

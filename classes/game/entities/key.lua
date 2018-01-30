@@ -1,6 +1,6 @@
 key = class("key", object)
 
-local keyImage = love.graphics.newImage("graphics/game/key.png")
+local keyImage = love.graphics.newImage("graphics/game/objects/key.png")
 local keyQuads = {}
 for i = 1, 6 do
 	keyQuads[i] = love.graphics.newQuad((i - 1) * 16, 0, 16, 16, keyImage:getWidth(), keyImage:getHeight())

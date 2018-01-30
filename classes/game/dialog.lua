@@ -1,6 +1,6 @@
 dialog = class("dialog")
 
-local dialogImage = love.graphics.newImage("graphics/game/dialogs.png")
+local dialogImage = love.graphics.newImage("graphics/game/hud/dialogs.png")
 local dialogQuads = {}
 for i = 1, 4 do
 	dialogQuads[i] = love.graphics.newQuad((i - 1) * 18, 0, 18, 14, dialogImage:getWidth(), dialogImage:getHeight())

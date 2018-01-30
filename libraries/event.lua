@@ -54,6 +54,21 @@ function event:update(dt)
 
 		if script.command == "freeze" then
 			player.freeze = script.args
+		elseif script.command == "condition" then
+			local object = state:call("findObject", script.args[1])
+			if script.args[3] == "greater" then
+				if object then
+					if object[script.args[2]] < script.args[4] then
+						self.sleep = dt
+						self.current = self.current - 1
+					end
+				end
+			elseif script.args[3] == "less" then
+				if object[script.args[2]] > script.args[4] then
+					self.sleep = dt
+					self.current = self.current - 1
+				end
+			end
 		elseif script.command == "function" then
 			if script.args[1] == "player" then
 				player[script.args[2]](player, unpack(script.args[3]))
@@ -111,8 +126,8 @@ function event:update(dt)
 			end
 		elseif script.command == "spawn" then
 			local layers = state:get("layers")
-			if script.args[1] == "phoenix" then
-				phoenix:new(layers[3], script.args[2], script.args[3])
+			if _G[script.args[1]] then
+				_G[script.args[1]]:new(layers[3], script.args[2], script.args[3])
 			end
 		elseif script.command == "fadeout" then
 			map.changeMap = true

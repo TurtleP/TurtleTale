@@ -1,6 +1,6 @@
 chest = class("chest", object)
 
-local chestImage = love.graphics.newImage("graphics/game/chest.png")
+local chestImage = love.graphics.newImage("graphics/game/objects/chest.png")
 local chestQuads = {}
 for x = 1, 5 do
 	chestQuads[x] = love.graphics.newQuad((x - 1) * 28, 0, 28, 19, chestImage:getWidth(), chestImage:getHeight())

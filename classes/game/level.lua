@@ -86,7 +86,7 @@ function level:createEntities(layers, objects)
 			elseif v.name == "water" then
 				water:new(layers[4], v.x, v.y, v.width, v.height)
 			elseif v.name == "door" then
-				door:new(layers[0], v.x, v.y, v.properties)
+				door:new(layers[1], v.x, v.y, v.width, v.height, v.properties)
 			elseif v.name == "sign" then
 				sign:new(layers[1], v.x, v.y, v.properties)
 			elseif v.name == "palm" then

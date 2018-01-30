@@ -1,6 +1,6 @@
 player = class("player", entity)
 
-local turtleImage = love.graphics.newImage("graphics/game/turtle.png")
+local turtleImage = love.graphics.newImage("graphics/game/objects/turtle.png")
 local turtleQuads = {}
 local turtleAnimations = { {"idle", 4}, {"walk", 4}, {"jump", 3}, {"dead", 6}, {"duck", 6}, {"unduck", 5}, {"spin", 5}, {"punch", 4}, {"climb", 6} }
 
@@ -25,7 +25,7 @@ function player:initialize(x, y)
 	{ 
 		true, false, true,
 		false, true, true,
-		true, true
+		true, true, true
 	}
 	
 	self.money = 0

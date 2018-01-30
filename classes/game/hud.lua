@@ -94,7 +94,7 @@ function hud:addToInventory(name, value)
 	end
 end
 
-function hud:useItem(name)
+function hud:useItem(name, force)
 	local count
 	if not name then
 		name, count = self:getItemQuad()

@@ -37,6 +37,7 @@ require 'classes.game.enemies.phoenix'
 require 'classes.game.enemies.hermit'
 require 'classes.game.enemies.bat'
 require 'classes.game.enemies.spider'
+require 'classes.game.enemies.tardigrade'
 
 require 'classes.game.entities.player'
 require 'classes.game.entities.tile'
@@ -77,7 +78,7 @@ function love.load()
 		healthQuads[x] = love.graphics.newQuad((x - 1) * 8, 0, 8, 8, healthImage:getWidth(), healthImage:getHeight())
 	end
 
-	moneyImage = love.graphics.newImage("graphics/game/money.png")
+	moneyImage = love.graphics.newImage("graphics/game/objects/money.png")
 	moneyQuads = {}
 	for x = 1, 2 do
 		moneyQuads[x] = love.graphics.newQuad((x - 1) * 7, 0, 7, 6, moneyImage:getWidth(), moneyImage:getHeight())
