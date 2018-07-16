@@ -53,6 +53,7 @@ function spider:update(dt)
 	self:animate(dt)
 
 	self:checkDeath()
+	self:checkSplash()
 	
 	local check = checkrectangle(self.x + (self.width * self.scale) + self.speed.x * dt, self.y, self.width, self.height, {"player"})
 	if #check > 0 then

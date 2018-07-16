@@ -10,7 +10,7 @@ for y = 1, 3 do
 	end
 end
 
-function bat:initialize(layer, x, y)
+function bat:initialize(layer, x, y, state)
 	entity.initialize(self, layer, x, y, 16, 16)
 
 	self.category = 5
@@ -32,7 +32,7 @@ function bat:initialize(layer, x, y)
 		fly = {stop = false}
 	}
 
-	self.state = "idle"
+	self.state = state or "idle"
 
 	self.timer = 0
 	self.quadi = 1
@@ -44,6 +44,9 @@ function bat:initialize(layer, x, y)
 end
 
 function bat:animate(dt)
+	self:checkDeath(dt)
+	self:checkSplash()
+
 	if self.animationRules[self.state] then
 		local rule = self.animationRules[self.state]
 

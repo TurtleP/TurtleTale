@@ -27,17 +27,20 @@ require 'classes.game.prefabs.bed'
 require 'classes.game.prefabs.door'
 require 'classes.game.prefabs.sign'
 require 'classes.game.prefabs.palm'
+require 'classes.game.prefabs.spawner'
+require 'classes.game.prefabs.waterfall'
 
 require 'classes.game.effects.particle'
 require 'classes.game.effects.smoke'
 require 'classes.game.effects.hitbox'
+require 'classes.game.effects.sonicblast'
 
 require 'classes.game.enemies.fire'
 require 'classes.game.enemies.phoenix'
 require 'classes.game.enemies.hermit'
 require 'classes.game.enemies.bat'
 require 'classes.game.enemies.spider'
-require 'classes.game.enemies.tardigrade'
+require 'classes.game.enemies.megabat'
 
 require 'classes.game.entities.player'
 require 'classes.game.entities.tile'
@@ -47,6 +50,9 @@ require 'classes.game.entities.block'
 require 'classes.game.entities.chest'
 require 'classes.game.entities.key'
 require 'classes.game.entities.button'
+require 'classes.game.entities.container'
+require 'classes.game.entities.spring'
+require 'classes.game.entities.crate'
 
 require 'classes.game.hud'
 require 'classes.game.dialog'
@@ -86,8 +92,10 @@ function love.load()
 	table.insert(moneyQuads, love.graphics.newQuad(0, 6, 15, 10, moneyImage:getWidth(), moneyImage:getHeight()))
 
 	clockImage = love.graphics.newImage("graphics/title/clock.png")
-	buttonImage = love.graphics.newImage("graphics/game/hud/button.png")
 	calendarImage = love.graphics.newImage("graphics/title/calendar.png")
+	bannerImage = love.graphics.newImage("graphics/title/title.png")
+
+	buttonImage = love.graphics.newImage("graphics/game/hud/button.png")
 
 	selectVerticalImage = love.graphics.newImage("graphics/game/select_vertical.png")
 	selectVerticalQuads = {}
@@ -107,8 +115,12 @@ function love.load()
 	end
 
 	batteryImage = love.graphics.newImage("graphics/game/hud/battery.png")
-	
-	bannerImage = love.graphics.newImage("graphics/title/title.png")
+
+	crackImage = love.graphics.newImage("graphics/game/effects/crack.png")
+	crackQuads = {}
+	for i = 1, 5 do
+		crackQuads[i] = love.graphics.newQuad((i -1) * 16, 0, 16, 16, crackImage:getWidth(), crackImage:getHeight())
+	end
 
 	fanfareSound = love.audio.newSource("audio/fanfare.ogg", "static")
 	flyAwaySound = love.audio.newSource("audio/flyaway.ogg", "static")

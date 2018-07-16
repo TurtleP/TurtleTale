@@ -12,15 +12,17 @@ function event:initialize()
 end
 
 function event:load(name, data)
-	local pass = false
+	if CUTSCENES[name][2] then --run the scene without clearing the data if it's been done before (e.g. died during the scene having been done)
+		self:reset()
+	else
+		self:reset(true) --reset the entire scene if this thing is different
+	end
+
+	local pass = true
 	for i, v in ipairs(data) do
 		local command, args = v[1], v[2]
-
-		if command == "levelequals" then
-			if state:get("map").name == args then
-				pass = true
-			end
-		elseif data.manual then
+		
+		if data.manual then
 			pass = true
 		end
 	
@@ -28,12 +30,14 @@ function event:load(name, data)
 			self.autoScroll = data.autoscroll or false
 			self.name = name
 			self.save = data.save or false
-			self.running = true
-
+			
 			table.insert(self.eventData, {command = command, args = args})
 		end
 	end
 
+	if #self.eventData > 0 then
+		self.running = true
+	end
 end
 
 function event:update(dt)
@@ -73,7 +77,13 @@ function event:update(dt)
 			if script.args[1] == "player" then
 				player[script.args[2]](player, unpack(script.args[3]))
 			else
-				local object = state:call("findObject", script.args[1])
+				local object
+				if not script.args[4] then
+					object = state:call("findObject", script.args[1])
+				else
+					object = state:call("findObject", script.args[1], script.args[4][1], script.args[4][2])
+					print(object.x, object.y)
+				end
 
 				if object then
 					object[script.args[2]](object, unpack(script.args[3]))
@@ -87,7 +97,7 @@ function event:update(dt)
 			if object and object.talk then
 				object:talk(script.args[2], self.autoScroll)
 			else
-				state:call("addDialog", script.args[1], script.args[2])
+				state:call("addDialog", script.args[1], script.args[2], self.autoScroll)
 			end
 		elseif script.command == "shake" then
 			if script.args > 0 then
@@ -114,7 +124,7 @@ function event:update(dt)
 					self.music:stop()
 				end
 
-				self.music = love.audio.newSource("audio/music/" .. script.args .. ".ogg")
+				self.music = love.audio.newSource("audio/music/" .. script.args .. ".ogg", "stream")
 				self.music:setLooping(true)
 				self.music:play()
 			else
@@ -143,7 +153,10 @@ function event:update(dt)
 			self.current = self.current + 1
 		else
 			self.running = false
-			CUTSCENES[self.name][2] = true
+
+			if not CUTSCENES[self.name][1].manual then
+				CUTSCENES[self.name][2] = true
+			end
 
 			if self.save then
 				save:encode()
@@ -160,6 +173,15 @@ function event:update(dt)
 				self.shakeTimer = math.random(0.5, 1)
 			end
 		end
+	end
+end
+
+function event:reset(clearData)
+	self.sleep = 0
+	self.current = 1
+
+	if clearData then
+		self.eventData = {}
 	end
 end
 

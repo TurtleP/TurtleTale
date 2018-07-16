@@ -29,7 +29,6 @@ function file:select()
 
 	if room == "indoors" then
 		speed = 0.15
-		love.graphics.setBackgroundColor(BACKGROUNDCOLORS.indoors)
 	end
 
 	save:import()
@@ -91,11 +90,10 @@ function file:draw()
 		love.graphics.draw(clockImage, self.x, self.y + (self.height - 8))
 		love.graphics.print(SecondsToClock(self.data["time"]), self.x + 11, self.y + (self.height - gameFont:getHeight()))
 
-		--money image
-		love.graphics.draw(moneyImage, moneyQuads[3], self.x + (self.width - gameFont:getWidth(moneyCount)) - 4, self.y + (self.height - 8))
-
-		--money amount
+		--money
 		local moneyCount = self.data["player"].money
+
+		love.graphics.draw(moneyImage, moneyQuads[3], self.x + (self.width - gameFont:getWidth(moneyCount)) - 19, self.y + (self.height - 8))
 		love.graphics.print(moneyCount, self.x + (self.width - (gameFont:getWidth(moneyCount) + 2)), self.y + (self.height - gameFont:getHeight()))
 	end
 
@@ -103,7 +101,7 @@ function file:draw()
 end
 
 function file:keypressed(key)
-	if key == "a" then
+	if key == CONTROLS["accept"] then
 		self:select()
 	end
 end

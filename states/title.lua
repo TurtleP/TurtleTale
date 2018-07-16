@@ -30,10 +30,19 @@ function title:load()
 
 	self.gui =
 	{
-		imagebutton:new(buttonImage, "x", "Delete File", 0, SCREEN_HEIGHT * 0.85, 192, 12, {offset = vector(BOTSCREEN_WIDTH, 0), padding = 2, center = true, func = function()
-			self.files[self.selection]:delete()
+		imagebutton:new(buttonImage, CONTROLS["item"], "Delete File", 0, SCREEN_HEIGHT * 0.85, 192, 12, {offset = vector(BOTSCREEN_WIDTH, 0), padding = 2, center = true, func = function()
+			if not self.files[self.selection].isNew then
+					deletionConfirmation = messagebox:new(60, 56, { 
+					title = "Delete File?", 
+					body = "Are you sure you would\nlike to delete File #" .. self.selection .. "?\n\nThis can not be undone.",
+					type = "YESNO",
+					file = self.files[self.selection]
+				})
+			end
 		end})
 	}
+
+	deletionConfirmation = nil
 end
 
 function title:update(dt)
@@ -41,6 +50,12 @@ function title:update(dt)
 
 	for i, v in ipairs(self.stars) do
 		v:update(dt)
+	end
+
+	if deletionConfirmation then
+		if deletionConfirmation.remove then
+			deletionConfirmation = nil
+		end
 	end
 end
 
@@ -79,9 +94,24 @@ function title:draw()
 			v:draw()
 		end
 	end
+
+	if deletionConfirmation then
+		love.graphics.setColor(0, 0, 0, 100)
+		love.graphics.rectangle("fill", 0, 0, BOTSCREEN_WIDTH, SCREEN_HEIGHT)
+
+		deletionConfirmation:draw()
+
+		love.graphics.setColor(255, 255, 255, 255)
+	end
 end
 
 function title:keypressed(key)
+	
+	if deletionConfirmation then
+		deletionConfirmation:keypressed(key)
+		return
+	end
+
 	self.files[self.selection].selected = false
 
 	if key == "down" then

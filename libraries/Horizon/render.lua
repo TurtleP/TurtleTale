@@ -110,21 +110,28 @@ end
 
 local oldGraphicsPrint = love.graphics.print
 function love.graphics.print(text, x, y, ...)
+	
 	x, y = translateCoordinates(x, y)
-
+	
 	text = tostring(text)
-
+	
 	if not CURRENT_FONT then
 		oldGraphicsPrint(text, x, y, ...)
 		return
 	end
-
+	
+	local originX = x
 	local font = CURRENT_FONT
 	local width = 0
 
 	for i = 1, #text do
 		local glyph = font.chars[text:sub(i, i)]
-		if text:sub(i, i) ~= "\n" then
+
+		if text:sub(i, i) == "\n" then
+			y = y + font:getHeight() + 4
+			x = originX
+			width = 0
+		else
 			if i > 1 then
 				width = width + font:getWidth(text:sub(i - 1, i - 1))
 			end

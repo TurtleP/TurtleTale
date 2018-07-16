@@ -13,8 +13,10 @@ function chest:initialize(layer, x, y, properties)
 	self.quadi = 1
 
 	self.timer = 0
+
 	self.open = false
 	self.visible = true
+	self.static = false
 
 	self.mask = { true }
 
@@ -25,9 +27,21 @@ function chest:initialize(layer, x, y, properties)
 	end
 
 	self.useRectangle = userectangle:new(self.x + (16 - 28) / 2, self.y, self.width, self.height, function(player)
+		if self.locked then
+			local _, count = state:get("display"):getItemQuad("key")
+			if count == 0 then
+				return
+			end
+		end
+
 		self.open = true
 		if self.item == "key" then
 			key:new(self.x, self.y)
+		elseif self.item == "money" then
+			player:addMoney(5)
+		elseif self.item == "shell" then
+			player:getShell(self.itemType)
+			event:load("fanfare", CUTSCENES["fanfare"][1])
 		end
 	end, false, true, nil, function(player)
 		return self.static == false
@@ -59,7 +73,6 @@ function chest:use(t)
 	end
 
 	if t == "on" then
-		print("nani the fuck")
 		self.visible = true
 		self.static = false
 	elseif t == "off" then

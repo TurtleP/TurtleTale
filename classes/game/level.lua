@@ -24,23 +24,28 @@ function level:initialize(layers, name, fade, fadeSpeed)
 	end
 	self.background = love.graphics.newImage("graphics/backgrounds/" .. background .. ".png")
 
+	local name = ""
 	if self.data.properties.song then
 		if level.SONGNAME ~= self.data.properties.song then
-			print("music: " .. tostring(level.SONGNAME))
-			self.music = love.audio.newSource("audio/music/" .. self.data.properties.song .. ".ogg")
+			name = self.data.properties.song
+		else
+			if level.SONGNAME ~= nil then
+				name = level.SONGNAME
+			end
 		end
+		self.music = love.audio.newSource("audio/music/" .. name .. ".ogg", "stream")
 	end
 
 	if self:hasLink("next") then
 		self.nextMap = self.data.properties.next:split(";")[1]
 	else
-		barrier:new(layers[0], self.width, 0, 1, SCREEN_HEIGHT)
+		barrier:new(layers[0], self.width, 0, 1, self.height)
 	end
 	
 	if self:hasLink("prev") then
 		self.previousMap = self.data.properties.prev:split(";")[1]
 	else
-		barrier:new(layers[0], -1, 0, 1, SCREEN_HEIGHT)
+		barrier:new(layers[0], -1, 0, 1, self.height)
 	end
 
 	self.changeMap = false
@@ -58,7 +63,20 @@ function level:initialize(layers, name, fade, fadeSpeed)
 	if self.offset ~= 0 then
 		love.graphics.setBackgroundColor(0, 0, 0)
 	else
-		love.graphics.setBackgroundColor(BACKGROUNDCOLORS.sky)
+		if self.name ~= "indoors" then
+			love.graphics.setBackgroundColor(BACKGROUNDCOLORS.sky)
+		else
+			love.graphics.setBackgroundColor(BACKGROUNDCOLORS.indoors)
+		end
+	end
+
+	if HIDDEN_ITEMS[self.name] then
+		for i = 1, #HIDDEN_ITEMS[self.name] do
+			local rectangle = HIDDEN_ITEMS[self.name][i]
+			if not rectangle.used then
+				table.insert(layers[0], userectangle:new(rectangle.x, rectangle.y, 16, 16, rectangle.func, true, true, state:get("player")))
+			end
+		end
 	end
 end
 
@@ -89,6 +107,8 @@ function level:createEntities(layers, objects)
 				door:new(layers[1], v.x, v.y, v.width, v.height, v.properties)
 			elseif v.name == "sign" then
 				sign:new(layers[1], v.x, v.y, v.properties)
+			elseif v.name == "crate" then
+				crate:new(layers[2], v.x, v.y, v.properties)
 			elseif v.name == "palm" then
 				palm:new(layers[2], v.x, v.y)
 			elseif v.name == "hermit" then
@@ -105,10 +125,18 @@ function level:createEntities(layers, objects)
 				button:new(layers[2], v.x, v.y, v.properties)
 			elseif v.name == "chest" then
 				chest:new(layers[1], v.x, v.y, v.properties)
+			elseif v.name == "spring" then
+				spring:new(layers[1], v.x, v.y, v.properties)
+			elseif v.name == "waterfall" then
+				waterfall:new(layers[1], v.x, v.y, v.height)
 			elseif v.name == "health" then
 				health:new(v.x, v.y)
+			elseif v.name == "key" then
+				key:new(v.x, v.y)
 			elseif v.name == "barrier" then
 				barrier:new(layers[0], v.x, v.y, v.width, v.height)
+			elseif v.name == "spawner" then
+				spawner:new(layers[1], v.x, v.y, v.properties)
 			end
 		else
 			print(v.name .. " does not exist.")
@@ -144,6 +172,7 @@ end
 
 function level:changeLevel(game, link)
 	game.player.freeze = true
+	game.player.gravity = 0
 	
 	if self.data.properties[link] then
 		self.newLevel = self.data.properties[link]:split(";")
@@ -183,7 +212,6 @@ function level:update(dt)
 		self.fade = math.max(self.fade - self.fadeSpeed * dt, 0)
 	end
 
-	--if self.newLevel then
 	if self.changeMap then
 		if self.fade == 1 and self.newLevel then
 			state:change("game", self.newLevel[1], 1, 1)
@@ -203,20 +231,23 @@ function level:update(dt)
 			end
 		end
 	end
---	end
+end
+
+function level:drawBackground()
+	if self.name ~= "indoors" then
+		for x = 1, math.ceil(self.width / self.background:getWidth()) do
+			love.graphics.draw(self.background, (x - 1) * TOPSCREEN_WIDTH, 0)
+		end
+	end
 end
 
 function level:draw()
-	for x = 1, math.ceil(self.width / self.background:getWidth()) do
-		love.graphics.draw(self.background, (x - 1) * TOPSCREEN_WIDTH, 0)
-	end
-
-	love.graphics.draw(self.tiles)
+	love.graphics.draw(self.tiles, 0, 0)
 end
 
 function level:drawTransition()
 	love.graphics.setColor(0, 0, 0, 255 * self.fade)
-	love.graphics.rectangle("fill", self.x, self.y, TOPSCREEN_WIDTH, SCREEN_HEIGHT)
+	love.graphics.rectangle("fill", 0, 0, TOPSCREEN_WIDTH, SCREEN_HEIGHT)
 	
 	love.graphics.setColor(255, 255, 255, 255)
 end

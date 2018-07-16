@@ -1,0 +1,13 @@
+# Shells
+- Default
+	- Not even anything special
+- Spiked
+	- Enemies that attack from behind die
+- Soft
+	- Take more damage, but faster speed
+- Gravity
+	- Jump a little higher
+- Vitality
+	- Add an extra heart
+- Boom
+	- Explodes, hurting yourself, enemies, and also breakable tiles (specific IDs)

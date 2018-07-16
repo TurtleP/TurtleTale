@@ -19,6 +19,8 @@ local abs = math.abs
 	7. Block (door)
 	8. Button
 	9. Tardigrade
+	10. Ladder
+	11. Crate
 --]]
 
 local physWorld, cache = {}, {}
@@ -118,16 +120,20 @@ function checkrectangle(x, y, width, height, check, self)
 	end
 
 	local object = false
-	for i, v in pairs(cache) do
-		for j = 1, #checkObjects do
-			if tostring(v[2]) == checkObjects[j] then
-				object = v[2]
+	for k, v in ipairs(physWorld) do
+		for j, w in ipairs(v) do
+			for j = 1, #checkObjects do
+				if tostring(w) == checkObjects[j] then
+					object = w
+				end
 			end
-		end
 
-		if object or checkObjects == "all" then
-			if not findInTable(returnData, object) and aabb(x, y, width, height, object.x, object.y, object.width, object.height) then
-				table.insert(returnData, object)
+			if object or checkObjects == "all" then
+				if not findInTable(returnData, object) then
+					if aabb(x, y, width, height, object.x, object.y, object.width, object.height) then
+						table.insert(returnData, object)
+					end
+				end
 			end
 		end
 	end

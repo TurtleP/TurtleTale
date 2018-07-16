@@ -45,25 +45,6 @@ function love.keyboard.isDown(key)
 	end
 end
 
---MOUSE EVENTS
-local oldMousePressed = love.mousepressed
-function love.mousepressed(x, y, button)
-	x, y = clamp(0, x, 320), clamp(0, y - 240, 240)
-
-	if oldMousePressed then
-		oldMousePressed(x, y, 1)
-	end
-end
-
-local oldMouseReleased = love.mousereleased
-function love.mousereleased(x, y, button)
-	x, y = clamp(0, x - 40, 320), clamp(0, y - 240, 240)
-
-	if oldMouseReleased then
-		oldMouseReleased(x, y, 1)
-	end
-end
-
 local oldMouseGetX = love.mouse.getX
 function love.mouse.getX()
 	local x = oldMouseGetX()
@@ -89,6 +70,25 @@ function love.mouse.getPosition()
 	x, y = clamp(0, x - 40, 320), clamp(0, y - 240, 240)
 
 	return x, y
+end
+
+--MOUSE EVENTS
+local oldMousePressed = love.mousepressed
+function love.mousepressed(x, y, button)
+	local x, y = love.mouse.getPosition()
+
+	if oldMousePressed then
+		oldMousePressed(x, y, 1)
+	end
+end
+
+local oldMouseReleased = love.mousereleased
+function love.mousereleased(x, y, button)
+	local x, y = love.mouse.getPosition()
+
+	if oldMouseReleased then
+		oldMouseReleased(x, y, 1)
+	end
 end
 
 local oldMouseIsDown = love.mouse.isDown

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="35" height="15" tilewidth="16" tileheight="16" nextobjectid="35">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="35" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="35">
  <properties>
   <property name="background" value="cave"/>
+  <property name="next" value="mountain_1-6;0;194;"/>
+  <property name="prev" value="mountain_1-2;544;146;"/>
   <property name="song" value="cave"/>
  </properties>
  <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
  <layer name="topTiles" width="35" height="15">
   <properties>
@@ -54,22 +56,12 @@
     <property name="evil" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="21" name="trigger" x="0" y="96" height="64">
-   <properties>
-    <property name="map" value="mountain_1-2;544;146;"/>
-   </properties>
-  </object>
   <object id="22" name="tile" x="448" y="192" width="16" height="48"/>
   <object id="23" name="tile" x="400" y="0" width="160" height="96"/>
   <object id="25" name="tile" x="432" y="96" width="128" height="16"/>
   <object id="26" name="tile" x="464" y="112" width="96" height="16"/>
   <object id="30" name="tile" x="496" y="176" width="64" height="64"/>
   <object id="32" name="tile" x="464" y="192" width="32" height="3"/>
-  <object id="33" name="trigger" x="560" y="128" height="48">
-   <properties>
-    <property name="map" value="mountain_1-6;0;194;"/>
-   </properties>
-  </object>
   <object id="34" name="tile" x="224" y="192" width="16" height="16">
    <properties>
     <property name="breakable" type="bool" value="true"/>

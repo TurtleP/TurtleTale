@@ -46,10 +46,6 @@ function shop:update(dt)
 		self.selectTimer = self.selectTimer + 8 * dt
 		self.quadi = math.floor(self.selectTimer % #selectHorizontalQuads) + 1
 	end
-
-	if not SHOP_OPEN and self.timer == 0 then
-		state:get("player").freeze = false
-	end
 end
 
 function shop:draw()
@@ -78,15 +74,18 @@ function shop:keypressed(key)
 	elseif key == "up" then
 		self.selection = math.max(self.selection - 1, 1)
 	elseif key == "b" then
-		SHOP_OPEN = false
-	elseif key == "a" then
+		if SHOP_OPEN then
+			state:get("player").freeze = false
+			SHOP_OPEN = false
+		end
+	elseif key == CONTROLS["accept"] then
 		if self.data[self.selection]:isAffordable() then
 			self.data[self.selection]:purchase()
 			self.rawData[self.data[self.selection].itemname] = true
 		else
 			state:call("addDialog", "hermit", "Sorry pal, you ain't got enough shells for this.")
 		end
-	elseif key == "x" then
+	elseif key == CONTROLS["item"] then
 		state:call("addDialog", "hermit", self.data[self.selection].description)
 	end
 end

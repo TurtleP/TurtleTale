@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="16" tileheight="16" nextobjectid="61">
+<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="16" tileheight="16" infinite="0" nextobjectid="61">
  <properties>
+  <property name="next" value="beach;16;144;"/>
+  <property name="prev" value="pathway2;704;96;"/>
   <property name="song" value="beach"/>
  </properties>
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" tilecount="330" columns="22">
-  <image source="../../../graphics/tiles.png" width="374" height="255"/>
+  <image source="../../../graphics/game/tiles.png" width="374" height="255"/>
  </tileset>
  <layer name="topTiles" width="50" height="15">
   <data encoding="csv">
@@ -22,20 +24,10 @@
 24,24,24,24,24,24,24,24,47,2,45,47,3,0,0,0,0,0,0,0,0,0,41,42,130,153,132,0,0,0,0,0,0,115,114,115,114,115,114,115,114,115,114,115,114,115,136,137,136,137,
 24,24,24,24,24,24,24,24,24,24,24,24,47,3,0,0,0,0,0,0,0,0,41,42,130,175,132,0,0,0,114,115,114,137,136,137,136,137,136,137,136,136,137,137,136,137,136,137,136,137,
 24,24,24,24,24,24,24,24,24,24,24,24,24,24,5,5,5,114,115,114,115,114,115,114,115,114,115,114,115,114,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,
-24,24,24,24,24,24,24,24,24,24,24,24,24,24,69,69,69,136,137,136,137,136,137,136,137,136,137,136,137,136,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137
+24,24,24,24,24,24,24,24,24,24,24,24,24,24,0,0,0,136,137,136,137,136,137,136,137,136,137,136,137,136,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137,136,137
 </data>
  </layer>
  <objectgroup name="topObjects">
-  <object id="4" name="trigger" x="0" y="0" height="112">
-   <properties>
-    <property name="map" value="pathway2;704;96;"/>
-   </properties>
-  </object>
-  <object id="20" name="trigger" x="800" y="0" height="160">
-   <properties>
-    <property name="map" value="beach;16;144;"/>
-   </properties>
-  </object>
   <object id="27" name="tile" x="0" y="112" width="64" height="128"/>
   <object id="33" name="tile" x="160" y="160" width="32" height="80"/>
   <object id="34" name="tile" x="192" y="192" width="32" height="48"/>
@@ -58,7 +50,7 @@
     <property name="speak" value="Phoenix? Er.. I know nothing of one. Maybe the owner of the Hermit Shack'll know."/>
    </properties>
   </object>
-  <object id="48" name="water" x="224" y="208" width="48" height="16">
+  <object id="48" name="water" x="224" y="208" width="48" height="32">
    <properties>
     <property name="width" type="int" value="48"/>
    </properties>

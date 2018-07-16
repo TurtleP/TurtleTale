@@ -33,8 +33,6 @@ function door:initialize(layer, x, y, width, height, properties)
 		self.timer = 0
 		self.open = false
 
-		self.x = self.x - 8
-
 		func = function(player)
 			local display = state:get("display")
 

@@ -29,6 +29,10 @@ function block:update(dt)
 	end
 end
 
+function block:fix()
+	self.y = self.origin.y - self.height
+end
+
 function block:draw()
 	local offset, camera = state:get("map").offset, math.floor(state:get("camera").x)
 	if offset == -camera then

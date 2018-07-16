@@ -28,6 +28,15 @@ function state:hasState(name)
 	return self.currentState ~= nil
 end
 
+function state:is(identity)
+	if self:hasState() then
+		if tostring(self.currentState):sub(-#identity) == identity then
+			return true
+		end
+		return false
+	end
+end
+
 function state:call(name, ...)
 	local args = {...}
 	if self:hasState() then

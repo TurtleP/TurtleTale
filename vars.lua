@@ -7,6 +7,27 @@ PLAYERSPAWN = {0, 0}
 JUMPFORCE = 2 * 60
 JUMPFORCEADD = 1 * 60
 
+SELECTING_SHELL = false
+
+local major, minor, rev, code = love.getVersion()
+if major == 11 then
+	local oldSetColor = love.graphics.setColor
+	function love.graphics.setColor(r, g, b, a)
+		if type(r) == "table" then
+			r, g, b, a = unpack(r)
+		end
+		oldSetColor(r / 255, g / 255, b / 255, (a or 255) / 255)
+	end
+
+	local oldSetBGColor = love.graphics.setBackgroundColor
+	function love.graphics.setBackgroundColor(r, g, b, a)
+		if type(r) == "table" then
+			r, g, b, a = unpack(r)
+		end
+		oldSetBGColor(r / 255, g / 255, b / 255, 255)
+	end
+end
+
 CONTROLS =
 {
 	["left"] = "left",
@@ -14,7 +35,10 @@ CONTROLS =
 	["jump"] = "b",
 	["duck"] = "down",
 	["punch"] = "y",
-	["use"] = "up"
+	["use"] = "up",
+	["accept"] = "a",
+	["item"] = "x",
+	["pause"] = "start"
 }
 
 BACKGROUNDCOLORS = 
@@ -22,6 +46,18 @@ BACKGROUNDCOLORS =
 	["midnight"] = {16, 51, 90},
 	["sky"] = {66, 148, 209},
 	["indoors"] = {43, 19, 23}
+}
+
+ENEMYFILTER =
+{
+	hermit = true,
+	bat = true,
+	megabat = true
+}
+
+BOSSES =
+{
+	megabat = true
 }
 
 function reloadData()
@@ -80,6 +116,12 @@ function reloadData()
 	end
 
 	print()
+
+	HIDDEN_ITEMS = {}
+	local hidden = require "data.hidden"
+	for k, v in pairs(hidden) do
+		HIDDEN_ITEMS[k] = v
+	end
 end
 
 CREDITS =

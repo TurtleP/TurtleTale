@@ -20,11 +20,6 @@ function entity:talk(text, autoscroll)
 	table.insert(dialogs, self.dialog)
 end
 
-function entity:setSpeed(x, y)
-	local speed = vector(x, y)
-	self.speed = speed
-end
-
 function entity:update(dt)
 
 end
@@ -36,8 +31,10 @@ end
 function entity:die(reason)
 	local whois = tostring(self)
 
-	if whois ~= "player" and not object.die(self, reason) then --died for a bad reason I guess, usually a pit
-		return --don't let it do anything else, except be removed!
+	if whois ~= "player" then
+		if not object.die(self, reason) then --died for a bad reason I guess, usually a pit
+			return --don't let it do anything else, except be removed!
+		end
 	end
 
 
@@ -48,7 +45,9 @@ function entity:die(reason)
 
 	smoke:new(self.x + (self.width - 24) / 2, self.y + (self.height - 24), smokeFrame)
 
-	self:dropCollectibles()
+	if not BOSSES[whois] and whois ~= "crate" then
+		self:dropCollectibles()
+	end
 	
 	if whois ~= "player" then
 		self.remove = true
@@ -64,10 +63,12 @@ function entity:dropCollectibles()
 
 	local player = state:get("player")
 	if player.health < player.maxHealth then
-		if not self:insideTile() then --died inside a tile
-			health:new(self.x + (self.width - 13) / 2, self.y + (self.height - 8) / 2)
-		else
-			player:addHealth(1)
+		if math.random() < 0.3 then
+			if not self:insideTile() then --died inside a tile
+				health:new(self.x + (self.width - 13) / 2, self.y + (self.height - 8) / 2)
+			else
+				player:addHealth(1)
+			end
 		end
 	end
 
@@ -103,4 +104,12 @@ end
 
 function entity:setGravity(gravity)
 	self.gravity = gravity
+end
+
+function entity:globalCollide(name, data)
+	if name == "tile" then
+		if data.spikes then
+			self:die()
+		end
+	end
 end

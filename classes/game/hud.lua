@@ -9,18 +9,21 @@ for i = 1, #itemNames do
 	inventoryIconQuads[itemNames[i]] = love.graphics.newQuad((i - 1) * 16, 0, 16, 16, inventoryIcons:getWidth(), inventoryIcons:getHeight())
 end
 
+local bossIconImage = love.graphics.newImage("graphics/game/hud/boss.png")
 
-function hud:initialize(player)
-	self.x = 2
-	self.y = 2
+function hud:initialize(entity, x, offset)
+	self.x = x or 2
+	self.y = y or 2
 
-	self.player = player
+	self.entity = entity
 	self.timer = 0
 
 	self.heartAnimation = {1, 2, 3, 2}
 
 	self.inventory = {}
 	self.item = 1
+
+	self.offset = offset or 0
 end
 
 function hud:update(dt)
@@ -29,29 +32,35 @@ end
 
 function hud:draw(offset)
 	love.graphics.push()
+
 	love.graphics.translate((offset or 0), 0)
 
-	love.graphics.draw(inventoryBackImage, self.x, self.y)
+	if self.entity:isInstanceOf(player) then
+		love.graphics.draw(inventoryBackImage, self.x, self.y)
 
-	local name, count = self:getItemQuad()
-	if name ~= nil then
-		if count == 0 then
-			love.graphics.setColor(180, 180, 180, 200)
+		local name, count = self:getItemQuad()
+		if name ~= nil then
+			if count == 0 then
+				love.graphics.setColor(180, 180, 180, 200)
+			end
+			love.graphics.draw(inventoryIcons, inventoryIconQuads[self:getItemQuad()], self.x, self.y)
 		end
-		love.graphics.draw(inventoryIcons, inventoryIconQuads[self:getItemQuad()], self.x, self.y)
+
+		love.graphics.setColor(0, 0, 0, 255)
+		love.graphics.print("x", self.x + 15 - gameFont:getWidth("x"), self.y + 7)
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.print("x", self.x + 16 - gameFont:getWidth("x"), self.y + 8)
+	else
+		--draw a portrait thing?
+		love.graphics.draw(bossIconImage, self.x, self.y)
 	end
 
-	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print("x", self.x + 15 - gameFont:getWidth("x"), self.y + 7)
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.print("x", self.x + 16 - gameFont:getWidth("x"), self.y + 8)
-
 	
-	for i = 1, self.player.maxHealth do
+	for i = 1, self.entity.maxHealth do
 		local quadi, add = 3, 0
-		if i > self.player.health then
+		if i > self.entity.health then
 			quadi = 4
-		elseif i == self.player.health then
+		elseif i == self.entity.health then
 			quadi = self.heartAnimation[math.floor(self.timer % #self.heartAnimation) + 1]
 		end
 
@@ -59,7 +68,7 @@ function hud:draw(offset)
 			add = 4
 		end
 
-		love.graphics.draw(healthImage, healthQuads[quadi], self.x + 18 + (i - 1) * 9, self.y + add)
+		love.graphics.draw(healthImage, healthQuads[quadi], self.x + self.offset + 18 + (i - 1) * 9, self.y + add)
 	end
 
 	love.graphics.pop()
@@ -76,8 +85,10 @@ function hud:keypressed(key)
 		if self.item > #self.inventory then
 			self.item = 1
 		end
-	elseif key == "x" then
-		self:useItem()
+	elseif key == CONTROLS["item"] then
+		if not SHOP_OPEN then
+			self:useItem()
+		end
 	end
 end
 

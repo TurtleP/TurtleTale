@@ -37,6 +37,14 @@ function gameover:load()
 	self.gui = 
 	{
 		imagebutton:new(buttonImage, "A", "Continue Game", 0, SCREEN_HEIGHT * 0.35, 192, 12, {padding = 2, offset = vector(BOTSCREEN_WIDTH, 0), center = true, func = function()
+			for k, v in pairs(MAP_DATA) do
+				for j, w in ipairs(v) do
+					if not w[4] then
+						table.remove(MAP_DATA[k], j)
+					end
+				end
+			end
+	
 			save:getActiveFile():select()
 		end}),
 

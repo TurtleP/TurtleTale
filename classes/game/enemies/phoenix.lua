@@ -41,25 +41,13 @@ function phoenix:update(dt)
 		self.offset = math.sin(love.timer.getTime() * 6) * 4
 	end
 
-	if self.fireballThrow then
-		self.fireballTime = self.fireballTime + 0.5 * dt
-		if self.fireballTime > 2 then
-			self.fireballThrow = false
-		else
-			self.fireballDelay = self.fireballDelay + dt
-			if self.fireballDelay > 0.05 then
-				fire:new(state:get("layers")[2], self.x, self.y + 16 + self.offset, vector(-200, 200))
-				self.fireballDelay = 0
-			end
-		end
-	end
 end
 
 function phoenix:draw()
 	love.graphics.draw(phoenixImage, phoenixQuads[self.quadi], self.x, self.y + self.offset, 0, self.scale, 1, self:getXOffset())
 end
 
-function phoenix:fireball(direction)
+function phoenix:fireball(target)
 	self.fireballDirection = direction
-	self.fireballThrow = true
+	fire:new(state:get("layers")[2], self.x, self.y + 16 + self.offset, vector(-200, 200))
 end

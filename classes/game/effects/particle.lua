@@ -32,4 +32,6 @@ end
 function particle:draw()
 	love.graphics.setColor(self.color)
 	love.graphics.rectangle("fill", self.x, self.y, 2, 2)
+
+	love.graphics.setColor(255, 255, 255, 255)
 end

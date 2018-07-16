@@ -50,11 +50,13 @@ function dialog:update(dt)
 				
 				self.i = math.min(self.i + 1, #self.text)
 				
-				self.timer = 0
-
-				if self.i % 2 == 0 then
-					dialogSound:play()
+				if self.lifeTime == 0 then
+					if self.i % 2 == 0 then
+						dialogSound:play()
+					end
 				end
+
+				self.timer = 0
 			else
 				if self.pause then
 					self.pauseTimer = self.pauseTimer + 8 * dt
@@ -78,6 +80,7 @@ end
 
 function dialog:draw(offset)
 	love.graphics.push()
+	print("Dialog..")
 	love.graphics.translate((offset or 0), 0)
 
 	love.graphics.setColor(0, 0, 0, 128)
@@ -103,7 +106,7 @@ function dialog:keypressed(key)
 		return
 	end
 
-	if key == "a" then
+	if key == CONTROLS["accept"] then
 		if self.pause then	
 			self:clear()
 		end

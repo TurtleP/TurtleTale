@@ -1,4 +1,4 @@
-house = class("house")
+house = class("house", object)
 
 local houseImage = love.graphics.newImage("graphics/game/prefabs/house.png")
 local houseQuads = {}
@@ -7,20 +7,14 @@ for i = 1, 2 do
 end
 
 function house:initialize(layer, x, y)
-	self.x = x
-	self.y = y
+	object.initialize(self, x, y, 128, 48)
 
 	self.active = true
 	self.static = true
 
-	self.width = 128
-	self.height = 48
-
 	self.fade = 1
 
 	table.insert(layer, self)
-
-	self.door = door:new(layer, 208, 192, {link = "indoors;192;208"})
 end
 
 function house:fix()
@@ -30,7 +24,7 @@ end
 function house:update(dt)
 	if self.fade > 0 then
 		local flames = checkrectangle(self.x, self.y, self.width, self.height, {"fire"})
-
+		print(#flames)
 		if #flames > 0 then
 			--if not self.burn then
 				
@@ -49,8 +43,6 @@ function house:update(dt)
 		if self.burn then
 			self.fade = math.max(self.fade - 0.15 * dt, 0)
 		end
-	else
-		self.door.remove = true
 	end
 end
 

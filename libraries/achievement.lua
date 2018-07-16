@@ -93,6 +93,8 @@ function achievement:unlock(name, loaded)
 	v.unlocked = true
 	v.show = not loaded
 
+	print("Unlocked: " .. name .. "; Loaded: " .. tostring(loaded))
+
 	if not loaded then
 		v.open = true
 		v.y = SCREEN_HEIGHT
@@ -108,7 +110,7 @@ end
 function achievement:draw() --draw the thing
 	love.graphics.setScreen("top")
 
-	local x = TOPSCREEN_WIDTH - self.width
+	local x = love.graphics.getWidth() - self.width
 	for k, v in pairs(self.achievements) do
 		if v.show then
 			if v.unlocked and not v.loaded then

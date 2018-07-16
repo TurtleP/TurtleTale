@@ -7,6 +7,8 @@ function game:initialize(map)
 	love.graphics.setBackgroundColor(BACKGROUNDCOLORS.sky)
 
 	self.camera = vector(0, 0)
+
+	paused = false
 end
 
 function game:load(map, fade, fadeSpeed)
@@ -31,7 +33,11 @@ function game:load(map, fade, fadeSpeed)
 
 	for k, v in pairs(CUTSCENES) do
 		if not v[1].manual and not v[2] then
-			event:load(k, v[1])
+			if v[1][1][1] == "levelequals" then
+				if v[1][1][2] == map then
+					event:load(k, v[1])
+				end
+			end
 		end
 	end
 
@@ -49,37 +55,36 @@ function game:load(map, fade, fadeSpeed)
 		end
 	end
 
+	self:FixObjects()
+end
+
+function game:FixObjects(isGameover)
 	if MAP_DATA[self.map.name] then
-		for i, v in pairs(self.layers) do
-			for j, w in pairs(v) do
-				for s, t in pairs(MAP_DATA[self.map.name]) do
-					if t[1] == w.x and t[2] == w.y then
-						w:fix()
-					end
-				end
+		for s, t in pairs(MAP_DATA[self.map.name]) do
+			local object = self:findObject(t[1], t[2], t[3])
+			
+			if object and object.fix then
+				object:fix()
 			end
 		end
 	end
 end
 
 function game:addFixData(object, isSaved)
-	local x, y = object.x, object.y
-	if not isSaved then
-		x, y = object.originX, object.originY
-	end
+	local x, y = object.origin.x, object.origin.y
 
 	if not MAP_DATA[self.map.name] then
 		MAP_DATA[self.map.name] = {}
 	end
 
-	table.insert(MAP_DATA[self.map.name], {x, y, isSaved})
+	table.insert(MAP_DATA[self.map.name], {tostring(object), x, y, isSaved})
 end
 
-function game:addDialog(speaker, text)
+function game:addDialog(speaker, text, autoscroll)
 	if #self.dialogs == 1 then
 		return
 	end
-	table.insert(self.dialogs, dialog:new(speaker, text))
+	table.insert(self.dialogs, dialog:new(speaker, text, autoscroll))
 end
 
 function game:shake(value)
@@ -88,6 +93,7 @@ end
 
 function game:updateCamera()
 	local MAP_WIDTH = self.map.width
+	local MAP_HEIGHT = self.map.height
 
 	if MAP_WIDTH > TOPSCREEN_WIDTH then
 		if self.camera.x >= 0 and self.camera.x + TOPSCREEN_WIDTH <= MAP_WIDTH then
@@ -104,9 +110,32 @@ function game:updateCamera()
 			self.camera.x = MAP_WIDTH - TOPSCREEN_WIDTH
 		end
 	end
+
+	if MAP_HEIGHT > SCREEN_HEIGHT then
+		if self.camera.y >= 0 and self.camera.y + SCREEN_HEIGHT <= MAP_HEIGHT then
+			if self.player.y > self.camera.y + SCREEN_HEIGHT * 1 / 2 then
+				self.camera.y = self.player.y - SCREEN_HEIGHT * 1 / 2
+			elseif self.player.y < self.camera.y + SCREEN_HEIGHT * 1 / 2 then
+				self.camera.y = self.player.y - SCREEN_HEIGHT * 1 / 2
+			end
+		end
+
+		if self.camera.y < 0 then
+			self.camera.y = 0
+		elseif self.camera.y + SCREEN_HEIGHT >= MAP_HEIGHT then
+			self.camera.y = MAP_HEIGHT - SCREEN_HEIGHT
+		end
+	end
 end
 
 function game:update(dt)
+	if paused or SELECTING_SHELL then
+		if SELECTING_SHELL then
+			self.player.inventory:update(dt)
+		end
+		return
+	end
+
 	save:getActiveFile():tick(dt)
 
 	self:updateCamera()
@@ -136,27 +165,45 @@ function game:update(dt)
 	physicsupdate(dt)
 end
 
-function game:draw()
-	love.graphics.rectangle("line", self.map.offset, 0, self.map.width, self.map.height)
+function game:scissor(enable)
+	if self.map.width < TOPSCREEN_WIDTH then
+		if enable then
+			love.graphics.setScissor(self.map.offset, 0, self.map.width, self.map.height)
+		else
+			love.graphics.setScissor()
+		end
+	end
+end
 
+function game:draw()
 	love.graphics.setScreen("top")
 
-	love.graphics.push()
-	
-	love.graphics.translate(self.shakeValue * math.random(-0.5, 0.5), 0)
-
-	love.graphics.translate(-math.floor(self.camera.x), self.camera.y)
+	love.graphics.setColor(255, 255, 255, 255)
 
 	if self.map.width < TOPSCREEN_WIDTH then
 		love.graphics.setScissor(self.map.offset, 0, self.map.width, self.map.height)
 	end
+
+	self.map:drawBackground()
+
+	love.graphics.push()
+	
+	if self.shakeValue > 0 then
+		love.graphics.translate(self.shakeValue * math.random(-1.5, 1.5), 0)
+	end
+
+	love.graphics.translate(-math.floor(self.camera.x), -math.floor(self.camera.y))
 
 	self.map:draw()
 
 	for i, v in ipairs(self.layers) do
 		for j, w in ipairs(v) do
 			if w.active and w.draw then
+				self:scissor(true)
+
 				w:draw()
+
+				self:scissor()
 			end
 		end
 	end
@@ -167,11 +214,19 @@ function game:draw()
 
 	self.map:drawTransition()
 
+	love.graphics.setColor(255, 255, 255, 255)
+
 	for i, v in ipairs(self.dialogs) do
 		v:draw(self.map.offset)
 	end
 
 	save:draw()
+
+	if SELECTING_SHELL then
+		love.graphics.setColor(0, 0, 0, 180)
+		love.graphics.rectangle("fill", 0, 0, TOPSCREEN_WIDTH, SCREEN_HEIGHT)
+		love.graphics.setColor(255, 255, 255, 255)
+	end
 	
 	if self.map.width < TOPSCREEN_WIDTH then
 		love.graphics.setScissor()
@@ -179,6 +234,10 @@ function game:draw()
 
 	love.graphics.setScreen("bottom")
 	
+	self:drawBottomScreen()
+end
+
+function game:drawBottomScreen()
 	love.graphics.draw(bottomScreenImage)
 
 	local _, battery = love.system.getPowerInfo()
@@ -188,20 +247,43 @@ function game:draw()
 	love.graphics.draw(moneyImage, moneyQuads[3], BOTSCREEN_WIDTH - gameFont:getWidth(self.player.money) - 17, 4)
 	love.graphics.print(self.player.money, BOTSCREEN_WIDTH - gameFont:getWidth(self.player.money) - 2, 2)
 
-	shop:draw()
+	if SHOP_OPEN then
+		shop:draw()
+	else
+		self.player.inventory:draw()
+	end
 end
 
 function game:keypressed(key)
+	if self.map.changeMap then
+		return
+	end
+
 	if not event:isRunning() then
 		if key == CONTROLS["use"] then
 			self.player:use(true)
 		end
 	end
 
-	if key =="start" then
-		save:encode()
-	elseif key == "select" then
-		self.display:addToInventory("water")
+	if not event:isRunning() and not SELECTING_SHELL and not paused then
+		if key == "select" then
+			SELECTING_SHELL = true
+		end
+	end
+
+	if SELECTING_SHELL then
+		self.player.inventory:keypressed(key)
+	end
+
+	if key == CONTROLS["pause"] then
+		if not event:isRunning() then
+			paused = not paused
+			return
+		end
+	else
+		if paused or SELECTING_SHELL then
+			return
+		end
 	end
 
 	if SHOP_OPEN then
@@ -239,6 +321,17 @@ function game:keyreleased(key)
 		self.player:use(false)
 	end
 
+	if key == "select" then
+		if SELECTING_SHELL then
+			self.player.inventory:keyreleased()
+			SELECTING_SHELL = false
+		end
+	end
+
+	if paused or SELECTING_SHELL then
+		return
+	end
+
 	if self.player.freeze then
 		return
 	end
@@ -259,7 +352,7 @@ end
 
 function game:mousepressed(x, y, button)
 	if button == 1 then
-		self.player:setPosition((x + self.camera.x) - self.player.width / 2, y - self.player.height / 2)
+		self.player.inventory:mousepressed(x, y)
 	end
 end
 
@@ -276,18 +369,19 @@ function game:findObject(name, x, y)
 
 	for k, v in pairs(objects) do
 		for j, w in pairs(v) do
-			local check, pass = tostring(w), false
+			local check = tostring(w)
 
 			if x and y and w.origin then
-				if w.origin.x == x and w.origin.y == y then
-					if check == name then
+				if name and check == name then
+					print(x, y, w.origin.x, w.origin.y)
+					if w.origin.x == x and w.origin.y == y then
 						return w
 					end
 				end
-			end
-
-			if check == name then
-				return w
+			else
+				if check == name then
+					return w
+				end
 			end
 		end
 	end

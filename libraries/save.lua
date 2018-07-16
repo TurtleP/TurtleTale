@@ -72,7 +72,8 @@ function save:encode(i, t) --on save
 	local values = 
 	{
 		{"money", 0}, {"health", 3}, {"maxHealth", 3},
-		{"x", 0}, {"y", 0}, {"scale", 1}, {"abilities", {}}
+		{"x", 0}, {"y", 0}, {"scale", 1}, {"abilities", {}},
+		{"graphic", 1}
 	}
 
 	local map = "indoors"
@@ -85,10 +86,11 @@ function save:encode(i, t) --on save
 		["cutscenes"] = {},
 		["player"] = {},
 		["achievements"] = {},
-		["mapdata"] = MAP_DATA,
+		["mapdata"] = {},
 		["map"] = map,
 		["shopdata"] = SHOP_DATA,
-		["inventory"] = state:get("display").inventory
+		["inventory"] = {},
+		["hidden"] = {}
 	}
 
 	local player = state:get("player")
@@ -99,6 +101,12 @@ function save:encode(i, t) --on save
 				if k == w[1] then
 					if type(v) == "number" then
 						v = math.floor(v)
+					end
+
+					if k == "maxHealth" then
+						if player.graphic == 2 then
+							v = v - 1
+						end
 					end
 
 					data["player"][k] = v
@@ -114,6 +122,23 @@ function save:encode(i, t) --on save
 	for k, v in pairs(CUTSCENES) do
 		if not v[1].manual then
 			data["cutscenes"][k] = v[2]
+		end
+	end
+
+	for k, v in pairs(MAP_DATA) do
+		if v[4] then
+			data["mapdata"][k] = {v[1], v[2], v[3]}
+		end
+	end
+
+	if state:get("display") then
+		data["inventory"] = state:get("display").inventory
+	end
+
+	for k, v in pairs(HIDDEN_ITEMS) do
+		data["hidden"][k] = {}
+		for j, w in ipairs(v) do
+			table.insert(data["hidden"][k], v.used)
 		end
 	end
 
@@ -181,10 +206,18 @@ function save:import(t)
 		local display = state:get("display")
 		display.inventory = self:getActiveData()["inventory"]
 
+		player.inventory:activateShell(player)
+
 		PLAYERSPAWN = {player.x, player.y}
 	else
 		for j, w in pairs(self:getActiveData()["cutscenes"]) do
 			CUTSCENES[j][2] = w
+		end
+
+		for k, v in pairs(self:getActiveData()["hidden"]) do
+			for j, w in ipairs(v) do
+				HIDDEN_ITEMS[k][j].used = w
+			end
 		end
 
 		if self:getActiveData()["shopdata"] then

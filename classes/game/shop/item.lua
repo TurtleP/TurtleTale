@@ -27,9 +27,9 @@ function item:purchase()
 			self.func(self, player, false)
 			player.money = player.money - self.cost
 
-			if self.itemname ~= "fish" then
+			if self.itemname ~= "fish" and self.itemname ~= "bash" then
 				local display = state:get("display")
-				display:addInventoryItem(self.itemname)
+				display:addToInventory(self.itemname)
 			end
 
 			if not self.reuse then

@@ -34,6 +34,8 @@ function hermit:initialize(layer, x, y, properties)
 	self.idleTime = math.random(1, 2)
 	self.walkTime = math.random(2, 4)
 
+	self.damage = 1
+
 	if next(properties) then
 		for k, v in pairs(properties) do
 			self[k] = v
@@ -57,7 +59,7 @@ function hermit:initialize(layer, x, y, properties)
 	self.animationRules =
 	{
 		attack = {stop = true, func = function()
-			hitbox:new(self.x + 1, self.y, self.width - 2, self.height, {"player"}, "addHealth", {-1})
+			hitbox:new(self.x + 1, self.y, self.width - 2, self.height, {"player"}, "addHealth", {-self.damage})
 			self:setState("idle")
 		end}
 	}
@@ -81,6 +83,7 @@ function hermit:update(dt)
 	self:animate(dt)
 
 	self:checkDeath()
+	self:checkSplash()
 
 	if self.freeze then
 		if self.dialog then
