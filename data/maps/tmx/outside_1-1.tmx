@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="4">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="7">
  <editorsettings>
   <export target="../lua/outside_1-1.lua" format="lua"/>
  </editorsettings>
+ <properties>
+  <property name="background" value="Mountain;Day"/>
+  <property name="barriers" value="y;y"/>
+  <property name="song" value="Cliffs"/>
+ </properties>
  <tileset firstgid="1" source="../tiles.tsx"/>
  <layer id="1" name="Tile Layer 1" width="40" height="23">
   <data encoding="csv">
@@ -35,9 +40,23 @@
   <object id="1" name="house" x="512" y="544" width="256" height="96"/>
   <object id="2" name="door" x="672" y="584" width="32" height="56">
    <properties>
-    <property name="warp" value="house;"/>
+    <property name="warp" value="house;384;544"/>
    </properties>
   </object>
-  <object id="3" name="tile" x="0" y="640" width="1280" height="96"/>
+  <object id="3" name="tile" x="0" y="640" width="1280" height="96">
+   <properties>
+    <property name="barriers" value="n;y"/>
+   </properties>
+  </object>
+  <object id="4" name="trigger" x="0" y="0" height="640">
+   <properties>
+    <property name="warp" value="outside_1-2;1260;640;left"/>
+   </properties>
+  </object>
+  <object id="6" name="trigger" x="1280" y="0" height="640">
+   <properties>
+    <property name="warp" value="outside_1-3;20;640;right"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

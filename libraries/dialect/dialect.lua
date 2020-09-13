@@ -105,7 +105,6 @@ local utf8 = require("utf8")
 
 local function wordWrap(text, config)
     local limit = dialect.position.text[3]
-    local MAX_LINES = math.floor(dialect.CONST_BOX_HEIGHT / dialect.text.font:getHeight())
 
     if config.profile then
         limit = limit - 128

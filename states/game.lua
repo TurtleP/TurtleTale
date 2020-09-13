@@ -15,7 +15,7 @@ function game:load(map)
     self.camera = camera(self.player:position())
     self.camera:zoom(1.5)
 
-    self.player:speak("Oh? You're approaching me? Well, in that case.." .. dialect.pauseChar .. "Turtle Tale 2: Electric Boogaloo!")
+    self.player:speak("Oh? You're approaching me? At 720p resolution, at this hour, localized on your Nintendo Switch for homebrew purposes?")
 end
 
 local function updateCamera(player, camera)
@@ -24,8 +24,8 @@ local function updateCamera(player, camera)
     local wvw, wvh = 1280 / (2 * camera.scale), 720 / (2 * camera.scale)
     local dx, dy = player.x - camera.x, player.y - camera.y
 
-    camera.x = math.clamp(camera.x + dx / 2, 0 + wvw, tiled.width  - wvw)
-    camera.y = math.clamp(camera.y + dy / 2, 0 + wvh, tiled.height - wvh)
+    camera.x = math.clamp(camera.x + dx / 2, 0 + wvw, (tiled.width)  - wvw)
+    camera.y = math.clamp(camera.y + dy / 2, 0 + wvh, (tiled.height - 8) - wvh)
 end
 
 function game:update(dt)
@@ -47,6 +47,10 @@ function game:draw()
 end
 
 function game:gamepadaxis(joy, axis, value)
+    if self.player:controlsDisabled() then
+        return
+    end
+
     if axis == "leftx" then
         if value > 0.5 then
             self.player:move("left", false)

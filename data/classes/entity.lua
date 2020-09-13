@@ -49,6 +49,14 @@ function Entity:is(name)
     return tostring(self) == name
 end
 
+function Entity:setVelocityX(x)
+    self.speed.x = x
+end
+
+function Entity:setVelocityY(y)
+    self.speed.y = y
+end
+
 function Entity:setVelocity(x, y)
     if type(x) == "table" and x.isvector then
         self.speed = vector

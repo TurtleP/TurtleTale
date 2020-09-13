@@ -9,8 +9,12 @@ return {
   tilewidth = 32,
   tileheight = 32,
   nextlayerid = 3,
-  nextobjectid = 4,
-  properties = {},
+  nextobjectid = 7,
+  properties = {
+    ["background"] = "Mountain;Day",
+    ["barriers"] = "y;y",
+    ["song"] = "Cliffs"
+  },
   tilesets = {
     {
       name = "tiles",
@@ -23,7 +27,7 @@ return {
       columns = 16,
       image = "../../../graphics/tilesnew.png",
       imagewidth = 512,
-      imageheight = 256,
+      imageheight = 512,
       objectalignment = "unspecified",
       tileoffset = {
         x = 0,
@@ -36,7 +40,7 @@ return {
       },
       properties = {},
       terrains = {},
-      tilecount = 128,
+      tilecount = 256,
       tiles = {}
     }
   },
@@ -86,7 +90,7 @@ return {
       draworder = "topdown",
       id = 2,
       name = "Object Layer 1",
-      visible = false,
+      visible = true,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -117,7 +121,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["warp"] = "house;"
+            ["warp"] = "house;384;544"
           }
         },
         {
@@ -131,7 +135,39 @@ return {
           height = 96,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["barriers"] = "n;y"
+          }
+        },
+        {
+          id = 4,
+          name = "trigger",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 0,
+          width = 0,
+          height = 640,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["warp"] = "outside_1-2;1260;640;left"
+          }
+        },
+        {
+          id = 6,
+          name = "trigger",
+          type = "",
+          shape = "rectangle",
+          x = 1280,
+          y = 0,
+          width = 0,
+          height = 640,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["warp"] = "outside_1-3;20;640;right"
+          }
         }
       }
     }

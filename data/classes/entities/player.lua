@@ -51,6 +51,9 @@ function Player:new(x, y)
     }
 
     self.scale = 1
+    self.flags.controlsDisabled = false
+
+    self.scissor = nil
 end
 
 function Player:speak(text)
@@ -67,6 +70,12 @@ function Player:filter()
             if entity.interactive and entity:canBeUsedBy(self) then
                 if self.keys.up then
                     entity:use(self)
+                end
+            elseif entity:is("trigger") then
+                entity:fire(self)
+            elseif entity:is("water") then
+                if not self.scissor then
+                    self.scissor = {self.x, entity.y - self.height, self.width, self.height}
                 end
             end
             return false
@@ -92,7 +101,10 @@ end
 
 function Player:update(dt)
     if self.keys.right or self.keys.left then
-        self:setState("walk")
+        if not self.jumping then
+            self:setState("walk")
+        end
+
         if self.keys.right then
             self.speed.x = Player.CONST_MOVE_SPEED
             self.scale = 1
@@ -101,16 +113,18 @@ function Player:update(dt)
             self.scale = -1
         end
     else
-        self:setState("idle")
+        if not self.jumping then
+            self:setState("idle")
+        end
         self.speed.x = 0
-    end
-
-    if self.speed.y ~= 0 then
-        self:setState("jump")
     end
 
     for _, entity in pairs(tiled.interactive) do
         entity:canBeUsedBy(self)
+    end
+
+    if self.speed.y ~= 0 then
+        self:setState("jump")
     end
 
     self:animate(dt)
@@ -140,10 +154,16 @@ function Player:move(dir, enable)
 end
 
 function Player:jump()
-    if self.speed.y == 0 and not self.jumping then
-        self.speed.y = -360
+    if self.speed.y == 0 then
+        self:setState("jump")
+        audio.playSound("Jump")
         self.jumping = true
+        self.speed.y = -360
     end
+end
+
+function Player:controlsDisabled()
+    return self.flags.controlsDisabled
 end
 
 function Player:useEntity(enable)

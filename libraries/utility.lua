@@ -28,6 +28,10 @@ function string:split(delimiter) --Not by me
     return result
 end
 
+function string:empty()
+    return self == ""
+end
+
 function math.clamp(x, lo, hi)
     return math.max(lo, math.min(hi, x))
 end

@@ -18,6 +18,12 @@ local Bed   = require(dir .. ".bed")
 local Clock = require(dir .. ".clock")
 local Door  = require(dir .. ".door")
 local House = require(dir .. ".house")
+local Water = require(dir .. ".water")
+
+dir = "data.classes.other"
+
+local Trigger    = require(dir .. ".trigger")
+local Background = require(dir .. ".background")
 
 ------------------
 
@@ -90,8 +96,28 @@ function tiled.loadMap(name, x, y)
         end
     end
 
-    table.insert(tiled.data, Border(0, 0, 1, tiled.height))
-    table.insert(tiled.data, Border(tiled.width, 0, 1, tiled.height))
+    -- barriers --
+
+    local left, right = nil, nil
+    if data.properties.barriers then
+        left, right = unpack(data.properties.barriers:split(";"))
+    end
+
+    if not left or left == "n" then
+        table.insert(tiled.data, Border(0, 0, 1, tiled.height))
+    elseif not right then
+        table.insert(tiled.data, Border(tiled.width, 0, 1, tiled.height))
+    end
+
+    -- -------- --
+
+    -- music --
+
+    if data.properties.song then
+        audio.play(data.properties.song)
+    end
+
+    -- ----- --
 
     if not tiled.player then
         tiled.player = Player(112, 192)
@@ -104,12 +130,12 @@ function tiled.loadMap(name, x, y)
 
     local properties = data.properties
 
-    if properties.matrix then
-        tiled.dynamicBackground = Background()
+    if properties.background then
+        tiled.background = Background(properties.background)
     end
 
     if love.filesystem.getInfo("data/maps/backdrop/" .. name .. ".png") then
-        tiled.background = love.graphics.newImage("data/maps/backdrop/" .. name .. ".png")
+        tiled.tiles = love.graphics.newImage("data/maps/backdrop/" .. name .. ".png")
     end
 
     animation.start(properties.script)
@@ -122,6 +148,8 @@ end
 function tiled.loadEntity(name, entityData, properties)
     local entity = nil
 
+    print("Spawning: " .. name)
+
     if name == "house" then
         entity = House(entityData.x, entityData.y - offset)
     elseif name == "tile" then
@@ -132,6 +160,10 @@ function tiled.loadEntity(name, entityData, properties)
         entity = Clock(entityData.x, entityData.y - offset)
     elseif name == "door" then
         entity = Door(entityData.x, entityData.y - offset, entityData.properties)
+    elseif name == "trigger" then
+        entity = Trigger(entityData.x, entityData.y - offset, entityData.height, entityData.properties)
+    elseif name == "water" then
+        entity = Water(entityData.x, entityData.y - offset, entityData.width, entityData.height)
     end
 
     return entity
@@ -169,10 +201,6 @@ function tiled.update(dt)
 
     physics:update(dt)
 
-    if tiled.dynamicBackground then
-        tiled.dynamicBackground:update(dt)
-    end
-
     for index, value in ipairs(tiled.data) do
         if value:remove() then
             tiled.removeEntity(value, index)
@@ -181,14 +209,12 @@ function tiled.update(dt)
 end
 
 function tiled.draw()
-    if tiled.dynamicBackground then
-        love.graphics.setColor(1, 1, 1, 0.25)
-        tiled.dynamicBackground:draw()
+    if tiled.background then
+        tiled.background:draw(tiled.width, 16, 8)
     end
 
-    if tiled.background then
-        love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(tiled.background, -16, -8)
+    if tiled.tiles then
+        love.graphics.draw(tiled.tiles, 0, -8)
     end
 
     love.graphics.setColor(1, 1, 1, 1)

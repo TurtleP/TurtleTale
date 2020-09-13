@@ -57,7 +57,7 @@ function animation.update(dt)
 end
 
 function animation.start(name)
-    if not animation.scripts[name] then
+    if name and not animation.scripts[name] then
         print(string.format("failed to load script '%s': no such file!", name))
         return
     end

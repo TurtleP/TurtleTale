@@ -3,6 +3,8 @@ local nest = require("libraries.nest").init("hac")
 love.graphics.setDefaultFilter("nearest", "nearest")
 
 fonts = require("data.fonts")
+audio = require("data.audio")
+
 state = require("libraries.state")
 utility = require("libraries.utility")
 
