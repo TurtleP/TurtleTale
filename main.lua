@@ -7,7 +7,7 @@ state = require("libraries.state")
 utility = require("libraries.utility")
 
 function love.load()
-    state.switch("game")
+    state.switch("game", "house")
 end
 
 function love.update(dt)

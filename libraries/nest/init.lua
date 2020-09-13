@@ -103,7 +103,6 @@ function nest._setupControls()
 
         if type(nest.controls[key]) == "table" then
             local which, value = unpack(nest.controls[key])
-            print("nest", which, value, type(value))
             love.gamepadaxis(joystick, which, value)
         else
             if not isrepeat then

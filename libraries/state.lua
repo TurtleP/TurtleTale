@@ -51,7 +51,6 @@ if love.filesystem.getInfo("states") then
     for i = 1, #items do
         local name = items[i]:gsub(".lua", "")
         state.states[name] = require("states." .. name)
-        print(name)
     end
 else
     error(state.ERRORS.NO_DIR)
@@ -118,7 +117,7 @@ function state.gamepadaxis(joy, axis, value)
     if not state.isCurrentStateValid("gamepadaxis") then
         return
     end
-    print("state", axis, value, type(value))
+
     state.current:gamepadaxis(joy, axis, value)
 end
 

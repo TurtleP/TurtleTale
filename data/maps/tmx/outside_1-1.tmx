@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="8">
- <properties>
-  <property name="background" value="home"/>
-  <property name="hasClouds" type="bool" value="true"/>
-  <property name="music" value="cliffs"/>
-  <property name="prev" value="outside_1-2;614;300"/>
- </properties>
- <tileset firstgid="1" name="base" tilewidth="16" tileheight="16" tilecount="418" columns="22">
-  <image source="../../../graphics/game/tiles.png" width="352" height="304"/>
- </tileset>
- <layer id="14" name="Tile Layer 1" width="40" height="23">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="4">
+ <editorsettings>
+  <export target="../lua/outside_1-1.lua" format="lua"/>
+ </editorsettings>
+ <tileset firstgid="1" source="../tiles.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="40" height="23">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -28,22 +23,21 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,16,17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,17,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,38,39,0,0,0,0,36,37,0,0,0,0,0,0,0,0,0,0,0,0,0,38,39,0,0,0,0,0,0,36,37,0,0,0,0,0,
-0,0,0,62,60,61,62,0,57,0,58,59,0,57,0,0,0,0,0,0,0,0,0,0,0,60,61,62,0,0,0,57,0,58,59,0,62,0,0,0,
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24
+0,0,0,0,74,75,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,74,75,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,90,91,0,0,0,0,0,72,73,0,0,0,0,0,0,0,0,0,0,0,0,0,0,90,91,0,0,0,0,0,72,73,0,0,0,0,
+0,0,0,0,106,107,0,92,0,0,0,88,89,0,76,0,0,0,0,0,0,0,0,0,0,0,0,106,107,0,0,92,0,0,88,89,0,0,76,0,
+100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,
+116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,
+116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116,116
 </data>
  </layer>
- <objectgroup id="15" name="Object Layer 1">
-  <object id="1" name="house" x="256" y="272" width="128" height="48"/>
-  <object id="2" name="tile" x="0" y="320" width="640" height="48"/>
-  <object id="7" name="rectangle" x="336" y="304" width="16" height="16">
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" name="house" x="512" y="544" width="256" height="96"/>
+  <object id="2" name="door" x="672" y="584" width="32" height="56">
    <properties>
-    <property name="next" value="house;184;256"/>
-    <property name="script" value="changemap"/>
+    <property name="warp" value="house;"/>
    </properties>
   </object>
+  <object id="3" name="tile" x="0" y="640" width="1280" height="96"/>
  </objectgroup>
 </map>

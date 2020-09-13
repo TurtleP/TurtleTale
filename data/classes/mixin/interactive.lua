@@ -32,12 +32,6 @@ function Interactive:toggle()
     self.flags.inUse = not self.flags.inUse
 end
 
-function Interactive:fire()
-    if not self.flags.inUse then
-        self.flags.inUse = true
-    end
-end
-
 function Interactive:inUse()
     return self.flags.inUse
 end

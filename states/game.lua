@@ -7,10 +7,10 @@ local debug = require("libraries.debug")
 
 local game = {}
 
-function game:load()
-    tiled.loadMap("house")
+function game:load(map)
+    tiled.loadMap(map)
 
-    self.player = tiled.getEntity("player")
+    self.player = tiled.player
 
     self.camera = camera(self.player:position())
     self.camera:zoom(1.5)

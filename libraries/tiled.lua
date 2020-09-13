@@ -16,6 +16,9 @@ dir = "data.classes.prefabs"
 
 local Bed   = require(dir .. ".bed")
 local Clock = require(dir .. ".clock")
+local Door  = require(dir .. ".door")
+local House = require(dir .. ".house")
+
 ------------------
 
 tiled.CONST_MAP_DIR = "data/maps/lua"
@@ -41,18 +44,22 @@ end
 function tiled.clear()
     tiled.data = {}
 
-    tiled.transitionColor = nil
     tiled.transitionFade = 1
     tiled.doTransition = false
     tiled.transitionRate = 1
+    tiled.transitionFunc = function() end
 end
 
-function tiled.transition(enable, color, rate)
+function tiled.transition(enable, color, func, rate)
     if color then
         tiled.transitionColor = color
     end
 
     tiled.doTransition = enable
+
+    if func then
+        tiled.transitionFunc = func
+    end
 
     if rate then
         tiled.transitionRate = rate
@@ -61,9 +68,8 @@ end
 
 local offset = 8
 
-function tiled.loadMap(name)
+function tiled.loadMap(name, x, y)
     tiled.clear()
-
 
     name = tostring(name)
     local data = tiled.maps[name]
@@ -87,6 +93,15 @@ function tiled.loadMap(name)
     table.insert(tiled.data, Border(0, 0, 1, tiled.height))
     table.insert(tiled.data, Border(tiled.width, 0, 1, tiled.height))
 
+    if not tiled.player then
+        tiled.player = Player(112, 192)
+    else
+        print(type(x))
+        tiled.player:setPosition(x, y)
+    end
+
+    table.insert(tiled.data, tiled.player)
+
     local properties = data.properties
 
     if properties.matrix then
@@ -107,14 +122,16 @@ end
 function tiled.loadEntity(name, entityData, properties)
     local entity = nil
 
-    if name == "player" then
-        entity = Player(entityData.x, entityData.y - offset)
+    if name == "house" then
+        entity = House(entityData.x, entityData.y - offset)
     elseif name == "tile" then
         entity = Tile(entityData.x, entityData.y - offset, entityData.width, entityData.height)
     elseif name == "bed" then
         entity = Bed(entityData.x, entityData.y - 2 - offset)
     elseif name == "clock" then
         entity = Clock(entityData.x, entityData.y - offset)
+    elseif name == "door" then
+        entity = Door(entityData.x, entityData.y - offset, entityData.properties)
     end
 
     return entity
@@ -176,17 +193,22 @@ function tiled.draw()
 
     love.graphics.setColor(1, 1, 1, 1)
     for _, value in pairs(tiled.data) do
-        if value.flags.noDraw then
-            return
+        if not value.flags.noDraw then
+            value:draw()
         end
-        value:draw()
     end
 
     if tiled.transitionFade > 0 and tiled.transitionColor then
         local r, g, b = unpack(tiled.transitionColor)
 
         love.graphics.setColor(r, g, b, tiled.transitionFade)
-        love.graphics.rectangle("fill", 0, 0, vars.WINDOW_W, vars.WINDOW_H)
+        love.graphics.rectangle("fill", 0, 0, 1296, 728)
+    end
+
+    if tiled.transitionFade == 1 then
+        if tiled.transitionFunc then
+            tiled.transitionFunc()
+        end
     end
 
     debug:draw(physics)
